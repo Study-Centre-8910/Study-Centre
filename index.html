@@ -4,126 +4,364 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Centre - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-color: #3b82f6;
-            --border-color: #334155;
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --card-border: #1f2937;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #2563eb;
+            --progress-green: #10b981;
+            --progress-purple: #8b5cf6;
+            --progress-orange: #f59e0b;
         }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
+
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
-            padding: 20px;
+            color: var(--text-main);
+            padding: 24px;
         }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-        }
-        h1 {
-            font-size: 1.5rem;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .progress-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .card {
+            margin-bottom: 24px;
             background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
+            border: 1px solid var(--card-border);
+            padding: 16px 24px;
+            border-radius: 12px;
         }
-        .card h3 {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
-        .card .progress-value {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        .subjects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .subject-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-        }
-        .subject-card h4 {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .tracker-section {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-        }
-        button {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
+
+        .header-title h1 {
+            font-size: 1.25rem;
             font-weight: 600;
         }
+
+        .header-title p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            background-color: var(--card-border);
+            color: var(--text-main);
+            border: 1px solid #374151;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+
         button:hover {
-            opacity: 0.9;
+            background-color: #374151;
+        }
+
+        .primary-btn {
+            background-color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .primary-btn:hover {
+            background-color: var(--accent-blue-hover);
+        }
+
+        .top-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .top-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .metric-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-info h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-info .value {
+            font-size: 2.25rem;
+            font-weight: 700;
+        }
+
+        .metric-info .sub-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .filter-group select {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .overview-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .overview-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 16px 20px;
+        }
+
+        .overview-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .overview-card-header span:first-child {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .overview-card-header span:last-child {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background-color: #1f2937;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .overview-card-footer {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .tracker-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .subject-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background-color: #1f2937;
+            color: var(--text-main);
+        }
+
+        .chapter-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .chapter-table th, .chapter-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.9rem;
+        }
+
+        .chapter-table th {
+            color: var(--text-muted);
+            font-weight: 500;
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
+        .chapter-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.015);
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-not-started { background-color: #1f2937; color: var(--text-muted); }
+        .status-progress { background-color: rgba(245, 158, 11, 0.15); color: var(--progress-orange); }
+        .status-completed { background-color: rgba(16, 185, 129, 0.15); color: var(--progress-green); }
+
+        .action-select {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- Header -->
         <header>
-            <h1>Study Centre</h1>
-            <button onclick="resetData()">Reset Data</button>
+            <div class="header-title">
+                <h1>Study Centre - Class 12 Dashboard</h1>
+                <p>Track your curriculum progress, practice sessions, and chapter mastery.</p>
+            </div>
+            <div class="header-actions">
+                <button onclick="resetData()">Reset Data</button>
+            </div>
         </header>
 
-        <div class="progress-grid">
-            <div class="card">
-                <h3>Overall Syllabus Progress</h3>
-                <div class="progress-value" id="syllabusProgress">0%</div>
+        <!-- Top Metrics Grid -->
+        <div class="top-grid">
+            <div class="metric-card">
+                <div class="metric-info">
+                    <h3>Overall Syllabus Progress</h3>
+                    <div class="value" id="overallSyllabusVal">0%</div>
+                    <div class="sub-text" id="syllabusSubText">0 Chapters Read</div>
+                </div>
             </div>
-            <div class="card">
-                <h3>Practice & Problems</h3>
-                <div class="progress-value" id="practiceProgress">0%</div>
+            <div class="metric-card">
+                <div class="metric-info">
+                    <h3>Practice & Problems</h3>
+                    <div class="value" id="overallPracticeVal">0%</div>
+                    <div class="sub-text">0 Exercises Total</div>
+                </div>
             </div>
         </div>
 
-        <h2>Subject Overview Cards</h2>
-        <div class="subjects-grid" id="subjectsOverview">
-            <!-- Dynamic Subject Cards -->
+        <!-- Subject Overview Section -->
+        <div class="section-header">
+            <h2>Subject Overview Cards</h2>
+            <div class="filter-group">
+                <span>Filter:</span>
+                <select id="subjectFilter" onchange="renderDashboard()">
+                    <option value="all">All Subjects</option>
+                </select>
+            </div>
         </div>
 
-        <div class="tracker-section">
-            <h2>Chapter & Exercise Tracker</h2>
-            <p style="color: var(--text-muted); margin-top: 10px;">Select your stream to load customized curriculum.</p>
+        <div class="overview-cards-grid" id="overviewCardsGrid">
+            <!-- Dynamically populated subject overview cards -->
+        </div>
+
+        <!-- Chapter & Exercise Tracker Section -->
+        <div class="tracker-container">
+            <div class="section-header">
+                <h2>Chapter & Exercise Tracker</h2>
+                <button class="primary-btn" onclick="window.location.href='onboarding.html'">Load Preset Curriculum</button>
+            </div>
+            
+            <div class="subject-tabs" id="subjectTabs">
+                <!-- Dynamically populated tabs -->
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="chapter-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">Chapter Name</th>
+                            <th style="width: 25%;">Status</th>
+                            <th style="width: 25%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chapterTableBody">
+                        <!-- Dynamically populated chapters -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -222,32 +460,161 @@
             }
         };
 
-        function loadDashboard() {
+        let currentActiveTab = "";
+
+        function getStoredProgress() {
+            let data = localStorage.getItem("studyProgress");
+            return data ? JSON.parse(data) : {};
+        }
+
+        function saveStoredProgress(data) {
+            localStorage.setItem("studyProgress", JSON.stringify(data));
+        }
+
+        function initDataStructure() {
             let userStream = localStorage.getItem("userStream") || "PCM";
-            
             if (!PREDEFINED_CURRICULUM[userStream]) {
                 userStream = "PCM";
                 localStorage.setItem("userStream", userStream);
             }
 
-            const subjects = PREDEFINED_CURRICULUM[userStream];
-            const subjectsContainer = document.getElementById("subjectsOverview");
-            subjectsContainer.innerHTML = "";
+            let progress = getStoredProgress();
+            let subjects = PREDEFINED_CURRICULUM[userStream];
 
-            for (let subName in subjects) {
-                let card = document.createElement("div");
-                card.className = "subject-card";
-                card.innerHTML = `
-                    <h4>${subName} <span>50%</span></h4>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">${subjects[subName].length} Chapters</p>
-                `;
-                subjectsContainer.appendChild(card);
+            let firstSub = Object.keys(subjects)[0];
+            if (!currentActiveTab || !subjects[currentActiveTab]) {
+                currentActiveTab = firstSub;
+            }
+
+            for (let sub in subjects) {
+                if (!progress[sub]) {
+                    progress[sub] = {};
+                }
+                subjects[sub].forEach(chap => {
+                    if (!progress[sub][chap]) {
+                        progress[sub][chap] = "Not Started"; // Not Started, In Progress, Completed
+                    }
+                });
+            }
+            saveStoredProgress(progress);
+        }
+
+        function renderDashboard() {
+            initDataStructure();
+            let userStream = localStorage.getItem("userStream") || "PCM";
+            let subjects = PREDEFINED_CURRICULUM[userStream];
+            let progress = getStoredProgress();
+
+            // Populate filter dropdown
+            let filterSelect = document.getElementById("subjectFilter");
+            let currentFilter = filterSelect.value;
+            filterSelect.innerHTML = `<option value="all">All Subjects</option>`;
+            Object.keys(subjects).forEach(sub => {
+                let opt = document.createElement("option");
+                opt.value = sub;
+                opt.textContent = sub;
+                if (currentFilter === sub) opt.selected = true;
+                filterSelect.appendChild(opt);
+            });
+
+            // Calculate metrics & render overview cards
+            let grid = document.getElementById("overviewCardsGrid");
+            grid.innerHTML = "";
+
+            let totalChaptersAll = 0;
+            let completedChaptersAll = 0;
+
+            Object.keys(subjects).forEach(sub => {
+                let chapters = subjects[sub];
+                let totalCount = chapters.length;
+                totalChaptersAll += totalCount;
+
+                let completedCount = 0;
+                chapters.forEach(chap => {
+                    if (progress[sub] && progress[sub][chap] === "Completed") {
+                        completedCount++;
+                        completedChaptersAll++;
+                    }
+                });
+
+                let percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+                // Respect filter
+                if (currentFilter === "all" || currentFilter === sub) {
+                    let card = document.createElement("div");
+                    card.className = "overview-card";
+                    card.innerHTML = `
+                        <div class="overview-card-header">
+                            <span>${sub}</span>
+                            <span>${percentage}%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: ${percentage}%; background-color: var(--accent-blue);"></div>
+                        </div>
+                        <div class="overview-card-footer">${totalCount} Chapters</div>
+                    `;
+                    grid.appendChild(card);
+                }
+            });
+
+            let overallPercentage = totalChaptersAll > 0 ? Math.round((completedChaptersAll / totalChaptersAll) * 100) : 0;
+            document.getElementById("overallSyllabusVal").textContent = overallPercentage + "%";
+            document.getElementById("syllabusSubText").textContent = `${completedChaptersAll} of ${totalChaptersAll} Chapters Completed`;
+
+            // Render Tabs
+            let tabsContainer = document.getElementById("subjectTabs");
+            tabsContainer.innerHTML = "";
+            Object.keys(subjects).forEach(sub => {
+                let btn = document.createElement("button");
+                btn.className = `tab-btn ${currentActiveTab === sub ? 'active' : ''}`;
+                btn.textContent = sub;
+                btn.onclick = () => {
+                    currentActiveTab = sub;
+                    renderDashboard();
+                };
+                tabsContainer.appendChild(btn);
+            });
+
+            // Render Chapter Table for active tab
+            let tbody = document.getElementById("chapterTableBody");
+            tbody.innerHTML = "";
+            if (subjects[currentActiveTab]) {
+                subjects[currentActiveTab].forEach(chap => {
+                    let status = progress[currentActiveTab] && progress[currentActiveTab][chap] ? progress[currentActiveTab][chap] : "Not Started";
+                    let statusClass = "status-not-started";
+                    if (status === "In Progress") statusClass = "status-progress";
+                    if (status === "Completed") statusClass = "status-completed";
+
+                    let tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${chap}</td>
+                        <td><span class="status-pill ${statusClass}">${status}</span></td>
+                        <td>
+                            <select class="action-select" onchange="updateChapterStatus('${currentActiveTab}', '${chap.replace(/'/g, "\\'")}', this.value)">
+                                <option value="Not Started" ${status === 'Not Started' ? 'selected' : ''}>Not Started</option>
+                                <option value="In Progress" ${status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="Completed" ${status === 'Completed' ? 'selected' : ''}>Completed</option>
+                            </select>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             }
         }
 
+        function updateChapterStatus(sub, chap, status) {
+            let progress = getStoredProgress();
+            if (!progress[sub]) progress[sub] = {};
+            progress[sub][chap] = status;
+            saveStoredProgress(progress);
+            renderDashboard();
+        }
+
         function resetData() {
-            localStorage.clear();
-            window.location.href = "onboarding.html";
+            if (confirm("Are you sure you want to reset all progress data?")) {
+                localStorage.clear();
+                window.location.href = "onboarding.html";
+            }
         }
 
         window.onload = function() {
@@ -255,7 +622,7 @@
                 window.location.href = "onboarding.html";
                 return;
             }
-            loadDashboard();
+            renderDashboard();
         };
     </script>
 </body>
