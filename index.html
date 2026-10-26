@@ -299,53 +299,19 @@
         .edit-icon { color: var(--text-muted); }
         .edit-icon:hover { color: var(--accent-blue); }
 
-        /* Responsive Styles for Mobile & Tablets */
         @media (max-width: 768px) {
-            body {
-                padding: 12px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .subjects-overview {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .chapter-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .chapter-actions {
-                width: 100%;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-                margin-top: 8px;
-            }
-
-            .progress-controls {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .tracker-section {
-                padding: 16px;
-            }
-
-            .header-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
+            body { padding: 12px; }
+            .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+            .subjects-overview { grid-template-columns: 1fr; gap: 12px; }
+            .chapter-item { flex-direction: column; align-items: flex-start; }
+            .chapter-actions { width: 100%; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 8px; }
+            .progress-controls { width: 100%; justify-content: space-between; }
+            .tracker-section { padding: 16px; }
+            .header-actions { width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <header>
             <h1>Study Centre</h1>
@@ -380,22 +346,14 @@
         </div>
 
         <h2>Subject Overview Cards</h2>
-        <div class="subjects-overview" id="subjectsOverviewGrid">
-            <!-- Dynamic Subject Cards -->
-        </div>
+        <div class="subjects-overview" id="subjectsOverviewGrid"></div>
 
         <div class="tracker-section">
             <div class="tracker-header">
                 <h2>Chapter & Exercise Tracker</h2>
             </div>
-            
-            <div class="tabs-container" id="subjectTabsContainer">
-                <!-- Dynamic Subject Tabs -->
-            </div>
-
-            <div id="chaptersContainer">
-                <!-- Dynamic Chapter Breakdown -->
-            </div>
+            <div class="tabs-container" id="subjectTabsContainer"></div>
+            <div id="chaptersContainer"></div>
         </div>
     </div>
 
@@ -404,60 +362,29 @@
             "PCM": {
                 "Physics": {
                     "color": "var(--accent-blue)",
-                    "chapters": [
-                        "Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity",
-                        "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction",
-                        "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments",
-                        "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei",
-                        "Semiconductor Electronics: Materials, Devices and Simple Circuits"
-                    ]
+                    "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics: Materials, Devices and Simple Circuits"]
                 },
                 "Chemistry": {
                     "color": "var(--progress-red)",
-                    "chapters": [
-                        "Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements",
-                        "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers",
-                        "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"
-                    ]
+                    "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
                 },
                 "Mathematics": {
                     "color": "var(--progress-purple)",
-                    "chapters": [
-                        "Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants",
-                        "Continuity and Differentiability", "Application of Derivatives", "Integrals",
-                        "Application of Integrals", "Differential Equations", "Vector Algebra",
-                        "Three Dimensional Geometry", "Linear Programming", "Probability"
-                    ]
+                    "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"]
                 }
             },
             "PCB": {
                 "Physics": {
                     "color": "var(--accent-blue)",
-                    "chapters": [
-                        "Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity",
-                        "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction",
-                        "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments",
-                        "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei",
-                        "Semiconductor Electronics: Materials, Devices and Simple Circuits"
-                    ]
+                    "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics: Materials, Devices and Simple Circuits"]
                 },
                 "Chemistry": {
                     "color": "var(--progress-red)",
-                    "chapters": [
-                        "Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements",
-                        "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers",
-                        "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"
-                    ]
+                    "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
                 },
                 "Biology": {
                     "color": "var(--progress-green)",
-                    "chapters": [
-                        "Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health",
-                        "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution",
-                        "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes",
-                        "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem",
-                        "Biodiversity and Conservation"
-                    ]
+                    "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"]
                 }
             }
         };
@@ -506,7 +433,6 @@
             let progress = getStoredProgress();
             if (!progress[subject]) progress[subject] = {};
             if (!progress[subject][chapter]) progress[subject][chapter] = { theory: 0, practice: 0 };
-            
             progress[subject][chapter][type] = value;
             saveStoredProgress(progress);
             renderDashboard();
@@ -519,17 +445,9 @@
                 let curriculum = getCurriculum();
                 let chapList = curriculum[subject].chapters;
                 let index = chapList.indexOf(oldChapName);
-                if (index > -1) {
-                    chapList[index] = newName;
-                    saveCurriculum(curriculum);
-                }
-
+                if (index > -1) { chapList[index] = newName; saveCurriculum(curriculum); }
                 let progress = getStoredProgress();
-                if (progress[subject] && progress[subject][oldChapName]) {
-                    progress[subject][newName] = progress[subject][oldChapName];
-                    delete progress[subject][oldChapName];
-                    saveStoredProgress(progress);
-                }
+                if (progress[subject] && progress[subject][oldChapName]) { progress[subject][newName] = progress[subject][oldChapName]; delete progress[subject][oldChapName]; saveStoredProgress(progress); }
                 renderDashboard();
             }
         }
@@ -539,17 +457,9 @@
                 let curriculum = getCurriculum();
                 let chapList = curriculum[subject].chapters;
                 let index = chapList.indexOf(chapter);
-                if (index > -1) {
-                    chapList.splice(index, 1);
-                    saveCurriculum(curriculum);
-                }
-
+                if (index > -1) { chapList.splice(index, 1); saveCurriculum(curriculum); }
                 let progress = getStoredProgress();
-                if (progress[subject]) {
-                    delete progress[subject][chapter];
-                    saveStoredProgress(progress);
-                }
-                
+                if (progress[subject]) { delete progress[subject][chapter]; saveStoredProgress(progress); }
                 renderDashboard();
             }
         }
@@ -591,7 +501,7 @@
             overviewGrid.innerHTML = "";
 
             let totalChaptersAll = 0;
-            let completedChaptersAll = 0;
+            let totalTheorySum = 0;
             let totalPracticeSum = 0;
 
             Object.keys(curriculum).forEach(subName => {
@@ -599,18 +509,18 @@
                 let totalCount = chapList.length;
                 totalChaptersAll += totalCount;
 
-                let completedSubCount = 0;
+                let subjectTheorySum = 0;
                 chapList.forEach(chapName => {
                     if (progress[subName] && progress[subName][chapName]) {
-                        if (progress[subName][chapName].theory === 100) {
-                            completedChaptersAll++;
-                            completedSubCount++;
-                        }
-                        totalPracticeSum += (progress[subName][chapName].practice || 0);
+                        let theoryVal = progress[subName][chapName].theory || 0;
+                        let practiceVal = progress[subName][chapName].practice || 0;
+                        subjectTheorySum += theoryVal;
+                        totalTheorySum += theoryVal;
+                        totalPracticeSum += practiceVal;
                     }
                 });
 
-                let subPercentage = totalCount > 0 ? Math.round((completedSubCount / totalCount) * 100) : 0;
+                let subPercentage = totalCount > 0 ? Math.round(subjectTheorySum / totalCount) : 0;
                 let cardColor = subName === "Chemistry" ? "var(--progress-red)" : (curriculum[subName].color || "var(--accent-blue)");
 
                 let card = document.createElement("div");
@@ -625,7 +535,7 @@
                 overviewGrid.appendChild(card);
             });
 
-            let overallPercentage = totalChaptersAll > 0 ? Math.round((completedChaptersAll / totalChaptersAll) * 100) : 0;
+            let overallPercentage = totalChaptersAll > 0 ? Math.round(totalTheorySum / totalChaptersAll) : 0;
             document.getElementById("syllabusProgressText").textContent = overallPercentage + "%";
             document.getElementById("syllabusProgressBar").style.width = overallPercentage + "%";
 
@@ -640,74 +550,12 @@
                 let btn = document.createElement("button");
                 btn.className = `tab-btn ${currentSubjectTab === subName ? "active" : ""}`;
                 btn.textContent = subName;
-                btn.onclick = () => {
-                    currentSubjectTab = subName;
-                    renderDashboard();
-                };
+                btn.onclick = () => { currentSubjectTab = subName; renderDashboard(); };
                 tabsContainer.appendChild(btn);
             });
 
             let chaptersContainer = document.getElementById("chaptersContainer");
-            chaptersContainer.innerHTML = "";
-
-            if (currentSubjectTab && curriculum[currentSubjectTab]) {
-                let activeSubjectData = curriculum[currentSubjectTab];
-                let sectionDiv = document.createElement("div");
-                sectionDiv.className = "section-breakdown";
-                sectionDiv.innerHTML = `
-                    <div class="section-title">
-                        ${currentSubjectTab}
-                        <button class="add-btn" onclick="addChapter('${currentSubjectTab}')">+ Add Chapter</button>
-                    </div>
-                `;
-
-                let ul = document.createElement("ul");
-                ul.className = "chapter-list";
-
-                activeSubjectData.chapters.forEach(chapName => {
-                    let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) ? progress[currentSubjectTab][chapName] : { theory: 0, practice: 0 };
-                    let theoryVal = chapProgress.theory;
-                    let practiceVal = chapProgress.practice;
-
-                    let escapedChapName = chapName.replace(/'/g, "\\'");
-
-                    let li = document.createElement("li");
-                    li.className = "chapter-item";
-                    li.innerHTML = `
-                        <div class="chapter-info">
-                            <div class="chapter-title-container">
-                                <h5>${chapName}</h5>
-                                <button class="icon-btn edit-icon" title="Edit Chapter Name" onclick="editChapter('${currentSubjectTab}', '${escapedChapName}')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                </button>
-                                <button class="icon-btn delete-icon" title="Delete Chapter" onclick="deleteChapter('${currentSubjectTab}', '${escapedChapName}')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="chapter-actions">
-                            <div class="progress-controls">
-                                <span style="color:var(--text-muted); font-size:0.8rem; width:45px;">Theory:</span>
-                                ${[25, 50, 75, 100].map(val => `
-                                    <button class="btn-radio ${theoryVal === val ? "active" : ""}" 
-                                            onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'theory', ${val})">${val}%</button>
-                                `).join('')}
-                            </div>
-                            <div class="progress-controls">
-                                <span style="color:var(--text-muted); font-size:0.8rem; width:55px;">Practice:</span>
-                                ${[25, 50, 75, 100].map(val => `
-                                    <button class="btn-radio ${practiceVal === val ? "active" : ""}" 
-                                            onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'practice', ${val})">${val}%</button>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                    ul.appendChild(li);
-                });
-
-                sectionDiv.appendChild(ul);
-                chaptersContainer.appendChild(sectionDiv);
-            }
+            chaptersContainer.appendChild(sectionDiv);
         }
 
         function resetData() {
