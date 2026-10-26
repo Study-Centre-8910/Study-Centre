@@ -19,22 +19,22 @@
             --progress-red: #f87171;
             --progress-purple: #c084fc;
             --border-color: #374151;
-            --sidebar-width: 260px;
+            --sidebar-width: 280px;
         }
 
-        body.theme-light {
-            --bg-color: #f8fafc;
+        body.light-theme {
+            --bg-color: #f3f4f6;
             --card-bg: #ffffff;
-            --card-border: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --card-border: #e5e7eb;
+            --text-main: #111827;
+            --text-muted: #4b5563;
             --accent-blue: #0284c7;
             --progress-blue: #0284c7;
             --progress-green: #059669;
             --progress-alert: #dc2626;
-            --progress-red: #ef4444;
+            --progress-red: #e11d48;
             --progress-purple: #9333ea;
-            --border-color: #cbd5e1;
+            --border-color: #d1d5db;
         }
 
         * {
@@ -50,7 +50,7 @@
             padding: 24px;
             font-size: 14px;
             overflow-x: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -343,7 +343,7 @@
         .edit-icon { color: var(--text-muted); }
         .edit-icon:hover { color: var(--accent-blue); }
 
-        /* Sidebar Styles */
+        /* Sidebar & Submenu Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -358,6 +358,7 @@
             display: flex;
             flex-direction: column;
             padding: 24px;
+            overflow-y: auto;
         }
 
         .sidebar.active {
@@ -368,7 +369,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }
 
         .sidebar-header h2 {
@@ -376,36 +377,77 @@
             font-weight: 700;
         }
 
-        .close-sidebar-btn {
+        .close-sidebar-btn, .back-sidebar-btn {
             background: transparent;
             border: none;
             cursor: pointer;
             color: var(--text-muted);
-            font-size: 1.5rem;
-            line-height: 1;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .close-sidebar-btn:hover, .back-sidebar-btn:hover {
+            color: var(--text-main);
         }
 
         .sidebar-nav {
             list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .sidebar-nav li {
-            margin-bottom: 8px;
-        }
-
-        .sidebar-nav a {
+        .sidebar-nav-item {
             color: var(--text-main);
             text-decoration: none;
             font-size: 1rem;
             font-weight: 600;
-            display: block;
-            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
             border-radius: 6px;
+            cursor: pointer;
             transition: background 0.2s;
         }
 
-        .sidebar-nav a:hover {
+        .sidebar-nav-item:hover {
             background-color: var(--border-color);
+            color: var(--accent-blue);
+        }
+
+        .sidebar-view {
+            display: block;
+        }
+
+        .sidebar-view.hidden {
+            display: none;
+        }
+
+        .theme-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .theme-option-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            transition: border-color 0.2s;
+        }
+
+        .theme-option-card.active {
+            border-color: var(--accent-blue);
             color: var(--accent-blue);
         }
 
@@ -427,63 +469,6 @@
             visibility: visible;
         }
 
-        /* Settings View Styles */
-        .settings-section {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            padding: 24px;
-            margin-top: 16px;
-        }
-
-        .settings-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .settings-group {
-            margin-bottom: 24px;
-        }
-
-        .settings-group h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--accent-blue);
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 8px;
-        }
-
-        .theme-options {
-            display: flex;
-            gap: 16px;
-            margin-top: 12px;
-        }
-
-        .theme-card {
-            background-color: var(--card-bg);
-            border: 2px solid var(--card-border);
-            border-radius: 8px;
-            padding: 16px 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-            transition: border-color 0.2s;
-        }
-
-        .theme-card.active {
-            border-color: var(--accent-blue);
-            color: var(--accent-blue);
-        }
-
-        .view-hidden {
-            display: none !important;
-        }
-
         @media (max-width: 768px) {
             body { padding: 12px; }
             .stats-grid { grid-template-columns: 1fr; gap: 12px; }
@@ -491,109 +476,118 @@
             .chapter-item { flex-direction: column; align-items: flex-start; }
             .chapter-actions { width: 100%; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 8px; }
             .progress-controls { width: 100%; justify-content: space-between; }
-            .tracker-section { padding: 16px; }
             .header-actions { width: 100%; justify-content: space-between; }
-            .theme-options { flex-direction: column; gap: 8px; }
         }
     </style>
 </head>
 <body>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>Study Centre</h2>
-            <button class="close-sidebar-btn" id="closeSidebar">&times;</button>
+        <!-- Main Sidebar View -->
+        <div id="mainSidebarView" class="sidebar-view">
+            <div class="sidebar-header">
+                <h2>Study Centre</h2>
+                <button class="close-sidebar-btn" id="closeSidebar">&times;</button>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a class="sidebar-nav-item" href="#">Dashboard</a></li>
+                <li><a class="sidebar-nav-item" href="#">Analytics</a></li>
+                <li><a class="sidebar-nav-item" href="#">Sample Papers & Previous Year Papers</a></li>
+                <li><a class="sidebar-nav-item" href="#">Chapter-wise Test Series</a></li>
+                <li>
+                    <div class="sidebar-nav-item" id="openSettingsBtn">
+                        <span>Settings</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
+            </ul>
         </div>
-        <ul class="sidebar-nav">
-            <li><a href="#" onclick="showView('dashboard'); closeSidebarFunc(); return false;">Dashboard</a></li>
-            <li><a href="#" onclick="closeSidebarFunc(); return false;">Analytics</a></li>
-            <li><a href="#" onclick="closeSidebarFunc(); return false;">Notes & Flashcards</a></li>
-            <li><a href="#" onclick="closeSidebarFunc(); return false;">Pomodoro Timer</a></li>
-            <li><a href="#" onclick="showView('settings'); closeSidebarFunc(); return false;">Settings</a></li>
-        </ul>
+
+        <!-- Settings Sidebar Sub-View -->
+        <div id="settingsSidebarView" class="sidebar-view hidden">
+            <div class="sidebar-header">
+                <button class="back-sidebar-btn" id="backToMainBtn">&larr; Back</button>
+                <h2>Settings</h2>
+            </div>
+            <ul class="sidebar-nav">
+                <li>
+                    <div class="sidebar-nav-item" id="openThemeBtn">
+                        <span>My Theme</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- My Theme Sub-View -->
+        <div id="themeSidebarView" class="sidebar-view hidden">
+            <div class="sidebar-header">
+                <button class="back-sidebar-btn" id="backToSettingsBtn">&larr; Back</button>
+                <h2>My Theme</h2>
+            </div>
+            <div class="theme-options">
+                <div class="theme-option-card" id="darkThemeCard" onclick="setTheme('dark')">
+                    <span>Dark Theme (Default)</span>
+                    <span id="darkCheck">&#10003;</span>
+                </div>
+                <div class="theme-option-card" id="lightThemeCard" onclick="setTheme('light')">
+                    <span>Light Theme</span>
+                    <span id="lightCheck" style="display:none;">&#10003;</span>
+                </div>
+            </div>
+        </div>
     </div>
+
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="container">
-        <!-- Main Dashboard View -->
-        <div id="dashboardView">
-            <header>
-                <div class="header-left">
-                    <button class="menu-toggle" id="menuToggle">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                    <h1>Study Centre</h1>
-                </div>
-                <div class="header-actions">
-                    <button onclick="window.location.href='onboarding.html'">Load Preset</button>
-                    <button class="add-btn" style="padding:8px 16px;" onclick="addSubjectPrompt()">Add Subject</button>
-                    <button onclick="resetData()" style="border-color: var(--progress-alert); color: var(--progress-alert);">Reset Data</button>
-                </div>
-            </header>
+        <header>
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1>Study Centre</h1>
+            </div>
+            <div class="header-actions">
+                <button onclick="window.location.href='onboarding.html'">Load Preset</button>
+                <button class="add-btn" style="padding:8px 16px;" onclick="addSubjectPrompt()">Add Subject</button>
+                <button onclick="resetData()" style="border-color: var(--progress-alert); color: var(--progress-alert);">Reset Data</button>
+            </div>
+        </header>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>Overall Syllabus Progress</h3>
-                    <div class="stat-value">
-                        <span id="syllabusProgressText">0%</span>
-                        <span id="streamBadge" class="stream-indicator">Loading...</span>
-                    </div>
-                    <div class="progress-bar-bg">
-                        <div id="syllabusProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-blue);"></div>
-                    </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Overall Syllabus Progress</h3>
+                <div class="stat-value">
+                    <span id="syllabusProgressText">0%</span>
+                    <span id="streamBadge" class="stream-indicator">Loading...</span>
                 </div>
-                <div class="stat-card">
-                    <h3>Practice & Problems</h3>
-                    <div class="stat-value">
-                        <span id="practiceProgressText">0%</span>
-                        <span style="font-size: 1rem; color: var(--text-muted);" id="practiceSubText">0 Exercises Total</span>
-                    </div>
-                    <div class="progress-bar-bg">
-                        <div id="practiceProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-green);"></div>
-                    </div>
+                <div class="progress-bar-bg">
+                    <div id="syllabusProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-blue);"></div>
                 </div>
             </div>
-
-            <h2>Subject Overview Cards</h2>
-            <div class="subjects-overview" id="subjectsOverviewGrid"></div>
-
-            <div class="tracker-section">
-                <div class="tracker-header">
-                    <h2>Chapter & Exercise Tracker</h2>
+            <div class="stat-card">
+                <h3>Practice & Problems</h3>
+                <div class="stat-value">
+                    <span id="practiceProgressText">0%</span>
+                    <span style="font-size: 1rem; color: var(--text-muted);" id="practiceSubText">0 Exercises Total</span>
                 </div>
-                <div class="tabs-container" id="subjectTabsContainer"></div>
-                <div id="chaptersContainer"></div>
+                <div class="progress-bar-bg">
+                    <div id="practiceProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-green);"></div>
+                </div>
             </div>
         </div>
 
-        <!-- Settings View -->
-        <div id="settingsView" class="view-hidden">
-            <header>
-                <div class="header-left">
-                    <button onclick="showView('dashboard')" style="display: flex; align-items: center; gap: 8px;">
-                        &larr; Back to Dashboard
-                    </button>
-                    <h1>Settings</h1>
-                </div>
-            </header>
+        <h2>Subject Overview Cards</h2>
+        <div class="subjects-overview" id="subjectsOverviewGrid"></div>
 
-            <div class="settings-section">
-                <div class="settings-group">
-                    <h3>My Theme</h3>
-                    <p style="color: var(--text-muted); margin-bottom: 12px;">Choose your preferred visual theme interface:</p>
-                    <div class="theme-options">
-                        <div class="theme-card" id="themeDarkCard" onclick="setTheme('dark')">
-                            <input type="radio" id="themeDark" name="themeChoice" value="dark">
-                            <label for="themeDark" style="cursor:pointer;">Dark Theme (Default)</label>
-                        </div>
-                        <div class="theme-card" id="themeLightCard" onclick="setTheme('light')">
-                            <input type="radio" id="themeLight" name="themeChoice" value="light">
-                            <label for="themeLight" style="cursor:pointer;">Light Theme</label>
-                        </div>
-                    </div>
-                </div>
+        <div class="tracker-section">
+            <div class="tracker-header">
+                <h2>Chapter & Exercise Tracker</h2>
             </div>
+            <div class="tabs-container" id="subjectTabsContainer"></div>
+            <div id="chaptersContainer"></div>
         </div>
     </div>
 
@@ -864,41 +858,22 @@
             }
         }
 
-        // View Management
-        function showView(viewName) {
-            const dashboardView = document.getElementById('dashboardView');
-            const settingsView = document.getElementById('settingsView');
-
-            if (viewName === 'settings') {
-                dashboardView.classList.add('view-hidden');
-                settingsView.classList.remove('view-hidden');
-            } else {
-                settingsView.classList.add('view-hidden');
-                dashboardView.classList.remove('view-hidden');
-            }
-        }
-
         // Theme Management
         function setTheme(theme) {
             if (theme === 'light') {
-                document.body.classList.add('theme-light');
-                document.getElementById('themeLight').checked = true;
-                document.getElementById('themeDark').checked = false;
-                document.getElementById('themeLightCard').classList.add('active');
-                document.getElementById('themeDarkCard').classList.remove('active');
+                document.body.classList.add('light-theme');
+                document.getElementById('lightThemeCard').classList.add('active');
+                document.getElementById('darkThemeCard').classList.remove('active');
+                document.getElementById('lightCheck').style.display = 'inline';
+                document.getElementById('darkCheck').style.display = 'none';
             } else {
-                document.body.classList.remove('theme-light');
-                document.getElementById('themeDark').checked = true;
-                document.getElementById('themeLight').checked = false;
-                document.getElementById('themeDarkCard').classList.add('active');
-                document.getElementById('themeLightCard').classList.remove('active');
+                document.body.classList.remove('light-theme');
+                document.getElementById('darkThemeCard').classList.add('active');
+                document.getElementById('lightThemeCard').classList.remove('active');
+                document.getElementById('darkCheck').style.display = 'inline';
+                document.getElementById('lightCheck').style.display = 'none';
             }
             localStorage.setItem('userTheme', theme);
-        }
-
-        function closeSidebarFunc() {
-            document.getElementById('sidebar').classList.remove('active');
-            document.getElementById('sidebarOverlay').classList.remove('active');
         }
 
         window.onload = function() {
@@ -919,14 +894,34 @@
             const closeSidebar = document.getElementById('closeSidebar');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
 
+            const mainView = document.getElementById('mainSidebarView');
+            const settingsView = document.getElementById('settingsSidebarView');
+            const themeView = document.getElementById('themeSidebarView');
+
             function toggleSidebar() {
                 sidebar.classList.toggle('active');
                 sidebarOverlay.classList.toggle('active');
+                if (!sidebar.classList.contains('active')) {
+                    showView(mainView);
+                }
+            }
+
+            function showView(viewToShow) {
+                mainView.classList.add('hidden');
+                settingsView.classList.add('hidden');
+                themeView.classList.add('hidden');
+                viewToShow.classList.remove('hidden');
             }
 
             menuToggle.addEventListener('click', toggleSidebar);
             closeSidebar.addEventListener('click', toggleSidebar);
             sidebarOverlay.addEventListener('click', toggleSidebar);
+
+            // Submenu Navigation Listeners
+            document.getElementById('openSettingsBtn').addEventListener('click', () => showView(settingsView));
+            document.getElementById('backToMainBtn').addEventListener('click', () => showView(mainView));
+            document.getElementById('openThemeBtn').addEventListener('click', () => showView(themeView));
+            document.getElementById('backToSettingsBtn').addEventListener('click', () => showView(settingsView));
 
             // Touch swipe gesture logic
             let startX;
