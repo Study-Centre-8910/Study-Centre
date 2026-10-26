@@ -248,57 +248,120 @@
     <!-- JavaScript Application Logic -->
     <script>
         // Preset Curriculums
-        const PREDEFINED_CURRICULUM = {
-            "Physics": {
-                name: "Physics",
-                color: "sky",
-                chapters: [
-                    { name: "Electric Charges and Fields", progress: 75, exercises: [100, 75] },
-                    { name: "Electrostatic Potential and Capacitance", progress: 50, exercises: [50, 25] },
-                    { name: "Current Electricity", progress: 25, exercises: [0, 0] },
-                    { name: "Moving Charges and Magnetism", progress: 0, exercises: [0] }
-                ]
-            },
-            "Chemistry": {
-                name: "Chemistry",
-                color: "emerald",
-                chapters: [
-                    { name: "Solutions & Concentration Terms", progress: 100, exercises: [100, 100] },
-                    { name: "Electrochemistry", progress: 75, exercises: [75, 50] },
-                    { name: "Chemical Kinetics", progress: 50, exercises: [50] },
-                    { name: "Surface Chemistry", progress: 0, exercises: [0] }
-                ]
-            },
-            "Mathematics": {
-                name: "Mathematics",
-                color: "indigo",
-                chapters: [
-                    { name: "Relations and Functions", progress: 100, exercises: [100] },
-                    { name: "Inverse Trigonometric Functions", progress: 75, exercises: [75, 75] },
-                    { name: "Matrices and Determinants", progress: 50, exercises: [50, 25] },
-                    { name: "Continuity and Differentiability", progress: 0, exercises: [0] }
-                ]
-            },
-            "Biology": {
-                name: "Biology",
-                color: "purple",
-                chapters: [
-                    { name: "Sexual Reproduction in Flowering Plants", progress: 100, exercises: [100] },
-                    { name: "Human Reproduction", progress: 75, exercises: [75] },
-                    { name: "Principles of Inheritance and Variation", progress: 25, exercises: [25] }
-                ]
-            },
-            "English": {
-                name: "English Literature",
-                color: "amber",
-                chapters: [
-                    { name: "The Last Lesson", progress: 100, exercises: [100] },
-                    { name: "Lost Spring", progress: 75, exercises: [75] },
-                    { name: "Deep Water", progress: 50, exercises: [50] }
-                ]
-            }
-        };
-
+   const userStream = localStorage.getItem('userStream') || 'PCM';
+const PREDEFINED_CURRICULUM = (userStream === 'PCB') ? {
+    "Physics": {
+        "name": "Physics",
+        "color": "sky",
+        "chapters": [
+            { "name": "Electric Charges and Fields", "progress": 0, "exercises": [0, 0] },
+            { "name": "Electrostatic Potential and Capacitance", "progress": 0, "exercises": [0, 0] },
+            { "name": "Current Electricity", "progress": 0, "exercises": [0, 0] },
+            { "name": "Moving Charges and Magnetism", "progress": 0, "exercises": [0, 0] },
+            { "name": "Magnetism and Matter", "progress": 0, "exercises": [0, 0] },
+            { "name": "Electromagnetic Induction", "progress": 0, "exercises": [0, 0] },
+            { "name": "Alternating Current", "progress": 0, "exercises": [0, 0] },
+            { "name": "Electromagnetic Waves", "progress": 0, "exercises": [0, 0] },
+            { "name": "Ray Optics and Optical Instruments", "progress": 0, "exercises": [0, 0] },
+            { "name": "Wave Optics", "progress": 0, "exercises": [0, 0] },
+            { "name": "Dual Nature of Radiation and Matter", "progress": 0, "exercises": [0, 0] },
+            { "name": "Atoms", "progress": 0, "exercises": [0, 0] },
+            { "name": "Nuclei", "progress": 0, "exercises": [0, 0] },
+            { "name": "Semiconductor Electronics", "progress": 0, "exercises": [0, 0] }
+        ]
+    },
+    "Chemistry": {
+        "name": "Chemistry",
+        "color": "emerald",
+        "chapters": [
+            { "name": "Solutions", "progress": 0, "exercises": [0, 0] },
+            { "name": "Electrochemistry", "progress": 0, "exercises": [0, 0] },
+            { "name": "Chemical Kinetics", "progress": 0, "exercises": [0, 0] },
+            { "name": "d- and f-Block Elements", "progress": 0, "exercises": [0, 0] },
+            { "name": "Coordination Compounds", "progress": 0, "exercises": [0, 0] },
+            { "name": "Haloalkanes and Haloarenes", "progress": 0, "exercises": [0, 0] },
+            { "name": "Alcohols, Phenols and Ethers", "progress": 0, "exercises": [0, 0] },
+            { "name": "Aldehydes, Ketones and Carboxylic Acids", "progress": 0, "exercises": [0, 0] },
+            { "name": "Amines", "progress": 0, "exercises": [0, 0] },
+            { "name": "Biomolecules", "progress": 0, "exercises": [0, 0] }
+        ]
+    },
+    "Biology": {
+        "name": "Biology",
+        "color": "rose",
+        "chapters": [
+            { "name": "Sexual Reproduction in Flowering Plants", "progress": 0, "exercises": [0, 0] },
+            { "name": "Human Reproduction", "progress": 0, "exercises": [0, 0] },
+            { "name": "Reproductive Health", "progress": 0, "exercises": [0, 0] },
+            { "name": "Principles of Inheritance and Variation", "progress": 0, "exercises": [0, 0] },
+            { "name": "Molecular Basis of Inheritance", "progress": 0, "exercises": [0, 0] },
+            { "name": "Evolution", "progress": 0, "exercises": [0, 0] },
+            { "name": "Human Health and Disease", "progress": 0, "exercises": [0, 0] },
+            { "name": "Microbes in Human Welfare", "progress": 0, "exercises": [0, 0] },
+            { "name": "Biotechnology: Principles and Processes", "progress": 0, "exercises": [0, 0] },
+            { "name": "Biotechnology and its Applications", "progress": 0, "exercises": [0, 0] },
+            { "name": "Organisms and Populations", "progress": 0, "exercises": [0, 0] },
+            { "name": "Ecosystem", "progress": 0, "exercises": [0, 0] },
+            { "name": "Biodiversity and Conservation", "progress": 0, "exercises": [0, 0] }
+        ]
+    }
+} : {
+    "Physics": {
+        "name": "Physics",
+        "color": "sky",
+        "chapters": [
+            { "name": "Electric Charges and Fields", "progress": 0, "exercises": [0, 0] },
+            { "name": "Electrostatic Potential and Capacitance", "progress": 0, "exercises": [0, 0] },
+            { "name": "Current Electricity", "progress": 0, "exercises": [0, 0] },
+            { "name": "Moving Charges and Magnetism", "progress": 0, "exercises": [0, 0] },
+            { "name": "Magnetism and Matter", "progress": 0, "exercises": [0, 0] },
+            { "name": "Electromagnetic Induction", "progress": 0, "exercises": [0, 0] },
+            { "name": "Alternating Current", "progress": 0, "exercises": [0, 0] },
+            { "name": "Electromagnetic Waves", "progress": 0, "exercises": [0, 0] },
+            { "name": "Ray Optics and Optical Instruments", "progress": 0, "exercises": [0, 0] },
+            { "name": "Wave Optics", "progress": 0, "exercises": [0, 0] },
+            { "name": "Dual Nature of Radiation and Matter", "progress": 0, "exercises": [0, 0] },
+            { "name": "Atoms", "progress": 0, "exercises": [0, 0] },
+            { "name": "Nuclei", "progress": 0, "exercises": [0, 0] },
+            { "name": "Semiconductor Electronics", "progress": 0, "exercises": [0, 0] }
+        ]
+    },
+    "Chemistry": {
+        "name": "Chemistry",
+        "color": "emerald",
+        "chapters": [
+            { "name": "Solutions", "progress": 0, "exercises": [0, 0] },
+            { "name": "Electrochemistry", "progress": 0, "exercises": [0, 0] },
+            { "name": "Chemical Kinetics", "progress": 0, "exercises": [0, 0] },
+            { "name": "d- and f-Block Elements", "progress": 0, "exercises": [0, 0] },
+            { "name": "Coordination Compounds", "progress": 0, "exercises": [0, 0] },
+            { "name": "Haloalkanes and Haloarenes", "progress": 0, "exercises": [0, 0] },
+            { "name": "Alcohols, Phenols and Ethers", "progress": 0, "exercises": [0, 0] },
+            { "name": "Aldehydes, Ketones and Carboxylic Acids", "progress": 0, "exercises": [0, 0] },
+            { "name": "Amines", "progress": 0, "exercises": [0, 0] },
+            { "name": "Biomolecules", "progress": 0, "exercises": [0, 0] }
+        ]
+    },
+    "Mathematics": {
+        "name": "Mathematics",
+        "color": "indigo",
+        "chapters": [
+            { "name": "Relations and Functions", "progress": 0, "exercises": [0, 0] },
+            { "name": "Inverse Trigonometric Functions", "progress": 0, "exercises": [0, 0] },
+            { "name": "Matrices", "progress": 0, "exercises": [0, 0] },
+            { "name": "Determinants", "progress": 0, "exercises": [0, 0] },
+            { "name": "Continuity and Differentiability", "progress": 0, "exercises": [0, 0] },
+            { "name": "Application of Derivatives", "progress": 0, "exercises": [0, 0] },
+            { "name": "Integrals", "progress": 0, "exercises": [0, 0] },
+            { "name": "Application of Integrals", "progress": 0, "exercises": [0, 0] },
+            { "name": "Differential Equations", "progress": 0, "exercises": [0, 0] },
+            { "name": "Vector Algebra", "progress": 0, "exercises": [0, 0] },
+            { "name": "Three Dimensional Geometry", "progress": 0, "exercises": [0, 0] },
+            { "name": "Linear Programming", "progress": 0, "exercises": [0, 0] },
+            { "name": "Probability", "progress": 0, "exercises": [0, 0] }
+        ]
+    }
+};
         // Application State
         let store = {
             subjects: []
