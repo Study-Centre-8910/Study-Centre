@@ -83,17 +83,6 @@
             border-radius: 8px;
             padding: 20px;
         }
-        .chapter-list {
-            margin-top: 15px;
-            list-style: none;
-        }
-        .chapter-item {
-            padding: 10px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
         button {
             background-color: var(--accent-color);
             color: white;
@@ -112,7 +101,7 @@
 
     <div class="container">
         <header>
-            <h1>Study Centre - Class 12 Dashboard</h1>
+            <h1>Study Centre</h1>
             <button onclick="resetData()">Reset Data</button>
         </header>
 
@@ -134,9 +123,7 @@
 
         <div class="tracker-section">
             <h2>Chapter & Exercise Tracker</h2>
-            <div id="chapterTrackerContainer">
-                <!-- Chapters loaded dynamically -->
-            </div>
+            <p style="color: var(--text-muted); margin-top: 10px;">Select your stream to load customized curriculum.</p>
         </div>
     </div>
 
@@ -245,44 +232,16 @@
 
             const subjects = PREDEFINED_CURRICULUM[userStream];
             const subjectsContainer = document.getElementById("subjectsOverview");
-            const trackerContainer = document.getElementById("chapterTrackerContainer");
-            
             subjectsContainer.innerHTML = "";
-            trackerContainer.innerHTML = "";
 
-            // Render subject overview cards & detailed chapter trackers
             for (let subName in subjects) {
-                let chapters = subjects[subName];
-
-                // Overview Card
                 let card = document.createElement("div");
                 card.className = "subject-card";
                 card.innerHTML = `
-                    <h4>${subName} <span>0%</span></h4>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">${chapters.length} Chapters</p>
+                    <h4>${subName} <span>50%</span></h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">${subjects[subName].length} Chapters</p>
                 `;
                 subjectsContainer.appendChild(card);
-
-                // Tracker Section for each subject
-                let subTrackerDiv = document.createElement("div");
-                subTrackerDiv.style.marginBottom = "20px";
-                subTrackerDiv.innerHTML = `<h3 style="color: var(--accent-color); margin-top: 15px;">${subName}</h3>`;
-                
-                let ul = document.createElement("ul");
-                ul.className = "chapter-list";
-
-                chapters.forEach((chap, index) => {
-                    let li = document.createElement("li");
-                    li.className = "chapter-item";
-                    li.innerHTML = `
-                        <span>${index + 1}. ${chap}</span>
-                        <input type="checkbox" style="transform: scale(1.2); cursor: pointer;">
-                    `;
-                    ul.appendChild(li);
-                });
-
-                subTrackerDiv.appendChild(ul);
-                trackerContainer.appendChild(subTrackerDiv);
             }
         }
 
