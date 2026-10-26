@@ -72,16 +72,6 @@
             border-color: var(--text-muted);
         }
 
-        .primary-btn {
-            background-color: var(--progress-blue);
-            border: none;
-        }
-
-        .primary-btn:hover {
-            background-color: var(--accent-blue);
-            color: var(--bg-color);
-        }
-
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -248,12 +238,15 @@
             flex: 1;
         }
 
+        .chapter-title-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .chapter-info h5 {
             font-size: 1rem;
             font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .chapter-actions {
@@ -287,9 +280,13 @@
             border: none;
             padding: 4px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .delete-icon { color: var(--progress-alert); }
         .edit-icon { color: var(--text-muted); }
+        .edit-icon:hover { color: var(--accent-blue); }
     </style>
 </head>
 <body>
@@ -299,9 +296,7 @@
             <h1>Study Centre</h1>
             <div class="header-actions">
                 <button onclick="window.location.href='onboarding.html'">Load Preset</button>
-                <div class="dropdown">
-                    <button class="add-btn" style="padding:8px 16px;">Add Subject</button>
-                </div>
+                <button class="add-btn" style="padding:8px 16px;" onclick="addSubjectPrompt()">Add Subject</button>
                 <button onclick="resetData()" style="border-color: var(--progress-alert); color: var(--progress-alert);">Reset Data</button>
             </div>
         </header>
@@ -350,7 +345,7 @@
     </div>
 
     <script>
-        const PREDEFINED_CURRICULUM = {
+        const DEFAULT_CURRICULUM = {
             "PCM": {
                 "Physics": {
                     "color": "var(--accent-blue)",
@@ -363,7 +358,7 @@
                     ]
                 },
                 "Chemistry": {
-                    "color": "var(--progress-green)",
+                    "color": "var(--progress-red)",
                     "chapters": [
                         "Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements",
                         "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers",
@@ -392,7 +387,7 @@
                     ]
                 },
                 "Chemistry": {
-                    "color": "var(--progress-green)",
+                    "color": "var(--progress-red)",
                     "chapters": [
                         "Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements",
                         "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers",
@@ -415,6 +410,15 @@
         let currentSubjectTab = "";
         let userStream = localStorage.getItem("userStream") || "PCM";
 
+        function getCurriculum() {
+            let data = localStorage.getItem("customCurriculum");
+            return data ? JSON.parse(data) : DEFAULT_CURRICULUM[userStream] || DEFAULT_CURRICULUM["PCM"];
+        }
+
+        function saveCurriculum(data) {
+            localStorage.setItem("customCurriculum", JSON.stringify(data));
+        }
+
         function getStoredProgress() {
             let data = localStorage.getItem("detailedStudyProgress");
             return data ? JSON.parse(data) : {};
@@ -425,21 +429,16 @@
         }
 
         function initData() {
-            if (!PREDEFINED_CURRICULUM[userStream]) {
-                userStream = "PCM";
-                localStorage.setItem("userStream", userStream);
-            }
-
+            let curriculum = getCurriculum();
             let progress = getStoredProgress();
-            let subjects = PREDEFINED_CURRICULUM[userStream];
 
-            if (!currentSubjectTab) {
-                currentSubjectTab = Object.keys(subjects)[0];
+            if (!currentSubjectTab || !curriculum[currentSubjectTab]) {
+                currentSubjectTab = Object.keys(curriculum)[0] || "";
             }
 
-            Object.keys(subjects).forEach(subName => {
+            Object.keys(curriculum).forEach(subName => {
                 if (!progress[subName]) progress[subName] = {};
-                subjects[subName].chapters.forEach(chapName => {
+                curriculum[subName].chapters.forEach(chapName => {
                     if (!progress[subName][chapName]) {
                         progress[subName][chapName] = { theory: 0, practice: 0 };
                     }
@@ -450,51 +449,103 @@
 
         function updateProgress(subject, chapter, type, value) {
             let progress = getStoredProgress();
+            if (!progress[subject]) progress[subject] = {};
+            if (!progress[subject][chapter]) progress[subject][chapter] = { theory: 0, practice: 0 };
+            
             progress[subject][chapter][type] = value;
             saveStoredProgress(progress);
             renderDashboard();
         }
 
-        function deleteChapter(subject, chapter) {
-            if (confirm("Are you sure you want to delete this chapter?")) {
+        function editChapter(subject, oldChapName) {
+            let newName = prompt("Edit Chapter Name:", oldChapName);
+            if (newName && newName.trim() !== "" && newName !== oldChapName) {
+                newName = newName.trim();
+                let curriculum = getCurriculum();
+                let chapList = curriculum[subject].chapters;
+                let index = chapList.indexOf(oldChapName);
+                if (index > -1) {
+                    chapList[index] = newName;
+                    saveCurriculum(curriculum);
+                }
+
                 let progress = getStoredProgress();
-                delete progress[subject][chapter];
-                saveStoredProgress(progress);
-                
-                let chapList = PREDEFINED_CURRICULUM[userStream][subject].chapters;
+                if (progress[subject] && progress[subject][oldChapName]) {
+                    progress[subject][newName] = progress[subject][oldChapName];
+                    delete progress[subject][oldChapName];
+                    saveStoredProgress(progress);
+                }
+                renderDashboard();
+            }
+        }
+
+        function deleteChapter(subject, chapter) {
+            if (confirm(`Are you sure you want to delete "${chapter}"?`)) {
+                let curriculum = getCurriculum();
+                let chapList = curriculum[subject].chapters;
                 let index = chapList.indexOf(chapter);
-                if (index > -1) chapList.splice(index, 1);
+                if (index > -1) {
+                    chapList.splice(index, 1);
+                    saveCurriculum(curriculum);
+                }
+
+                let progress = getStoredProgress();
+                if (progress[subject]) {
+                    delete progress[subject][chapter];
+                    saveStoredProgress(progress);
+                }
                 
                 renderDashboard();
             }
         }
 
+        function addChapter(subject) {
+            let name = prompt("Enter new chapter name:");
+            if (name && name.trim() !== "") {
+                let curriculum = getCurriculum();
+                curriculum[subject].chapters.push(name.trim());
+                saveCurriculum(curriculum);
+                renderDashboard();
+            }
+        }
+
+        function addSubjectPrompt() {
+            let name = prompt("Enter new subject name:");
+            if (name && name.trim() !== "") {
+                name = name.trim();
+                let curriculum = getCurriculum();
+                if (!curriculum[name]) {
+                    curriculum[name] = { color: "var(--accent-blue)", chapters: [] };
+                    saveCurriculum(curriculum);
+                    currentSubjectTab = name;
+                    renderDashboard();
+                }
+            }
+        }
+
         function renderDashboard() {
             initData();
-            let subjects = PREDEFINED_CURRICULUM[userStream];
+            let curriculum = getCurriculum();
             let progress = getStoredProgress();
 
-            // Render Stream Badge
             let streamBadge = document.getElementById("streamBadge");
             streamBadge.textContent = userStream;
             streamBadge.className = `stream-indicator stream-${userStream.toLowerCase()}`;
 
-            // Render Overview Cards
             let overviewGrid = document.getElementById("subjectsOverviewGrid");
             overviewGrid.innerHTML = "";
 
             let totalChaptersAll = 0;
             let completedChaptersAll = 0;
 
-            Object.keys(subjects).forEach(subName => {
-                let chapList = subjects[subName].chapters;
+            Object.keys(curriculum).forEach(subName => {
+                let chapList = curriculum[subName].chapters;
                 let totalCount = chapList.length;
                 totalChaptersAll += totalCount;
 
                 let completedSubCount = 0;
                 chapList.forEach(chapName => {
-                    totalChaptersAll += 0; 
-                    if (progress[subName][chapName].theory === 100) {
+                    if (progress[subName] && progress[subName][chapName] && progress[subName][chapName].theory === 100) {
                         completedChaptersAll++;
                         completedSubCount++;
                     }
@@ -509,7 +560,7 @@
                         <h4>${subName}</h4>
                         <p>${totalCount} Chapters</p>
                     </div>
-                    <div class="subject-stat" style="color: ${subjects[subName].color}">${subPercentage}%</div>
+                    <div class="subject-stat" style="color: ${curriculum[subName].color || 'var(--accent-blue)'}">${subPercentage}%</div>
                 `;
                 overviewGrid.appendChild(card);
             });
@@ -518,10 +569,9 @@
             document.getElementById("syllabusProgressText").textContent = overallPercentage + "%";
             document.getElementById("syllabusProgressBar").style.width = overallPercentage + "%";
 
-            // Render Tabs
             let tabsContainer = document.getElementById("subjectTabsContainer");
             tabsContainer.innerHTML = "";
-            Object.keys(subjects).forEach(subName => {
+            Object.keys(curriculum).forEach(subName => {
                 let btn = document.createElement("button");
                 btn.className = `tab-btn ${currentSubjectTab === subName ? "active" : ""}`;
                 btn.textContent = subName;
@@ -532,65 +582,71 @@
                 tabsContainer.appendChild(btn);
             });
 
-            // Render Chapters for Active Tab
             let chaptersContainer = document.getElementById("chaptersContainer");
             chaptersContainer.innerHTML = "";
 
-            let activeSubjectData = subjects[currentSubjectTab];
-            let sectionDiv = document.createElement("div");
-            sectionDiv.className = "section-breakdown";
-            sectionDiv.innerHTML = `
-                <div class="section-title">
-                    ${currentSubjectTab}
-                    <button class="add-btn">+ Add Chapter</button>
-                </div>
-            `;
-
-            let ul = document.createElement("ul");
-            ul.className = "chapter-list";
-
-            activeSubjectData.chapters.forEach(chapName => {
-                let chapProgress = progress[currentSubjectTab][chapName];
-                let theoryVal = chapProgress ? chapProgress.theory : 0;
-                let practiceVal = chapProgress ? chapProgress.practice : 0;
-
-                let li = document.createElement("li");
-                li.className = "chapter-item";
-                li.innerHTML = `
-                    <div class="chapter-info">
-                        <h5>
-                            ${chapName}
-                            <button class="icon-btn delete-icon" onclick="deleteChapter('${currentSubjectTab}', '${chapName}')">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                            </button>
-                        </h5>
-                    </div>
-                    <div class="chapter-actions">
-                        <div class="progress-controls">
-                            <span style="color:var(--text-muted); font-size:0.8rem; width:45px;">Theory:</span>
-                            ${[25, 50, 75, 100].map(val => `
-                                <button class="btn-radio ${theoryVal === val ? "active" : ""}" 
-                                        onclick="updateProgress('${currentSubjectTab}', '${chapName}', 'theory', ${val})">${val}%</button>
-                            `).join('')}
-                        </div>
-                        <div class="progress-controls">
-                            <span style="color:var(--text-muted); font-size:0.8rem; width:55px;">Practice:</span>
-                            ${[25, 50, 75, 100].map(val => `
-                                <button class="btn-radio ${practiceVal === val ? "active" : ""}" 
-                                        onclick="updateProgress('${currentSubjectTab}', '${chapName}', 'practice', ${val})">${val}%</button>
-                            `).join('')}
-                        </div>
+            if (currentSubjectTab && curriculum[currentSubjectTab]) {
+                let activeSubjectData = curriculum[currentSubjectTab];
+                let sectionDiv = document.createElement("div");
+                sectionDiv.className = "section-breakdown";
+                sectionDiv.innerHTML = `
+                    <div class="section-title">
+                        ${currentSubjectTab}
+                        <button class="add-btn" onclick="addChapter('${currentSubjectTab}')">+ Add Chapter</button>
                     </div>
                 `;
-                ul.appendChild(li);
-            });
 
-            sectionDiv.appendChild(ul);
-            chaptersContainer.appendChild(sectionDiv);
+                let ul = document.createElement("ul");
+                ul.className = "chapter-list";
+
+                activeSubjectData.chapters.forEach(chapName => {
+                    let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) ? progress[currentSubjectTab][chapName] : { theory: 0, practice: 0 };
+                    let theoryVal = chapProgress.theory;
+                    let practiceVal = chapProgress.practice;
+
+                    let escapedChapName = chapName.replace(/'/g, "\\'");
+
+                    let li = document.createElement("li");
+                    li.className = "chapter-item";
+                    li.innerHTML = `
+                        <div class="chapter-info">
+                            <div class="chapter-title-container">
+                                <h5>${chapName}</h5>
+                                <button class="icon-btn edit-icon" title="Edit Chapter Name" onclick="editChapter('${currentSubjectTab}', '${escapedChapName}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                </button>
+                                <button class="icon-btn delete-icon" title="Delete Chapter" onclick="deleteChapter('${currentSubjectTab}', '${escapedChapName}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chapter-actions">
+                            <div class="progress-controls">
+                                <span style="color:var(--text-muted); font-size:0.8rem; width:45px;">Theory:</span>
+                                ${[25, 50, 75, 100].map(val => `
+                                    <button class="btn-radio ${theoryVal === val ? "active" : ""}" 
+                                            onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'theory', ${val})">${val}%</button>
+                                `).join('')}
+                            </div>
+                            <div class="progress-controls">
+                                <span style="color:var(--text-muted); font-size:0.8rem; width:55px;">Practice:</span>
+                                ${[25, 50, 75, 100].map(val => `
+                                    <button class="btn-radio ${practiceVal === val ? "active" : ""}" 
+                                            onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'practice', ${val})">${val}%</button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    ul.appendChild(li);
+                });
+
+                sectionDiv.appendChild(ul);
+                chaptersContainer.appendChild(sectionDiv);
+            }
         }
 
         function resetData() {
-            if (confirm("Are you sure you want to reset all progress data?")) {
+            if (confirm("Are you sure you want to reset all progress data and custom curriculum?")) {
                 localStorage.clear();
                 window.location.href = "onboarding.html";
             }
