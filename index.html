@@ -1,945 +1,552 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: #111827;
-            --card-border: #1f2937;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --accent-blue: #38bdf8;
-            --progress-blue: #0ea5e9;
-            --progress-green: #10b981;
-            --progress-alert: #ef4444;
-            --progress-red: #f87171;
-            --progress-purple: #c084fc;
-            --border-color: #374151;
-            --sidebar-width: 280px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Centre - Dashboard & Study Material</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root[data-theme="dark"] {
+      --bg-main: #0f172a;
+      --bg-card: #1e293b;
+      --bg-sidebar: #0f172a;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
 
-        body.light-theme {
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --card-border: #e5e7eb;
-            --text-main: #111827;
-            --text-muted: #4b5563;
-            --accent-blue: #0284c7;
-            --progress-blue: #0284c7;
-            --progress-green: #059669;
-            --progress-alert: #dc2626;
-            --progress-red: #e11d48;
-            --progress-purple: #9333ea;
-            --border-color: #d1d5db;
-        }
+    :root[data-theme="light"] {
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-sidebar: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --success: #16a34a;
+      --warning: #d97706;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', sans-serif;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 24px;
-            font-size: 14px;
-            overflow-x: hidden;
-            transition: background-color 0.3s, color 0.3s;
-        }
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            transition: transform 0.3s ease;
-        }
+    /* Sidebar Styles */
+    .sidebar {
+      width: 260px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
+    .sidebar-header {
+      padding: 24px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
+    .sidebar-nav {
+      list-style: none;
+      padding: 16px 0;
+      flex: 1;
+    }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+    .sidebar-nav-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
 
-        .menu-toggle {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+    .sidebar-nav-item:hover,
+    .sidebar-nav-item.active {
+      color: var(--accent);
+      background-color: rgba(56, 189, 248, 0.1);
+    }
 
-        .menu-toggle span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background-color: var(--text-main);
-            border-radius: 2px;
-            transition: all 0.3s;
-        }
+    /* Main Layout */
+    .main-content {
+      margin-left: 260px;
+      flex: 1;
+      padding: 32px;
+      max-width: 1200px;
+    }
 
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+    .page-header {
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        button {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s, border-color 0.2s;
-        }
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+    }
 
-        button:hover {
-            background-color: var(--border-color);
-            border-color: var(--text-muted);
-        }
+    .view-section {
+      display: none;
+    }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
+    .view-section.active {
+      display: block;
+    }
 
-        .stat-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            padding: 24px;
-        }
+    /* Cards & Stats */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
 
-        .stat-card h3 {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+    }
 
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .card-title {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
 
-        .progress-bar-bg {
-            width: 100%;
-            height: 8px;
-            background-color: var(--border-color);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 16px;
-        }
+    .card-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
 
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
+    /* Folder & File Explorer Component */
+    .explorer-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+    }
 
-        .subjects-overview {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 32px;
-        }
+    .breadcrumb {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
 
-        .subject-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .breadcrumb-item {
+      cursor: pointer;
+      color: var(--accent);
+    }
 
-        .subject-info h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
+    .explorer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
 
-        .subject-info p {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
+    .item-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
 
-        .subject-stat {
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
+    .item-card:hover {
+      transform: translateY(-2px);
+      background-color: rgba(255, 255, 255, 0.03);
+    }
 
-        .tracker-section {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            padding: 24px;
-        }
+    .item-icon {
+      font-size: 24px;
+    }
 
-        .tracker-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
+    /* Test Series Interface */
+    .test-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: var(--bg-card);
+    }
 
-        .tabs-container {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-        }
+    .btn {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
 
-        .tab-btn {
-            background-color: transparent;
-            border: 1px solid var(--card-border);
-            color: var(--text-muted);
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            white-space: nowrap;
-        }
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
 
-        .tab-btn.active {
-            background-color: var(--border-color);
-            color: var(--text-main);
-            border-color: var(--text-main);
-        }
+    /* PDF Modal Viewer */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
 
-        .stream-indicator {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
+    .modal-overlay.active {
+      display: flex;
+    }
 
-        .stream-pcm { background-color: rgba(56, 189, 248, 0.15); color: var(--accent-blue); }
-        .stream-pcb { background-color: rgba(16, 185, 129, 0.15); color: var(--progress-green); }
+    .modal-content {
+      background: var(--bg-card);
+      width: 80%;
+      height: 80%;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-        .section-breakdown {
-            margin-bottom: 32px;
-        }
+    .modal-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: var(--accent-blue);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .modal-body {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .add-btn {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            padding: 4px 8px;
-            font-size: 0.8rem;
-        }
-
-        .chapter-list {
-            list-style: none;
-        }
-
-        .chapter-item {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .chapter-info {
-            flex: 1;
-        }
-
-        .chapter-title-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .chapter-info h5 {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .chapter-actions {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .progress-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-radio {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 4px 8px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .btn-radio.active {
-            background-color: var(--progress-blue);
-            color: #ffffff;
-            border-color: var(--progress-blue);
-        }
-
-        .icon-btn {
-            background: transparent;
-            border: none;
-            padding: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .delete-icon { color: var(--progress-alert); }
-        .edit-icon { color: var(--text-muted); }
-        .edit-icon:hover { color: var(--accent-blue); }
-
-        /* Sidebar & Submenu Styling */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: var(--sidebar-width);
-            height: 100%;
-            background-color: var(--card-bg);
-            border-right: 1px solid var(--card-border);
-            z-index: 1000;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            padding: 24px;
-            overflow-y: auto;
-        }
-
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .sidebar-header h2 {
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .close-sidebar-btn, .back-sidebar-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .close-sidebar-btn:hover, .back-sidebar-btn:hover {
-            color: var(--text-main);
-        }
-
-        .sidebar-nav {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .sidebar-nav-item {
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .sidebar-nav-item:hover {
-            background-color: var(--border-color);
-            color: var(--accent-blue);
-        }
-
-        .sidebar-view {
-            display: block;
-        }
-
-        .sidebar-view.hidden {
-            display: none;
-        }
-
-        .theme-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .theme-option-card {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 12px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: 600;
-            transition: border-color 0.2s;
-        }
-
-        .theme-option-card.active {
-            border-color: var(--accent-blue);
-            color: var(--accent-blue);
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        @media (max-width: 768px) {
-            body { padding: 12px; }
-            .stats-grid { grid-template-columns: 1fr; gap: 12px; }
-            .subjects-overview { grid-template-columns: 1fr; gap: 12px; }
-            .chapter-item { flex-direction: column; align-items: flex-start; }
-            .chapter-actions { width: 100%; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 8px; }
-            .progress-controls { width: 100%; justify-content: space-between; }
-            .header-actions { width: 100%; justify-content: space-between; }
-        }
-    </style>
+    .theme-toggle {
+      padding: 8px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
-        <!-- Main Sidebar View -->
-        <div id="mainSidebarView" class="sidebar-view">
-            <div class="sidebar-header">
-                <h2>Study Centre</h2>
-                <button class="close-sidebar-btn" id="closeSidebar">&times;</button>
-            </div>
-            <ul class="sidebar-nav">
-                <li><a class="sidebar-nav-item" href="#">Dashboard</a></li>
-                <li><a class="sidebar-nav-item" href="#">Analytics</a></li>
-                <li><a class="sidebar-nav-item" href="https://drive.google.com/drive/folders/1RvacnsdE0mjAEUaPh8l3os0XUUlIK4y2?usp=drive_link">Sample Papers & Previous Year Papers</a></li>
-                <li><a class="sidebar-nav-item" href="#">Chapter-wise Test Series</a></li>
-                <li>
-                    <div class="sidebar-nav-item" id="openSettingsBtn">
-                        <span>Settings</span>
-                        <span>&rsaquo;</span>
-                    </div>
-                </li>
-            </ul>
-        </div>
 
-        <!-- Settings Sidebar Sub-View -->
-        <div id="settingsSidebarView" class="sidebar-view hidden">
-            <div class="sidebar-header">
-                <button class="back-sidebar-btn" id="backToMainBtn">&larr; Back</button>
-                <h2>Settings</h2>
-            </div>
-            <ul class="sidebar-nav">
-                <li>
-                    <div class="sidebar-nav-item" id="openThemeBtn">
-                        <span>My Theme</span>
-                        <span>&rsaquo;</span>
-                    </div>
-                </li>
-            </ul>
-        </div>
-
-        <!-- My Theme Sub-View -->
-        <div id="themeSidebarView" class="sidebar-view hidden">
-            <div class="sidebar-header">
-                <button class="back-sidebar-btn" id="backToSettingsBtn">&larr; Back</button>
-                <h2>My Theme</h2>
-            </div>
-            <div class="theme-options">
-                <div class="theme-option-card" id="darkThemeCard" onclick="setTheme('dark')">
-                    <span>Dark Theme (Default)</span>
-                    <span id="darkCheck">&#10003;</span>
-                </div>
-                <div class="theme-option-card" id="lightThemeCard" onclick="setTheme('light')">
-                    <span>Light Theme</span>
-                    <span id="lightCheck" style="display:none;">&#10003;</span>
-                </div>
-            </div>
-        </div>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      📚 Study Centre
     </div>
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item active" onclick="switchView('dashboard', this)">
+        <span>📊</span> Dashboard
+      </li>
+      <li class="sidebar-nav-item" onclick="switchView('papers', this)">
+        <span>📁</span> Sample Papers & PYQs
+      </li>
+      <li class="sidebar-nav-item" onclick="switchView('tests', this)">
+        <span>📝</span> Chapter-wise Test Series
+      </li>
+      <li class="sidebar-nav-item" onclick="switchView('settings', this)">
+        <span>⚙️</span> Settings & Theme
+      </li>
+    </ul>
+  </aside>
 
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <!-- Main Content Area -->
+  <main class="main-content">
 
-    <div class="container">
-        <header>
-            <div class="header-left">
-                <button class="menu-toggle" id="menuToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <h1>Study Centre</h1>
-            </div>
-            <div class="header-actions">
-                <button onclick="window.location.href='onboarding.html'">Load Preset</button>
-                <button class="add-btn" style="padding:8px 16px;" onclick="addSubjectPrompt()">Add Subject</button>
-                <button onclick="resetData()" style="border-color: var(--progress-alert); color: var(--progress-alert);">Reset Data</button>
-            </div>
-        </header>
+    <!-- Dashboard View -->
+    <section id="dashboard-view" class="view-section active">
+      <div class="page-header">
+        <h1 class="page-title">Dashboard Overview</h1>
+      </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Overall Syllabus Progress</h3>
-                <div class="stat-value">
-                    <span id="syllabusProgressText">0%</span>
-                    <span id="streamBadge" class="stream-indicator">Loading...</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div id="syllabusProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-blue);"></div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <h3>Practice & Problems</h3>
-                <div class="stat-value">
-                    <span id="practiceProgressText">0%</span>
-                    <span style="font-size: 1rem; color: var(--text-muted);" id="practiceSubText">0 Exercises Total</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div id="practiceProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-green);"></div>
-                </div>
-            </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-title">Physics Progress</div>
+          <div class="card-value">65%</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Chemistry Progress</div>
+          <div class="card-value">48%</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Biology Progress</div>
+          <div class="card-value">82%</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Mathematics</div>
+          <div class="card-value">40%</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Study Analytics</h3>
+        <canvas id="progressChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+      </div>
+    </section>
+
+    <!-- Internal Documents / Papers Explorer View -->
+    <section id="papers-view" class="view-section">
+      <div class="page-header">
+        <h1 class="page-title">Sample Papers & Previous Year Papers</h1>
+      </div>
+
+      <div class="explorer-container">
+        <div class="breadcrumb" id="breadcrumb">
+          <span class="breadcrumb-item" onclick="navigateToFolder('root')">Root</span>
         </div>
 
-        <h2>Subject Overview Cards</h2>
-        <div class="subjects-overview" id="subjectsOverviewGrid"></div>
-
-        <div class="tracker-section">
-            <div class="tracker-header">
-                <h2>Chapter & Exercise Tracker</h2>
-            </div>
-            <div class="tabs-container" id="subjectTabsContainer"></div>
-            <div id="chaptersContainer"></div>
+        <div class="explorer-grid" id="explorer-grid">
+          <!-- Dynamically populated files and folders -->
         </div>
+      </div>
+    </section>
+
+    <!-- Chapter-wise Test Series View -->
+    <section id="tests-view" class="view-section">
+      <div class="page-header">
+        <h1 class="page-title">Chapter-wise Test Series</h1>
+      </div>
+
+      <div id="test-list">
+        <div class="test-card">
+          <div>
+            <h3>Physics - Chapter 1: Electrostatics</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">Questions: 15 | Time: 20 Mins</p>
+          </div>
+          <button class="btn" onclick="startTest('Physics - Electrostatics')">Start Test</button>
+        </div>
+
+        <div class="test-card">
+          <div>
+            <h3>Chemistry - Chapter 1: Solutions</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">Questions: 15 | Time: 20 Mins</p>
+          </div>
+          <button class="btn" onclick="startTest('Chemistry - Solutions')">Start Test</button>
+        </div>
+
+        <div class="test-card">
+          <div>
+            <h3>Biology - Chapter 1: Reproduction in Organisms</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">Questions: 20 | Time: 25 Mins</p>
+          </div>
+          <button class="btn" onclick="startTest('Biology - Reproduction')">Start Test</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings & Theme View -->
+    <section id="settings-view" class="view-section">
+      <div class="page-header">
+        <h1 class="page-title">Settings</h1>
+      </div>
+
+      <div class="card">
+        <h3>My Theme Preferences</h3>
+        <p style="color: var(--text-muted); margin: 10px 0 20px 0;">Switch between dark mode and light mode.</p>
+        <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark / Light Theme</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PDF / Document Preview Modal -->
+  <div class="modal-overlay" id="pdf-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Document Preview</h3>
+        <button class="btn" onclick="closeModal()">Close</button>
+      </div>
+      <div class="modal-body">
+        <div id="modal-body-content" style="text-align: center;">
+          📄 Document viewer interface loaded here.
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        const DEFAULT_CURRICULUM = {
-            "PCM": {
-                "Physics": {
-                    "color": "var(--accent-blue)",
-                    "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics: Materials, Devices and Simple Circuits"]
-                },
-                "Chemistry": {
-                    "color": "var(--progress-red)",
-                    "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
-                },
-                "Mathematics": {
-                    "color": "var(--progress-purple)",
-                    "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"]
-                }
-            },
-            "PCB": {
-                "Physics": {
-                    "color": "var(--accent-blue)",
-                    "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics: Materials, Devices and Simple Circuits"]
-                },
-                "Chemistry": {
-                    "color": "var(--progress-red)",
-                    "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
-                },
-                "Biology": {
-                    "color": "var(--progress-green)",
-                    "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"]
-                }
-            }
-        };
+  <script>
+    // System Data Structure for Direct In-App Explorer
+    const fileSystem = {
+      'root': [
+        { name: 'Physics', type: 'folder', id: 'physics' },
+        { name: 'Chemistry', type: 'folder', id: 'chemistry' },
+        { name: 'Biology', type: 'folder', id: 'biology' },
+        { name: 'Mathematics', type: 'folder', id: 'maths' }
+      ],
+      'physics': [
+        { name: 'Physics 2024 Question Paper.pdf', type: 'file' },
+        { name: 'Physics 2023 Question Paper.pdf', type: 'file' },
+        { name: 'Electrostatics Sample Paper.pdf', type: 'file' }
+      ],
+      'chemistry': [
+        { name: 'Chemistry 2024 Board Paper.pdf', type: 'file' },
+        { name: 'Solutions Practice Sheet.pdf', type: 'file' }
+      ],
+      'biology': [
+        { name: 'Biology 2024 Question Paper.pdf', type: 'file' },
+        { name: 'Biology 2023 Question Paper.pdf', type: 'file' }
+      ],
+      'maths': [
+        { name: 'Maths 2024 Sample Paper.pdf', type: 'file' }
+      ]
+    };
 
-        let currentSubjectTab = "";
-        let userStream = localStorage.getItem("userStream") || "PCM";
+    let currentFolder = 'root';
 
-        function getCurriculum() {
-            let data = localStorage.getItem("customCurriculum");
-            return data ? JSON.parse(data) : DEFAULT_CURRICULUM[userStream] || DEFAULT_CURRICULUM["PCM"];
+    // Explorer Navigation
+    function renderExplorer(folderId) {
+      currentFolder = folderId;
+      const grid = document.getElementById('explorer-grid');
+      const breadcrumb = document.getElementById('breadcrumb');
+      grid.innerHTML = '';
+
+      // Update Breadcrumb
+      if (folderId === 'root') {
+        breadcrumb.innerHTML = `<span class="breadcrumb-item" onclick="navigateToFolder('root')">Root</span>`;
+      } else {
+        breadcrumb.innerHTML = `
+          <span class="breadcrumb-item" onclick="navigateToFolder('root')">Root</span> / 
+          <span class="breadcrumb-item">${folderId.charAt(0).toUpperCase() + folderId.slice(1)}</span>
+        `;
+      }
+
+      const items = fileSystem[folderId] || [];
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+
+        if (item.type === 'folder') {
+          card.innerHTML = `<span class="item-icon">📁</span> <span>${item.name}</span>`;
+          card.onclick = () => navigateToFolder(item.id);
+        } else {
+          card.innerHTML = `<span class="item-icon">📄</span> <span>${item.name}</span>`;
+          card.onclick = () => openDocument(item.name);
         }
 
-        function saveCurriculum(data) {
-            localStorage.setItem("customCurriculum", JSON.stringify(data));
+        grid.appendChild(card);
+      });
+    }
+
+    function navigateToFolder(folderId) {
+      renderExplorer(folderId);
+    }
+
+    function openDocument(fileName) {
+      document.getElementById('modal-title').innerText = fileName;
+      document.getElementById('modal-body-content').innerHTML = `
+        <div>
+          <h3>Preview for "${fileName}"</h3>
+          <p style="margin-top: 10px; color: var(--text-muted);">PDF file display content ready inside dashboard layout.</p>
+        </div>
+      `;
+      document.getElementById('pdf-modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('pdf-modal').classList.remove('active');
+    }
+
+    // View Switcher
+    function switchView(viewName, element) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+
+      document.getElementById(`${viewName}-view`).classList.add('active');
+      if (element) element.classList.add('active');
+
+      if (viewName === 'papers') {
+        renderExplorer('root');
+      }
+    }
+
+    // Theme Switcher
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+    }
+
+    // Interactive Test Launcher
+    function startTest(testName) {
+      alert(`Starting test: ${testName}`);
+    }
+
+    // Render Chart
+    window.onload = function() {
+      renderExplorer('root');
+
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Physics', 'Chemistry', 'Biology', 'Mathematics'],
+          datasets: [{
+            label: 'Completion %',
+            data: [65, 48, 82, 40],
+            backgroundColor: ['#38bdf8', '#22c55e', '#f59e0b', '#a855f7']
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true, max: 100 }
+          }
         }
-
-        function getStoredProgress() {
-            let data = localStorage.getItem("detailedStudyProgress");
-            return data ? JSON.parse(data) : {};
-        }
-
-        function saveStoredProgress(data) {
-            localStorage.setItem("detailedStudyProgress", JSON.stringify(data));
-        }
-
-        function initData() {
-            let curriculum = getCurriculum();
-            let progress = getStoredProgress();
-
-            if (!currentSubjectTab || !curriculum[currentSubjectTab]) {
-                currentSubjectTab = Object.keys(curriculum)[0] || "";
-            }
-
-            Object.keys(curriculum).forEach(subName => {
-                if (!progress[subName]) progress[subName] = {};
-                curriculum[subName].chapters.forEach(chapName => {
-                    if (!progress[subName][chapName]) {
-                        progress[subName][chapName] = { theory: 0, practice: 0 };
-                    }
-                });
-            });
-            saveStoredProgress(progress);
-        }
-
-        function updateProgress(subject, chapter, type, value) {
-            let progress = getStoredProgress();
-            if (!progress[subject]) progress[subject] = {};
-            if (!progress[subject][chapter]) progress[subject][chapter] = { theory: 0, practice: 0 };
-            progress[subject][chapter][type] = value;
-            saveStoredProgress(progress);
-            renderDashboard();
-        }
-
-        function editChapter(subject, oldChapName) {
-            let newName = prompt("Edit Chapter Name:", oldChapName);
-            if (newName && newName.trim() !== "" && newName !== oldChapName) {
-                newName = newName.trim();
-                let curriculum = getCurriculum();
-                let chapList = curriculum[subject].chapters;
-                let index = chapList.indexOf(oldChapName);
-                if (index > -1) { chapList[index] = newName; saveCurriculum(curriculum); }
-                let progress = getStoredProgress();
-                if (progress[subject] && progress[subject][oldChapName]) { progress[subject][newName] = progress[subject][oldChapName]; delete progress[subject][oldChapName]; saveStoredProgress(progress); }
-                renderDashboard();
-            }
-        }
-
-        function deleteChapter(subject, chapter) {
-            if (confirm(`Are you sure you want to delete "${chapter}"?`)) {
-                let curriculum = getCurriculum();
-                let chapList = curriculum[subject].chapters;
-                let index = chapList.indexOf(chapter);
-                if (index > -1) { chapList.splice(index, 1); saveCurriculum(curriculum); }
-                let progress = getStoredProgress();
-                if (progress[subject]) { delete progress[subject][chapter]; saveStoredProgress(progress); }
-                renderDashboard();
-            }
-        }
-
-        function addChapter(subject) {
-            let name = prompt("Enter new chapter name:");
-            if (name && name.trim() !== "") {
-                let curriculum = getCurriculum();
-                curriculum[subject].chapters.push(name.trim());
-                saveCurriculum(curriculum);
-                renderDashboard();
-            }
-        }
-
-        function addSubjectPrompt() {
-            let name = prompt("Enter new subject name:");
-            if (name && name.trim() !== "") {
-                name = name.trim();
-                let curriculum = getCurriculum();
-                if (!curriculum[name]) {
-                    curriculum[name] = { color: "var(--accent-blue)", chapters: [] };
-                    saveCurriculum(curriculum);
-                    currentSubjectTab = name;
-                    renderDashboard();
-                }
-            }
-        }
-
-        function renderDashboard() {
-            initData();
-            let curriculum = getCurriculum();
-            let progress = getStoredProgress();
-
-            let streamBadge = document.getElementById("streamBadge");
-            streamBadge.textContent = userStream;
-            streamBadge.className = `stream-indicator stream-${userStream.toLowerCase()}`;
-
-            let overviewGrid = document.getElementById("subjectsOverviewGrid");
-            overviewGrid.innerHTML = "";
-
-            let totalChaptersAll = 0;
-            let totalTheorySum = 0;
-            let totalPracticeSum = 0;
-
-            Object.keys(curriculum).forEach(subName => {
-                let chapList = curriculum[subName].chapters;
-                let totalCount = chapList.length;
-                totalChaptersAll += totalCount;
-
-                let subjectTheorySum = 0;
-                chapList.forEach(chapName => {
-                    if (progress[subName] && progress[subName][chapName]) {
-                        let theoryVal = progress[subName][chapName].theory || 0;
-                        let practiceVal = progress[subName][chapName].practice || 0;
-                        subjectTheorySum += theoryVal;
-                        totalTheorySum += theoryVal;
-                        totalPracticeSum += practiceVal;
-                    }
-                });
-
-                let subPercentage = totalCount > 0 ? Math.round(subjectTheorySum / totalCount) : 0;
-                let cardColor = subName === "Chemistry" ? "var(--progress-red)" : (curriculum[subName].color || "var(--accent-blue)");
-
-                let card = document.createElement("div");
-                card.className = "subject-card";
-                card.innerHTML = `
-                    <div class="subject-info">
-                        <h4>${subName}</h4>
-                        <p>${totalCount} Chapters</p>
-                    </div>
-                    <div class="subject-stat" style="color: ${cardColor}">${subPercentage}%</div>
-                `;
-                overviewGrid.appendChild(card);
-            });
-
-            let overallPercentage = totalChaptersAll > 0 ? Math.round(totalTheorySum / totalChaptersAll) : 0;
-            document.getElementById("syllabusProgressText").textContent = overallPercentage + "%";
-            document.getElementById("syllabusProgressBar").style.width = overallPercentage + "%";
-
-            let practicePercentage = totalChaptersAll > 0 ? Math.round(totalPracticeSum / totalChaptersAll) : 0;
-            document.getElementById("practiceProgressText").textContent = practicePercentage + "%";
-            document.getElementById("practiceProgressBar").style.width = practicePercentage + "%";
-            document.getElementById("practiceSubText").textContent = `${totalChaptersAll} Exercises Total`;
-
-            let tabsContainer = document.getElementById("subjectTabsContainer");
-            tabsContainer.innerHTML = "";
-            Object.keys(curriculum).forEach(subName => {
-                let btn = document.createElement("button");
-                btn.className = `tab-btn ${currentSubjectTab === subName ? "active" : ""}`;
-                btn.textContent = subName;
-                btn.onclick = () => { currentSubjectTab = subName; renderDashboard(); };
-                tabsContainer.appendChild(btn);
-            });
-
-            let chaptersContainer = document.getElementById("chaptersContainer");
-            chaptersContainer.innerHTML = "";
-
-            if (currentSubjectTab && curriculum[currentSubjectTab]) {
-                let activeSubjectData = curriculum[currentSubjectTab];
-                let sectionDiv = document.createElement("div");
-                sectionDiv.className = "section-breakdown";
-                sectionDiv.innerHTML = `
-                    <div class="section-title">
-                        ${currentSubjectTab}
-                        <button class="add-btn" onclick="addChapter('${currentSubjectTab}')">+ Add Chapter</button>
-                    </div>
-                `;
-
-                let ul = document.createElement("ul");
-                ul.className = "chapter-list";
-
-                activeSubjectData.chapters.forEach(chapName => {
-                    let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) ? progress[currentSubjectTab][chapName] : { theory: 0, practice: 0 };
-                    let theoryVal = chapProgress.theory !== undefined ? chapProgress.theory : 0;
-                    let practiceVal = chapProgress.practice !== undefined ? chapProgress.practice : 0;
-
-                    let escapedChapName = chapName.replace(/'/g, "\\'");
-
-                    let li = document.createElement("li");
-                    li.className = "chapter-item";
-                    li.innerHTML = `
-                        <div class="chapter-info">
-                            <div class="chapter-title-container">
-                                <h5>${chapName}</h5>
-                                <button class="icon-btn edit-icon" title="Edit Chapter Name" onclick="editChapter('${currentSubjectTab}', '${escapedChapName}')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                </button>
-                                <button class="icon-btn delete-icon" title="Delete Chapter" onclick="deleteChapter('${currentSubjectTab}', '${escapedChapName}')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="chapter-actions">
-                            <div class="progress-controls">
-                                <span style="color:var(--text-muted); font-size:0.8rem; width:45px;">Theory:</span>
-                                ${[0, 25, 50, 75, 100].map(val => `
-                                    <button class="btn-radio ${theoryVal === val ? "active" : ""}" 
-                                            onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'theory', ${val})">${val}%</button>
-                                `).join('')}
-                            </div>
-                            <div class="progress-controls">
-                                <span style="color:var(--text-muted); font-size:0.8rem; width:55px;">Practice:</span>
-                                ${[0, 25, 50, 75, 100].map(val => `
-                                    <button class="btn-radio ${practiceVal === val ? "active" : ""}" 
-                                            onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'practice', ${val})">${val}%</button>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                    ul.appendChild(li);
-                });
-
-                sectionDiv.appendChild(ul);
-                chaptersContainer.appendChild(sectionDiv);
-            }
-        }
-
-        function resetData() {
-            if (confirm("Are you sure you want to reset all progress data and custom curriculum?")) {
-                localStorage.clear();
-                window.location.href = "onboarding.html";
-            }
-        }
-
-        // Theme Management
-        function setTheme(theme) {
-            if (theme === 'light') {
-                document.body.classList.add('light-theme');
-                document.getElementById('lightThemeCard').classList.add('active');
-                document.getElementById('darkThemeCard').classList.remove('active');
-                document.getElementById('lightCheck').style.display = 'inline';
-                document.getElementById('darkCheck').style.display = 'none';
-            } else {
-                document.body.classList.remove('light-theme');
-                document.getElementById('darkThemeCard').classList.add('active');
-                document.getElementById('lightThemeCard').classList.remove('active');
-                document.getElementById('darkCheck').style.display = 'inline';
-                document.getElementById('lightCheck').style.display = 'none';
-            }
-            localStorage.setItem('userTheme', theme);
-        }
-
-        window.onload = function() {
-            if (!localStorage.getItem("userStream")) {
-                window.location.href = "onboarding.html";
-                return;
-            }
-
-            // Apply saved theme or default to dark
-            const savedTheme = localStorage.getItem('userTheme') || 'dark';
-            setTheme(savedTheme);
-
-            renderDashboard();
-
-            // Sidebar JavaScript logic
-            const sidebar = document.getElementById('sidebar');
-            const menuToggle = document.getElementById('menuToggle');
-            const closeSidebar = document.getElementById('closeSidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-            const mainView = document.getElementById('mainSidebarView');
-            const settingsView = document.getElementById('settingsSidebarView');
-            const themeView = document.getElementById('themeSidebarView');
-
-            function toggleSidebar() {
-                sidebar.classList.toggle('active');
-                sidebarOverlay.classList.toggle('active');
-                if (!sidebar.classList.contains('active')) {
-                    showView(mainView);
-                }
-            }
-
-            function showView(viewToShow) {
-                mainView.classList.add('hidden');
-                settingsView.classList.add('hidden');
-                themeView.classList.add('hidden');
-                viewToShow.classList.remove('hidden');
-            }
-
-            menuToggle.addEventListener('click', toggleSidebar);
-            closeSidebar.addEventListener('click', toggleSidebar);
-            sidebarOverlay.addEventListener('click', toggleSidebar);
-
-            // Submenu Navigation Listeners
-            document.getElementById('openSettingsBtn').addEventListener('click', () => showView(settingsView));
-            document.getElementById('backToMainBtn').addEventListener('click', () => showView(mainView));
-            document.getElementById('openThemeBtn').addEventListener('click', () => showView(themeView));
-            document.getElementById('backToSettingsBtn').addEventListener('click', () => showView(settingsView));
-
-            // Touch swipe gesture logic
-            let startX;
-            document.addEventListener('touchstart', function(e) {
-                startX = e.touches[0].clientX;
-            });
-
-            document.addEventListener('touchend', function(e) {
-                const endX = e.changedTouches[0].clientX;
-                const deltaX = endX - startX;
-
-                if (deltaX > 50 && startX < 50) {
-                    toggleSidebar();
-                } else if (deltaX < -50 && sidebar.classList.contains('active')) {
-                    toggleSidebar();
-                }
-            });
-        };
-    </script>
+      });
+    };
+  </script>
 </body>
 </html>
