@@ -573,8 +573,8 @@
 
                 activeSubjectData.chapters.forEach(chapName => {
                     let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) ? progress[currentSubjectTab][chapName] : { theory: 0, practice: 0 };
-                    let theoryVal = chapProgress.theory;
-                    let practiceVal = chapProgress.practice;
+                    let theoryVal = chapProgress.theory !== undefined ? chapProgress.theory : 0;
+                    let practiceVal = chapProgress.practice !== undefined ? chapProgress.practice : 0;
 
                     let escapedChapName = chapName.replace(/'/g, "\\'");
 
@@ -595,14 +595,14 @@
                         <div class="chapter-actions">
                             <div class="progress-controls">
                                 <span style="color:var(--text-muted); font-size:0.8rem; width:45px;">Theory:</span>
-                                ${[25, 50, 75, 100].map(val => `
+                                ${[0, 25, 50, 75, 100].map(val => `
                                     <button class="btn-radio ${theoryVal === val ? "active" : ""}" 
                                             onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'theory', ${val})">${val}%</button>
                                 `).join('')}
                             </div>
                             <div class="progress-controls">
                                 <span style="color:var(--text-muted); font-size:0.8rem; width:55px;">Practice:</span>
-                                ${[25, 50, 75, 100].map(val => `
+                                ${[0, 25, 50, 75, 100].map(val => `
                                     <button class="btn-radio ${practiceVal === val ? "active" : ""}" 
                                             onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'practice', ${val})">${val}%</button>
                                 `).join('')}
