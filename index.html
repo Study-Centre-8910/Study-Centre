@@ -16,6 +16,8 @@
             --progress-blue: #0ea5e9;
             --progress-green: #10b981;
             --progress-alert: #ef4444;
+            --progress-red: #f87171;
+            --progress-purple: #c084fc;
             --border-color: #374151;
         }
 
@@ -70,6 +72,16 @@
         button:hover {
             background-color: var(--border-color);
             border-color: var(--text-muted);
+        }
+
+        .primary-btn {
+            background-color: var(--progress-blue);
+            border: none;
+        }
+
+        .primary-btn:hover {
+            background-color: var(--accent-blue);
+            color: var(--bg-color);
         }
 
         .stats-grid {
@@ -315,11 +327,11 @@
             <div class="stat-card">
                 <h3>Practice & Problems</h3>
                 <div class="stat-value">
-                    <span>0%</span>
-                    <span style="font-size: 1rem; color: var(--text-muted);">0 Exercises Total</span>
+                    <span id="practiceProgressText">0%</span>
+                    <span style="font-size: 1rem; color: var(--text-muted);" id="practiceSubText">0 Exercises Total</span>
                 </div>
                 <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" style="width: 0%; background-color: var(--progress-green);"></div>
+                    <div id="practiceProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-green);"></div>
                 </div>
             </div>
         </div>
@@ -537,6 +549,7 @@
 
             let totalChaptersAll = 0;
             let completedChaptersAll = 0;
+            let totalPracticeSum = 0;
 
             Object.keys(curriculum).forEach(subName => {
                 let chapList = curriculum[subName].chapters;
@@ -545,13 +558,17 @@
 
                 let completedSubCount = 0;
                 chapList.forEach(chapName => {
-                    if (progress[subName] && progress[subName][chapName] && progress[subName][chapName].theory === 100) {
-                        completedChaptersAll++;
-                        completedSubCount++;
+                    if (progress[subName] && progress[subName][chapName]) {
+                        if (progress[subName][chapName].theory === 100) {
+                            completedChaptersAll++;
+                            completedSubCount++;
+                        }
+                        totalPracticeSum += (progress[subName][chapName].practice || 0);
                     }
                 });
 
                 let subPercentage = totalCount > 0 ? Math.round((completedSubCount / totalCount) * 100) : 0;
+                let cardColor = subName === "Chemistry" ? "var(--progress-red)" : (curriculum[subName].color || "var(--accent-blue)");
 
                 let card = document.createElement("div");
                 card.className = "subject-card";
@@ -560,7 +577,7 @@
                         <h4>${subName}</h4>
                         <p>${totalCount} Chapters</p>
                     </div>
-                    <div class="subject-stat" style="color: ${curriculum[subName].color || 'var(--accent-blue)'}">${subPercentage}%</div>
+                    <div class="subject-stat" style="color: ${cardColor}">${subPercentage}%</div>
                 `;
                 overviewGrid.appendChild(card);
             });
@@ -568,6 +585,11 @@
             let overallPercentage = totalChaptersAll > 0 ? Math.round((completedChaptersAll / totalChaptersAll) * 100) : 0;
             document.getElementById("syllabusProgressText").textContent = overallPercentage + "%";
             document.getElementById("syllabusProgressBar").style.width = overallPercentage + "%";
+
+            let practicePercentage = totalChaptersAll > 0 ? Math.round(totalPracticeSum / totalChaptersAll) : 0;
+            document.getElementById("practiceProgressText").textContent = practicePercentage + "%";
+            document.getElementById("practiceProgressBar").style.width = practicePercentage + "%";
+            document.getElementById("practiceSubText").textContent = `${totalChaptersAll} Exercises Total`;
 
             let tabsContainer = document.getElementById("subjectTabsContainer");
             tabsContainer.innerHTML = "";
