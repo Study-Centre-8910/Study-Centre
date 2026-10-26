@@ -45,6 +45,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         h1 {
@@ -56,6 +58,7 @@
             display: flex;
             gap: 12px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         button {
@@ -72,16 +75,6 @@
         button:hover {
             background-color: var(--border-color);
             border-color: var(--text-muted);
-        }
-
-        .primary-btn {
-            background-color: var(--progress-blue);
-            border: none;
-        }
-
-        .primary-btn:hover {
-            background-color: var(--accent-blue);
-            color: var(--bg-color);
         }
 
         .stats-grid {
@@ -181,6 +174,8 @@
             display: flex;
             gap: 12px;
             margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 4px;
         }
 
         .tab-btn {
@@ -191,6 +186,7 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .tab-btn.active {
@@ -244,6 +240,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 16px;
         }
 
         .chapter-info {
@@ -263,13 +260,14 @@
 
         .chapter-actions {
             display: flex;
-            gap: 12px;
+            gap: 16px;
+            align-items: center;
         }
 
         .progress-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-radio {
@@ -279,6 +277,7 @@
             padding: 4px 8px;
             font-size: 0.8rem;
             cursor: pointer;
+            border-radius: 4px;
         }
 
         .btn-radio.active {
@@ -299,6 +298,50 @@
         .delete-icon { color: var(--progress-alert); }
         .edit-icon { color: var(--text-muted); }
         .edit-icon:hover { color: var(--accent-blue); }
+
+        /* Responsive Styles for Mobile & Tablets */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .subjects-overview {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .chapter-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .chapter-actions {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                margin-top: 8px;
+            }
+
+            .progress-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .tracker-section {
+                padding: 16px;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 <body>
