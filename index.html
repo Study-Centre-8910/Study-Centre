@@ -1,611 +1,1140 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Study Tracker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-color: #0b0f19;
-      --card-bg: #111827;
-      --card-border: #1f2937;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --accent-blue: #3b82f6;
-      --accent-green: #10b981;
-      --accent-red: #ef4444;
-      --accent-purple: #8b5cf6;
+body.light-theme {
+        --bg-color: #f3f4f6;
+        --card-bg: #ffffff;
+        --card-border: #e5e7eb;
+        --text-main: #111827;
+        --text-muted: #4b5563;
+        --accent-blue: #0284c7;
+        --progress-blue: #0284c7;
+        --progress-green: #059669;
+        --progress-alert: #dc2626;
+        --progress-red: #e11d48;
+        --progress-purple: #9333ea;
+        --border-color: #d1d5db;
     }
 
     * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', sans-serif;
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      display: flex;
-      min-height: 100vh;
-      overflow-x: hidden;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        padding: 24px;
+        font-size: 14px;
+        overflow-x: hidden;
+        transition: background-color 0.3s, color 0.3s;
     }
 
-    /* Sidebar Styling */
-    .sidebar-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(2px);
-      z-index: 99;
-      display: none;
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        transition: transform 0.3s ease;
     }
 
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -280px;
-      width: 280px;
-      height: 100%;
-      background: var(--card-bg);
-      border-right: 1px solid var(--card-border);
-      z-index: 100;
-      transition: left 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      padding: 24px 16px;
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
     }
 
-    .sidebar.open {
-      left: 0;
-    }
-
-    .sidebar-overlay.active {
-      display: block;
-    }
-
-    .sidebar-brand {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 32px;
-      padding: 0 8px;
-    }
-
-    .sidebar-close {
-      cursor: pointer;
-      font-size: 1.2rem;
-      color: var(--text-muted);
-    }
-
-    .sidebar-menu {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .menu-item {
-      padding: 12px 16px;
-      border-radius: 8px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: all 0.2s ease;
-    }
-
-    .menu-item:hover, .menu-item.active {
-      background: rgba(59, 130, 246, 0.1);
-      color: var(--accent-blue);
-    }
-
-    /* Header & Main Container */
-    .app-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
-
-    .top-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 24px;
-      background: var(--bg-color);
-      border-bottom: 1px solid var(--card-border);
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
     }
 
     .header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
     }
 
     .menu-toggle {
-      cursor: pointer;
-      font-size: 1.4rem;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
     }
 
-    .header-title {
-      font-size: 1.25rem;
-      font-weight: 700;
+    .menu-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background-color: var(--text-main);
+        border-radius: 2px;
+        transition: all 0.3s;
     }
 
     .header-actions {
-      display: flex;
-      gap: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
     }
 
-    .btn {
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border: 1px solid transparent;
-      cursor: pointer;
-      transition: background 0.2s;
+    button {
+        background-color: var(--card-bg);
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s, border-color 0.2s;
     }
 
-    .btn-secondary {
-      background: var(--card-bg);
-      border-color: var(--card-border);
-      color: var(--text-main);
+    button:hover {
+        background-color: var(--border-color);
+        border-color: var(--text-muted);
     }
 
-    .btn-danger {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: rgba(239, 68, 68, 0.2);
-      color: var(--accent-red);
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
     }
 
-    /* Main Dashboard Layout */
-    .dashboard-content {
-      padding: 24px;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
+    .stat-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 24px;
     }
 
-    .progress-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 20px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      position: relative;
+    .stat-card h3 {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
-    .card-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-
-    .progress-val-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-    }
-
-    .progress-number {
-      font-size: 2.25rem;
-      font-weight: 700;
-    }
-
-    .badge-tag {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 4px;
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--accent-green);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      font-weight: 600;
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .progress-bar-bg {
-      width: 100%;
-      height: 8px;
-      background: #1f293d;
-      border-radius: 4px;
-      overflow: hidden;
+        width: 100%;
+        height: 8px;
+        background-color: var(--border-color);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 16px;
     }
 
     .progress-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--accent-blue);
-      border-radius: 4px;
-      transition: width 0.3s ease;
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
     }
 
-    .section-heading {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-top: 8px;
+    .subjects-overview {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 32px;
     }
 
-    /* Pomodoro Modal / Sidebar Drawer */
-    .pomodoro-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.75);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
+    .subject-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-    .pomodoro-modal.active {
-      display: flex;
+    .subject-info h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 4px;
     }
 
-    .pomodoro-box {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      width: 90%;
-      max-width: 420px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    .subject-info p {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .subject-stat {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .tracker-section {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 24px;
+    }
+
+    .tracker-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .tabs-container {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .tab-btn {
+        background-color: transparent;
+        border: 1px solid var(--card-border);
+        color: var(--text-muted);
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .tab-btn.active {
+        background-color: var(--border-color);
+        color: var(--text-main);
+        border-color: var(--text-main);
+    }
+
+    .stream-indicator {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .stream-pcm { background-color: rgba(56, 189, 248, 0.15); color: var(--accent-blue); }
+    .stream-pcb { background-color: rgba(16, 185, 129, 0.15); color: var(--progress-green); }
+
+    .section-breakdown {
+        margin-bottom: 32px;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: var(--accent-blue);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .add-btn {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+
+    .chapter-list {
+        list-style: none;
+    }
+
+    .chapter-item {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .chapter-info {
+        flex: 1;
+    }
+
+    .chapter-title-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .chapter-info h5 {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .chapter-actions {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .progress-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-radio {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        padding: 4px 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .btn-radio.active {
+        background-color: var(--progress-blue);
+        color: #ffffff;
+        border-color: var(--progress-blue);
+    }
+
+    .icon-btn {
+        background: transparent;
+        border: none;
+        padding: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .delete-icon { color: var(--progress-alert); }
+    .edit-icon { color: var(--text-muted); }
+    .edit-icon:hover { color: var(--accent-blue); }
+
+    /* Sidebar & Submenu Styling */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100%;
+        background-color: var(--card-bg);
+        border-right: 1px solid var(--card-border);
+        z-index: 1000;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+        overflow-y: auto;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .sidebar-header h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .close-sidebar-btn, .back-sidebar-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .close-sidebar-btn:hover, .back-sidebar-btn:hover {
+        color: var(--text-main);
+    }
+
+    .sidebar-nav {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .sidebar-nav-item {
+        color: var(--text-main);
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .sidebar-nav-item:hover {
+        background-color: var(--border-color);
+        color: var(--accent-blue);
+    }
+
+    .sidebar-view {
+        display: block;
+    }
+
+    .sidebar-view.hidden {
+        display: none;
+    }
+
+    .theme-options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .theme-option-card {
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        padding: 12px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: 600;
+        transition: border-color 0.2s;
+    }
+
+    .theme-option-card.active {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Pomodoro Clock Modal */
+    .pomo-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .pomo-modal.active {
+        display: flex;
+    }
+
+    .pomo-box {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        width: 90%;
+        max-width: 420px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
     .pomo-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .pomo-header h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
+        font-size: 1.1rem;
+        font-weight: 600;
     }
 
     .pomo-close {
-      cursor: pointer;
-      color: var(--text-muted);
-      font-size: 1.2rem;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 1.2rem;
     }
 
     .pomo-tabs {
-      display: flex;
-      background: var(--bg-color);
-      padding: 4px;
-      border-radius: 8px;
-      border: 1px solid var(--card-border);
+        display: flex;
+        background: var(--bg-color);
+        padding: 4px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
     }
 
     .pomo-tab {
-      flex: 1;
-      text-align: center;
-      padding: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      border-radius: 6px;
-      transition: all 0.2s;
+        flex: 1;
+        text-align: center;
+        padding: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.2s;
     }
 
     .pomo-tab.active {
-      background: var(--card-bg);
-      color: var(--accent-blue);
+        background: var(--card-bg);
+        color: var(--accent-blue);
     }
 
     .digital-clock-display {
-      background: var(--bg-color);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 24px 12px;
-      text-align: center;
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 24px 12px;
+        text-align: center;
     }
 
     .clock-digits {
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 3.5rem;
-      font-weight: 700;
-      color: var(--accent-blue);
-      letter-spacing: 2px;
-      text-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: var(--accent-blue);
+        letter-spacing: 2px;
+        text-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
     }
 
     .inputs-row {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      align-items: center;
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        align-items: center;
     }
 
     .input-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
     }
 
     .input-group label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+        font-size: 0.75rem;
+        color: var(--text-muted);
     }
 
     .pomo-input {
-      width: 60px;
-      background: var(--bg-color);
-      border: 1px solid var(--card-border);
-      border-radius: 6px;
-      color: var(--text-main);
-      padding: 6px;
-      text-align: center;
-      font-size: 0.95rem;
+        width: 60px;
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        color: var(--text-main);
+        padding: 6px;
+        text-align: center;
+        font-size: 0.95rem;
     }
 
     .pomo-controls {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
     }
 
     .btn-pomo {
-      flex: 1;
-      padding: 10px;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      border: none;
+        flex: 1;
+        padding: 10px;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        border: none;
     }
 
-    .btn-start {
-      background: var(--accent-blue);
-      color: #fff;
-    }
+    .btn-start { background: var(--accent-blue); color: #0b0f19; }
+    .btn-pause { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .btn-stop { background: rgba(239, 68, 68, 0.2); color: var(--progress-alert); border: 1px solid rgba(239, 68, 68, 0.3); }
 
-    .btn-pause {
-      background: rgba(245, 158, 11, 0.2);
-      color: #f59e0b;
-      border: 1px solid rgba(245, 158, 11, 0.3);
+    @media (max-width: 768px) {
+        body { padding: 12px; }
+        .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+        .subjects-overview { grid-template-columns: 1fr; gap: 12px; }
+        .chapter-item { flex-direction: column; align-items: flex-start; }
+        .chapter-actions { width: 100%; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 8px; }
+        .progress-controls { width: 100%; justify-content: space-between; }
+        .header-actions { width: 100%; justify-content: space-between; }
     }
-
-    .btn-stop {
-      background: rgba(239, 68, 68, 0.2);
-      color: var(--accent-red);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Navigation Sidebar & Overlay -->
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <span>Study Centre</span>
-      <span class="sidebar-close" onclick="closeSidebar()">✕</span>
+</style>
+    <div id="settingsSidebarView" class="sidebar-view hidden">
+        <div class="sidebar-header">
+            <button class="back-sidebar-btn" id="backToMainBtn">&larr; Back</button>
+            <h2>Settings</h2>
+        </div>
+        <ul class="sidebar-nav">
+            <li>
+                <div class="sidebar-nav-item" id="openThemeBtn">
+                    <span>My Theme</span>
+                    <span>&rsaquo;</span>
+                </div>
+            </li>
+        </ul>
     </div>
-    <ul class="sidebar-menu">
-      <li class="menu-item active" onclick="closeSidebar()">
-        <span>📊</span> Dashboard
-      </li>
-      <li class="menu-item" onclick="closeSidebar()">
-        <span>📈</span> Analytics
-      </li>
-      <li class="menu-item" onclick="closeSidebar()">
-        <span>📚</span> Sample Papers & Previous Year Papers
-      </li>
-      <li class="menu-item" onclick="closeSidebar()">
-        <span>📝</span> Chapter-wise Test Series
-      </li>
-      <li class="menu-item" onclick="openPomodoro()">
-        <span>⏱️</span> Pomodoro & Timer
-      </li>
-      <li class="menu-item" onclick="closeSidebar()">
-        <span>⚙️</span> Settings
-      </li>
-    </ul>
-  </aside>
 
-  <!-- App Main Content Container -->
-  <div class="app-container">
-    <header class="top-header">
-      <div class="header-left">
-        <div class="menu-toggle" onclick="openSidebar()">☰</div>
-        <div class="header-title">Study Centre</div>
-      </div>
-      <div class="header-actions">
-        <button class="btn btn-secondary">Load Preset</button>
-        <button class="btn btn-secondary">Add Subject</button>
-        <button class="btn btn-danger">Reset Data</button>
-      </div>
+    <div id="themeSidebarView" class="sidebar-view hidden">
+        <div class="sidebar-header">
+            <button class="back-sidebar-btn" id="backToSettingsBtn">&larr; Back</button>
+            <h2>My Theme</h2>
+        </div>
+        <div class="theme-options">
+            <div class="theme-option-card" id="darkThemeCard" onclick="setTheme('dark')">
+                <span>Dark Theme (Default)</span>
+                <span id="darkCheck">&#10003;</span>
+            </div>
+            <div class="theme-option-card" id="lightThemeCard" onclick="setTheme('light')">
+                <span>Light Theme</span>
+                <span id="lightCheck" style="display:none;">&#10003;</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="container">
+    <header>
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>Study Centre</h1>
+        </div>
+        <div class="header-actions">
+            <button onclick="window.location.href='onboarding.html'">Load Preset</button>
+            <button class="add-btn" style="padding:8px 16px;" onclick="addSubjectPrompt()">Add Subject</button>
+            <button onclick="resetData()" style="border-color: var(--progress-alert); color: var(--progress-alert);">Reset Data</button>
+        </div>
     </header>
 
-    <main class="dashboard-content">
-      <div class="progress-card">
-        <div class="card-label">Overall Syllabus Progress</div>
-        <div class="progress-val-row">
-          <div class="progress-number">0%</div>
-          <span class="badge-tag">PCB</span>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Overall Syllabus Progress</h3>
+            <div class="stat-value">
+                <span id="syllabusProgressText">0%</span>
+                <span id="streamBadge" class="stream-indicator">Loading...</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="syllabusProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-blue);"></div>
+            </div>
         </div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill"></div>
+        <div class="stat-card">
+            <h3>Practice & Problems</h3>
+            <div class="stat-value">
+                <span id="practiceProgressText">0%</span>
+                <span style="font-size: 1rem; color: var(--text-muted);" id="practiceSubText">0 Exercises Total</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="practiceProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-green);"></div>
+            </div>
         </div>
-      </div>
-
-      <div class="progress-card">
-        <div class="card-label">Practice & Problems</div>
-        <div class="progress-val-row">
-          <div class="progress-number">0%</div>
-          <span style="font-size: 0.85rem; color: var(--text-muted);">37 Exercises Total</span>
-        </div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill"></div>
-        </div>
-      </div>
-
-      <div class="section-heading">Subject Overview Cards</div>
-      <div class="progress-card">
-        <div class="progress-val-row">
-          <div>
-            <div style="font-weight: 600;">Physics</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">14 Chapters</div>
-          </div>
-          <div style="font-weight: 700; color: var(--accent-blue);">0%</div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Digital Pomodoro Clock Modal -->
-  <div class="pomodoro-modal" id="pomodoroModal">
-    <div class="pomodoro-box">
-      <div class="pomo-header">
-        <h3>Digital Pomodoro Clock</h3>
-        <span class="pomo-close" onclick="closePomodoro()">✕</span>
-      </div>
-
-      <div class="pomo-tabs">
-        <div class="pomo-tab active" id="tabTimer" onclick="switchMode('timer')">Countdown Timer</div>
-        <div class="pomo-tab" id="tabStopwatch" onclick="switchMode('stopwatch')">Stopwatch</div>
-      </div>
-
-      <div class="digital-clock-display">
-        <div class="clock-digits" id="clockDisplay">25:00</div>
-      </div>
-
-      <div class="inputs-row" id="timerInputs">
-        <div class="input-group">
-          <label>Minutes</label>
-          <input type="number" id="pomoMins" class="pomo-input" value="25" min="0" max="180">
-        </div>
-        <div class="input-group">
-          <label>Seconds</label>
-          <input type="number" id="pomoSecs" class="pomo-input" value="00" min="0" max="59">
-        </div>
-      </div>
-
-      <div class="pomo-controls">
-        <button class="btn-pomo btn-start" id="startBtn" onclick="startClock()">Start</button>
-        <button class="btn-pomo btn-pause" id="pauseBtn" onclick="pauseClock()">Pause</button>
-        <button class="btn-pomo btn-stop" id="stopBtn" onclick="stopClock()">Stop</button>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // Sidebar Navigation Controls
-    function openSidebar() {
-      document.getElementById('sidebar').classList.add('open');
-      document.getElementById('sidebarOverlay').classList.add('active');
-    }
+    <h2>Subject Overview Cards</h2>
+    <div class="subjects-overview" id="subjectsOverviewGrid"></div>
 
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebarOverlay').classList.remove('active');
-    }
+    <div class="tracker-section">
+        <div class="tracker-header">
+            <h2>Chapter & Exercise Tracker</h2>
+        </div>
+        <div class="tabs-container" id="subjectTabsContainer"></div>
+        <div id="chaptersContainer"></div>
+    </div>
+</div>
+
+<!-- Digital Pomodoro Clock Modal -->
+<div class="pomo-modal" id="pomodoroModal">
+    <div class="pomo-box">
+        <div class="pomo-header">
+            <h3>Digital Pomodoro Clock</h3>
+            <span class="pomo-close" id="closePomodoro">&times;</span>
+        </div>
+        <div class="pomo-tabs">
+            <div class="pomo-tab active" id="tabTimer" onclick="switchMode('timer')">Countdown Timer</div>
+            <div class="pomo-tab" id="tabStopwatch" onclick="switchMode('stopwatch')">Stopwatch</div>
+        </div>
+        <div class="digital-clock-display">
+            <div class="clock-digits" id="clockDisplay">25:00</div>
+        </div>
+        <div class="inputs-row" id="timerInputs">
+            <div class="input-group">
+                <label>Minutes</label>
+                <input type="number" id="pomoMins" class="pomo-input" value="25" min="0" max="180">
+            </div>
+            <div class="input-group">
+                <label>Seconds</label>
+                <input type="number" id="pomoSecs" class="pomo-input" value="00" min="0" max="59">
+            </div>
+        </div>
+        <div class="pomo-controls">
+            <button class="btn-pomo btn-start" id="startBtn" onclick="startClock()">Start</button>
+            <button class="btn-pomo btn-pause" id="pauseBtn" onclick="pauseClock()">Pause</button>
+            <button class="btn-pomo btn-stop" id="stopBtn" onclick="stopClock()">Stop</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const DEFAULT_CURRICULUM = {
+        "PCM": {
+            "Physics": {
+                "color": "var(--accent-blue)",
+                "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics: Materials, Devices and Simple Circuits"]
+            },
+            "Chemistry": {
+                "color": "var(--progress-red)",
+                "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
+            },
+            "Mathematics": {
+                "color": "var(--progress-purple)",
+                "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"]
+            }
+        },
+        "PCB": {
+            "Physics": {
+                "color": "var(--accent-blue)",
+                "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics: Materials, Devices and Simple Circuits"]
+            },
+            "Chemistry": {
+                "color": "var(--progress-red)",
+                "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
+            },
+            "Biology": {
+                "color": "var(--progress-green)",
+                "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"]
+            }
+        }
+    };
+
+    let currentSubjectTab = "";
+    let userStream = localStorage.getItem("userStream") || "PCM";
 
     // Digital Pomodoro Clock Logic
-    let currentMode = 'timer'; // 'timer' or 'stopwatch'
+    let currentMode = 'timer'; 
     let timerInterval = null;
     let isRunning = false;
     let totalSeconds = 25 * 60;
 
-    function openPomodoro() {
-      closeSidebar();
-      document.getElementById('pomodoroModal').classList.add('active');
-      resetClock();
+    function getCurriculum() {
+        let data = localStorage.getItem("customCurriculum");
+        return data ? JSON.parse(data) : DEFAULT_CURRICULUM[userStream] || DEFAULT_CURRICULUM["PCM"];
     }
 
-    function closePomodoro() {
-      document.getElementById('pomodoroModal').classList.remove('active');
+    function saveCurriculum(data) {
+        localStorage.setItem("customCurriculum", JSON.stringify(data));
     }
 
+    function getStoredProgress() {
+        let data = localStorage.getItem("detailedStudyProgress");
+        return data ? JSON.parse(data) : {};
+    }
+
+    function saveStoredProgress(data) {
+        localStorage.setItem("detailedStudyProgress", JSON.stringify(data));
+    }
+
+    function initData() {
+        let curriculum = getCurriculum();
+        let progress = getStoredProgress();
+
+        if (!currentSubjectTab || !curriculum[currentSubjectTab]) {
+            currentSubjectTab = Object.keys(curriculum)[0] || "";
+        }
+
+        Object.keys(curriculum).forEach(subName => {
+            if (!progress[subName]) progress[subName] = {};
+            curriculum[subName].chapters.forEach(chapName => {
+                if (!progress[subName][chapName]) {
+                    progress[subName][chapName] = { theory: 0, practice: 0 };
+                }
+            });
+        });
+        saveStoredProgress(progress);
+    }
+
+    function updateProgress(subject, chapter, type, value) {
+        let progress = getStoredProgress();
+        if (!progress[subject]) progress[subject] = {};
+        if (!progress[subject][chapter]) progress[subject][chapter] = { theory: 0, practice: 0 };
+        progress[subject][chapter][type] = value;
+        saveStoredProgress(progress);
+        renderDashboard();
+    }
+
+    function editChapter(subject, oldChapName) {
+        let newName = prompt("Edit Chapter Name:", oldChapName);
+        if (newName && newName.trim() !== "" && newName !== oldChapName) {
+            newName = newName.trim();
+            let curriculum = getCurriculum();
+            let chapList = curriculum[subject].chapters;
+            let index = chapList.indexOf(oldChapName);
+            if (index > -1) { chapList[index] = newName; saveCurriculum(curriculum); }
+            let progress = getStoredProgress();
+            if (progress[subject] && progress[subject][oldChapName]) { progress[subject][newName] = progress[subject][oldChapName]; delete progress[subject][oldChapName]; saveStoredProgress(progress); }
+            renderDashboard();
+        }
+    }
+
+    function deleteChapter(subject, chapter) {
+        if (confirm(`Are you sure you want to delete "${chapter}"?`)) {
+            let curriculum = getCurriculum();
+            let chapList = curriculum[subject].chapters;
+            let index = chapList.indexOf(chapter);
+            if (index > -1) { chapList.splice(index, 1); saveCurriculum(curriculum); }
+            let progress = getStoredProgress();
+            if (progress[subject]) { delete progress[subject][chapter]; saveStoredProgress(progress); }
+            renderDashboard();
+        }
+    }
+
+    function addChapter(subject) {
+        let name = prompt("Enter new chapter name:");
+        if (name && name.trim() !== "") {
+            let curriculum = getCurriculum();
+            curriculum[subject].chapters.push(name.trim());
+            saveCurriculum(curriculum);
+            renderDashboard();
+        }
+    }
+
+    function addSubjectPrompt() {
+        let name = prompt("Enter new subject name:");
+        if (name && name.trim() !== "") {
+            name = name.trim();
+            let curriculum = getCurriculum();
+            if (!curriculum[name]) {
+                curriculum[name] = { color: "var(--accent-blue)", chapters: [] };
+                saveCurriculum(curriculum);
+                currentSubjectTab = name;
+                renderDashboard();
+            }
+        }
+    }
+
+    function renderDashboard() {
+        initData();
+        let curriculum = getCurriculum();
+        let progress = getStoredProgress();
+
+        let streamBadge = document.getElementById("streamBadge");
+        streamBadge.textContent = userStream;
+        streamBadge.className = `stream-indicator stream-${userStream.toLowerCase()}`;
+
+        let overviewGrid = document.getElementById("subjectsOverviewGrid");
+        overviewGrid.innerHTML = "";
+
+        let totalChaptersAll = 0;
+        let totalTheorySum = 0;
+        let totalPracticeSum = 0;
+
+        Object.keys(curriculum).forEach(subName => {
+            let chapList = curriculum[subName].chapters;
+            let totalCount = chapList.length;
+            totalChaptersAll += totalCount;
+
+            let subjectTheorySum = 0;
+            chapList.forEach(chapName => {
+                if (progress[subName] && progress[subName][chapName]) {
+                    let theoryVal = progress[subName][chapName].theory || 0;
+                    let practiceVal = progress[subName][chapName].practice || 0;
+                    subjectTheorySum += theoryVal;
+                    totalTheorySum += theoryVal;
+                    totalPracticeSum += practiceVal;
+                }
+            });
+
+            let subPercentage = totalCount > 0 ? Math.round(subjectTheorySum / totalCount) : 0;
+            let cardColor = subName === "Chemistry" ? "var(--progress-red)" : (curriculum[subName].color || "var(--accent-blue)");
+
+            let card = document.createElement("div");
+            card.className = "subject-card";
+            card.innerHTML = `
+                <div class="subject-info">
+                    <h4>${subName}</h4>
+                    <p>${totalCount} Chapters</p>
+                </div>
+                <div class="subject-stat" style="color: ${cardColor}">${subPercentage}%</div>
+            `;
+            overviewGrid.appendChild(card);
+        });
+
+        let overallPercentage = totalChaptersAll > 0 ? Math.round(totalTheorySum / totalChaptersAll) : 0;
+        document.getElementById("syllabusProgressText").textContent = overallPercentage + "%";
+        document.getElementById("syllabusProgressBar").style.width = overallPercentage + "%";
+
+        let practicePercentage = totalChaptersAll > 0 ? Math.round(totalPracticeSum / totalChaptersAll) : 0;
+        document.getElementById("practiceProgressText").textContent = practicePercentage + "%";
+        document.getElementById("practiceProgressBar").style.width = practicePercentage + "%";
+        document.getElementById("practiceSubText").textContent = `${totalChaptersAll} Exercises Total`;
+
+        let tabsContainer = document.getElementById("subjectTabsContainer");
+        tabsContainer.innerHTML = "";
+        Object.keys(curriculum).forEach(subName => {
+            let btn = document.createElement("button");
+            btn.className = `tab-btn ${currentSubjectTab === subName ? "active" : ""}`;
+            btn.textContent = subName;
+            btn.onclick = () => { currentSubjectTab = subName; renderDashboard(); };
+            tabsContainer.appendChild(btn);
+        });
+
+        let chaptersContainer = document.getElementById("chaptersContainer");
+        chaptersContainer.innerHTML = "";
+
+        if (currentSubjectTab && curriculum[currentSubjectTab]) {
+            let activeSubjectData = curriculum[currentSubjectTab];
+            let sectionDiv = document.createElement("div");
+            sectionDiv.className = "section-breakdown";
+            sectionDiv.innerHTML = `
+                <div class="section-title">
+                    ${currentSubjectTab}
+                    <button class="add-btn" onclick="addChapter('${currentSubjectTab}')">+ Add Chapter</button>
+                </div>
+            `;
+
+            let ul = document.createElement("ul");
+            ul.className = "chapter-list";
+
+            activeSubjectData.chapters.forEach(chapName => {
+                let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) ? progress[currentSubjectTab][chapName] : { theory: 0, practice: 0 };
+                let theoryVal = chapProgress.theory !== undefined ? chapProgress.theory : 0;
+                let practiceVal = chapProgress.practice !== undefined ? chapProgress.practice : 0;
+
+                let escapedChapName = chapName.replace(/'/g, "\\'");
+
+                let li = document.createElement("li");
+                li.className = "chapter-item";
+                li.innerHTML = `
+                    <div class="chapter-info">
+                        <div class="chapter-title-container">
+                            <h5>${chapName}</h5>
+                            <button class="icon-btn edit-icon" title="Edit Chapter Name" onclick="editChapter('${currentSubjectTab}', '${escapedChapName}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="icon-btn delete-icon" title="Delete Chapter" onclick="deleteChapter('${currentSubjectTab}', '${escapedChapName}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chapter-actions">
+                        <div class="progress-controls">
+                            <span style="color:var(--text-muted); font-size:0.8rem; width:45px;">Theory:</span>
+                            ${[0, 25, 50, 75, 100].map(val => `
+                                <button class="btn-radio ${theoryVal === val ? "active" : ""}" 
+                                        onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'theory', ${val})">${val}%</button>
+                            `).join('')}
+                        </div>
+                        <div class="progress-controls">
+                            <span style="color:var(--text-muted); font-size:0.8rem; width:55px;">Practice:</span>
+                            ${[0, 25, 50, 75, 100].map(val => `
+                                <button class="btn-radio ${practiceVal === val ? "active" : ""}" 
+                                        onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'practice', ${val})">${val}%</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+
+            sectionDiv.appendChild(ul);
+            chaptersContainer.appendChild(sectionDiv);
+        }
+    }
+
+    function resetData() {
+        if (confirm("Are you sure you want to reset all progress data and custom curriculum?")) {
+            localStorage.clear();
+            window.location.href = "onboarding.html";
+        }
+    }
+
+    function setTheme(theme) {
+        if (theme === 'light') {
+            document.body.classList.add('light-theme');
+            document.getElementById('lightThemeCard').classList.add('active');
+            document.getElementById('darkThemeCard').classList.remove('active');
+            document.getElementById('lightCheck').style.display = 'inline';
+            document.getElementById('darkCheck').style.display = 'none';
+        } else {
+            document.body.classList.remove('light-theme');
+            document.getElementById('darkThemeCard').classList.add('active');
+            document.getElementById('lightThemeCard').classList.remove('active');
+            document.getElementById('darkCheck').style.display = 'inline';
+            document.getElementById('lightCheck').style.display = 'none';
+        }
+        localStorage.setItem('userTheme', theme);
+    }
+
+    // Clock Functions
     function switchMode(mode) {
-      currentMode = mode;
-      stopClock();
-      document.getElementById('tabTimer').classList.toggle('active', mode === 'timer');
-      document.getElementById('tabStopwatch').classList.toggle('active', mode === 'stopwatch');
-      document.getElementById('timerInputs').style.display = mode === 'timer' ? 'flex' : 'none';
-      resetClock();
+        currentMode = mode;
+        stopClock();
+        document.getElementById('tabTimer').classList.toggle('active', mode === 'timer');
+        document.getElementById('tabStopwatch').classList.toggle('active', mode === 'stopwatch');
+        document.getElementById('timerInputs').style.display = mode === 'timer' ? 'flex' : 'none';
+        resetClock();
     }
 
     function updateDisplay() {
-      const mins = Math.floor(totalSeconds / 60);
-      const secs = totalSeconds % 60;
-      document.getElementById('clockDisplay').innerText = 
-        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        document.getElementById('clockDisplay').innerText = 
+            `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
     function resetClock() {
-      if (currentMode === 'timer') {
-        const m = parseInt(document.getElementById('pomoMins').value) || 0;
-        const s = parseInt(document.getElementById('pomoSecs').value) || 0;
-        totalSeconds = (m * 60) + s;
-      } else {
-        totalSeconds = 0;
-      }
-      updateDisplay();
+        if (currentMode === 'timer') {
+            const m = parseInt(document.getElementById('pomoMins').value) || 0;
+            const s = parseInt(document.getElementById('pomoSecs').value) || 0;
+            totalSeconds = (m * 60) + s;
+        } else {
+            totalSeconds = 0;
+        }
+        updateDisplay();
     }
 
     function startClock() {
-      if (isRunning) return;
+        if (isRunning) return;
 
-      if (currentMode === 'timer' && totalSeconds <= 0) {
-        resetClock();
-      }
-
-      isRunning = true;
-      timerInterval = setInterval(() => {
-        if (currentMode === 'timer') {
-          if (totalSeconds > 0) {
-            totalSeconds--;
-            updateDisplay();
-          } else {
-            stopClock();
-            alert('Timer finished!');
-          }
-        } else {
-          totalSeconds++;
-          updateDisplay();
+        if (currentMode === 'timer' && totalSeconds <= 0) {
+            resetClock();
         }
-      }, 1000);
+
+        isRunning = true;
+        timerInterval = setInterval(() => {
+            if (currentMode === 'timer') {
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    updateDisplay();
+                } else {
+                    stopClock();
+                    alert('Timer finished!');
+                }
+            } else {
+                totalSeconds++;
+                updateDisplay();
+            }
+        }, 1000);
     }
 
     function pauseClock() {
-      isRunning = false;
-      clearInterval(timerInterval);
+        isRunning = false;
+        clearInterval(timerInterval);
     }
 
     function stopClock() {
-      pauseClock();
-      resetClock();
+        pauseClock();
+        resetClock();
     }
-  </script>
-</body>
-</html>
+
+    window.onload = function() {
+        if (!localStorage.getItem("userStream")) {
+            window.location.href = "onboarding.html";
+            return;
+        }
+
+        const savedTheme = localStorage.getItem('userTheme') || 'dark';
+        setTheme(savedTheme);
+        renderDashboard();
+
+        // Setup Event Listeners
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menuToggle');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        const mainView = document.getElementById('mainSidebarView');
+        const settingsView = document.getElementById('settingsSidebarView');
+        const themeView = document.getElementById('themeSidebarView');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+            if (!sidebar.classList.contains('active')) {
+                showView(mainView);
+            }
+        }
+
+        function showView(viewToShow) {
+            mainView.classList.add('hidden');
+            settingsView.classList.add('hidden');
+            themeView.classList.add('hidden');
+            viewToShow.classList.remove('hidden');
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        closeSidebar.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        document.getElementById('openSettingsBtn').addEventListener('click', () => showView(settingsView));
+        document.getElementById('backToMainBtn').addEventListener('click', () => showView(mainView));
+        document.getElementById('openThemeBtn').addEventListener('click', () => showView(themeView));
+        document.getElementById('backToSettingsBtn').addEventListener('click', () => showView(settingsView));
+
+        // Pomodoro Modal Listeners
+        const pomoModal = document.getElementById('pomodoroModal');
+        document.getElementById('openPomodoroItem').addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleSidebar();
+            pomoModal.classList.add('active');
+            resetClock();
+        });
+        document.getElementById('closePomodoro').addEventListener('click', () => {
+            pomoModal.classList.remove('active');
+        });
+
+        // Swipe logic
+        let startX;
+        document.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            const endX = e.changedTouches[0].clientX;
+            const deltaX = endX - startX;
+            if (deltaX > 50 && startX < 50) {
+                toggleSidebar();
+            } else if (deltaX < -50 && sidebar.classList.contains('active')) {
+                toggleSidebar();
+            }
+        });
+    };
+</script>
