@@ -555,7 +555,66 @@
             });
 
             let chaptersContainer = document.getElementById("chaptersContainer");
-            chaptersContainer.appendChild(sectionDiv);
+            chaptersContainer.innerHTML = "";
+
+            if (currentSubjectTab && curriculum[currentSubjectTab]) {
+                let activeSubjectData = curriculum[currentSubjectTab];
+                let sectionDiv = document.createElement("div");
+                sectionDiv.className = "section-breakdown";
+                sectionDiv.innerHTML = `
+                    <div class="section-title">
+                        ${currentSubjectTab}
+                        <button class="add-btn" onclick="addChapter('${currentSubjectTab}')">+ Add Chapter</button>
+                    </div>
+                `;
+
+                let ul = document.createElement("ul");
+                ul.className = "chapter-list";
+
+                activeSubjectData.chapters.forEach(chapName => {
+                    let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) ? progress[currentSubjectTab][chapName] : { theory: 0, practice: 0 };
+                    let theoryVal = chapProgress.theory;
+                    let practiceVal = chapProgress.practice;
+
+                    let escapedChapName = chapName.replace(/'/g, "\\'");
+
+                    let li = document.createElement("li");
+                    li.className = "chapter-item";
+                    li.innerHTML = `
+                        <div class="chapter-info">
+                            <div class="chapter-title-container">
+                                <h5>${chapName}</h5>
+                                <button class="icon-btn edit-icon" title="Edit Chapter Name" onclick="editChapter('${currentSubjectTab}', '${escapedChapName}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                </button>
+                                <button class="icon-btn delete-icon" title="Delete Chapter" onclick="deleteChapter('${currentSubjectTab}', '${escapedChapName}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chapter-actions">
+                            <div class="progress-controls">
+                                <span style="color:var(--text-muted); font-size:0.8rem; width:45px;">Theory:</span>
+                                ${[25, 50, 75, 100].map(val => `
+                                    <button class="btn-radio ${theoryVal === val ? "active" : ""}" 
+                                            onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'theory', ${val})">${val}%</button>
+                                `).join('')}
+                            </div>
+                            <div class="progress-controls">
+                                <span style="color:var(--text-muted); font-size:0.8rem; width:55px;">Practice:</span>
+                                ${[25, 50, 75, 100].map(val => `
+                                    <button class="btn-radio ${practiceVal === val ? "active" : ""}" 
+                                            onclick="updateProgress('${currentSubjectTab}', '${escapedChapName}', 'practice', ${val})">${val}%</button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    ul.appendChild(li);
+                });
+
+                sectionDiv.appendChild(ul);
+                chaptersContainer.appendChild(sectionDiv);
+            }
         }
 
         function resetData() {
