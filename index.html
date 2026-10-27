@@ -535,6 +535,13 @@
             color: var(--text-muted);
         }
 
+        .clock-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
         .clock-display {
             font-size: 3rem;
             font-weight: 700;
@@ -722,7 +729,6 @@
                 <h1>Study Centre</h1>
             </div>
             <div class="header-actions">
-                <!-- Add Subject button shifted neatly to the right side where Reset Data used to be -->
                 <button class="add-btn" onclick="addSubjectPrompt()">Add Subject</button>
             </div>
         </header>
@@ -766,7 +772,11 @@
     <div class="modal" id="clockModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeClockModal()">&times;</span>
-            <h2>Pomodoro Clock</h2>
+            <h2 id="clockTitle">Pomodoro Clock</h2>
+            <div class="clock-tabs">
+                <button id="pomodoroTabBtn" class="tab-btn active" onclick="switchClockMode('pomodoro')">Pomodoro (25m)</button>
+                <button id="stopwatchTabBtn" class="tab-btn" onclick="switchClockMode('stopwatch')">Stopwatch</button>
+            </div>
             <div class="clock-display" id="clockDisplay">25:00</div>
             <div class="clock-controls">
                 <button onclick="startTimer()">Start</button>
@@ -805,12 +815,6 @@
                 "PCB": {
                     "Physics": { "color": "var(--accent-blue)", "chapters": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles and Rotational Motion", "Gravitation", "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves"] },
                     "Chemistry": { "color": "var(--progress-red)", "chapters": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements and Periodicity", "Chemical Bonding and Molecular Structure", "States of Matter", "Thermodynamics", "Equilibrium", "Redox Reactions", "Hydrogen", "s-Block Elements", "p-Block Elements", "Organic Chemistry: Basic Principles and Techniques", "Hydrocarbons", "Environmental Chemistry"] },
-                    "Biology": { "color": "var(--progress-green)", "chapters": ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Flowering Plants", "Anatomy of Flowering Plants", "Structural Organisation in Animals", "Cell: The Unit of Life", "Biomolecules", "Cell Cycle and Cell Division", "Transport in Plants", "Mineral Nutrition", "Photosynthesis in Higher Plants", "Respiration in Plants", "Plant Growth and Development", "Digestion and Absorption", "Breathing and Exchange of Gases", "Body Fluids and Circulation", "Excretory Products and their Elimination", "Locomotion and Movement", "Neural Control and Coordination", "Chemical Coordination and Integration"] }
-                },
-                "PCMB": {
-                    "Physics": { "color": "var(--accent-blue)", "chapters": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles and Rotational Motion", "Gravitation", "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves"] },
-                    "Chemistry": { "color": "var(--progress-red)", "chapters": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements and Periodicity", "Chemical Bonding and Molecular Structure", "States of Matter", "Thermodynamics", "Equilibrium", "Redox Reactions", "Hydrogen", "s-Block Elements", "p-Block Elements", "Organic Chemistry: Basic Principles and Techniques", "Hydrocarbons", "Environmental Chemistry"] },
-                    "Mathematics": { "color": "var(--progress-purple)", "chapters": ["Sets", "Relations and Functions", "Trigonometric Functions", "Principle of Mathematical Induction", "Complex Numbers and Quadratic Equations", "Linear Inequalities", "Permutations and Combinations", "Binomial Theorem", "Sequences and Series", "Straight Lines", "Conic Sections", "Introduction to Three Dimensional Geometry", "Limits and Derivatives", "Mathematical Reasoning", "Statistics", "Probability"] },
                     "Biology": { "color": "var(--progress-green)", "chapters": ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Flowering Plants", "Anatomy of Flowering Plants", "Structural Organisation in Animals", "Cell: The Unit of Life", "Biomolecules", "Cell Cycle and Cell Division", "Transport in Plants", "Mineral Nutrition", "Photosynthesis in Higher Plants", "Respiration in Plants", "Plant Growth and Development", "Digestion and Absorption", "Breathing and Exchange of Gases", "Body Fluids and Circulation", "Excretory Products and their Elimination", "Locomotion and Movement", "Neural Control and Coordination", "Chemical Coordination and Integration"] }
                 }
             }
@@ -919,11 +923,28 @@
         }
 
         function resetData() {
-            if (confirm("Are you sure you want to reset all study progress and custom curriculum data?")) {
+            if (confirm("Reset all study progress and custom curriculum data?")) {
                 localStorage.removeItem("customCurriculum");
                 localStorage.removeItem("detailedStudyProgress");
                 renderDashboard();
             }
+        }
+
+        function loadPresetPrompt() {
+            let cls = prompt("Enter Class (11th, 12th):", userClass);
+            if (cls && ["11th", "12th"].includes(cls)) {
+                userClass = cls;
+                localStorage.setItem("userClass", userClass);
+            }
+            let stream = prompt("Enter Stream Preset (PCM, PCB, PCMB):", userStream);
+            if (stream && ["PCM", "PCB", "PCMB"].includes(stream.toUpperCase())) {
+                userStream = stream.toUpperCase();
+                localStorage.setItem("userStream", userStream);
+            }
+            localStorage.removeItem("customCurriculum");
+            currentSubjectTab = "";
+            updateSettingsUI();
+            renderDashboard();
         }
 
         function renderDashboard() {
@@ -1233,45 +1254,82 @@
             settingsSidebarView.classList.remove("hidden");
         };
 
-        // Pomodoro Clock Logic
-        let timerInterval;
-        let timeLeft = 25 * 60;
+        // Pomodoro Clock & Stopwatch Logic
+        let clockMode = 'pomodoro'; // 'pomodoro' or 'stopwatch'
+        let timerInterval = null;
+        let timeLeft = 25 * 60; // 25 minutes for Pomodoro
+        let stopwatchTime = 0;  // in seconds for Stopwatch
 
         function updateClockDisplay() {
-            let m = Math.floor(timeLeft / 60);
-            let s = timeLeft % 60;
+            let totalSecs = clockMode === 'pomodoro' ? timeLeft : stopwatchTime;
+            let m = Math.floor(totalSecs / 60);
+            let s = totalSecs % 60;
             document.getElementById("clockDisplay").textContent = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
+        function switchClockMode(mode) {
+            pauseTimer();
+            clockMode = mode;
+            let pBtn = document.getElementById("pomodoroTabBtn");
+            let sBtn = document.getElementById("stopwatchTabBtn");
+            let title = document.getElementById("clockTitle");
+
+            if (mode === 'pomodoro') {
+                pBtn.classList.add("active");
+                sBtn.classList.remove("active");
+                title.textContent = "Pomodoro Clock";
+            } else {
+                sBtn.classList.add("active");
+                pBtn.classList.remove("active");
+                title.textContent = "Stopwatch";
+            }
+            resetTimer();
+        }
+
         function startTimer() {
-            clearInterval(timerInterval);
+            if (timerInterval) return; // avoid multiple intervals
             timerInterval = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    updateClockDisplay();
+                if (clockMode === 'pomodoro') {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateClockDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        alert("Time's up!");
+                    }
                 } else {
-                    clearInterval(timerInterval);
-                    alert("Time's up!");
+                    stopwatchTime++;
+                    updateClockDisplay();
                 }
             }, 1000);
         }
 
         function pauseTimer() {
-            clearInterval(timerInterval);
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
         }
 
         function resetTimer() {
-            clearInterval(timerInterval);
-            timeLeft = 25 * 60;
+            pauseTimer();
+            if (clockMode === 'pomodoro') {
+                timeLeft = 25 * 60;
+            } else {
+                stopwatchTime = 0;
+            }
             updateClockDisplay();
         }
 
         function openClockModal() {
             toggleSidebar();
             document.getElementById("clockModal").style.display = "flex";
+            updateClockDisplay();
         }
 
         function closeClockModal() {
+            pauseTimer();
             document.getElementById("clockModal").style.display = "none";
         }
 
