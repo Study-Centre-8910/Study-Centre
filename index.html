@@ -542,11 +542,30 @@
             margin: 16px 0;
         }
 
+        .custom-time-container {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-time-container input {
+            width: 70px;
+            padding: 6px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+        }
+
         .clock-display {
             font-size: 3rem;
             font-weight: 700;
             font-family: monospace;
-            margin: 20px 0;
+            margin: 15px 0;
             color: var(--accent-blue);
         }
 
@@ -774,8 +793,13 @@
             <span class="close-modal" onclick="closeClockModal()">&times;</span>
             <h2 id="clockTitle">Pomodoro Clock</h2>
             <div class="clock-tabs">
-                <button id="pomodoroTabBtn" class="tab-btn active" onclick="switchClockMode('pomodoro')">Pomodoro (25m)</button>
+                <button id="pomodoroTabBtn" class="tab-btn active" onclick="switchClockMode('pomodoro')">Pomodoro</button>
                 <button id="stopwatchTabBtn" class="tab-btn" onclick="switchClockMode('stopwatch')">Stopwatch</button>
+            </div>
+            <!-- Custom Time Input for Pomodoro -->
+            <div class="custom-time-container" id="customTimeContainer">
+                <label for="customMinutes" style="font-size: 0.85rem; color: var(--text-muted);">Set Minutes:</label>
+                <input type="number" id="customMinutes" value="25" min="1" max="180" onchange="updateCustomTime()">
             </div>
             <div class="clock-display" id="clockDisplay">25:00</div>
             <div class="clock-controls">
@@ -1254,10 +1278,10 @@
             settingsSidebarView.classList.remove("hidden");
         };
 
-        // Pomodoro Clock & Stopwatch Logic
+        // Pomodoro Clock & Stopwatch Logic with Custom Time Option
         let clockMode = 'pomodoro'; // 'pomodoro' or 'stopwatch'
         let timerInterval = null;
-        let timeLeft = 25 * 60; // 25 minutes for Pomodoro
+        let timeLeft = 25 * 60; // Default 25 minutes
         let stopwatchTime = 0;  // in seconds for Stopwatch
 
         function updateClockDisplay() {
@@ -1273,21 +1297,33 @@
             let pBtn = document.getElementById("pomodoroTabBtn");
             let sBtn = document.getElementById("stopwatchTabBtn");
             let title = document.getElementById("clockTitle");
+            let customContainer = document.getElementById("customTimeContainer");
 
             if (mode === 'pomodoro') {
                 pBtn.classList.add("active");
                 sBtn.classList.remove("active");
                 title.textContent = "Pomodoro Clock";
+                customContainer.style.display = "flex";
             } else {
                 sBtn.classList.add("active");
                 pBtn.classList.remove("active");
                 title.textContent = "Stopwatch";
+                customContainer.style.display = "none";
             }
             resetTimer();
         }
 
+        function updateCustomTime() {
+            if (clockMode === 'pomodoro') {
+                let mins = parseInt(document.getElementById("customMinutes").value);
+                if (isNaN(mins) || mins < 1) mins = 25;
+                timeLeft = mins * 60;
+                updateClockDisplay();
+            }
+        }
+
         function startTimer() {
-            if (timerInterval) return; // avoid multiple intervals
+            if (timerInterval) return;
             timerInterval = setInterval(() => {
                 if (clockMode === 'pomodoro') {
                     if (timeLeft > 0) {
@@ -1315,7 +1351,9 @@
         function resetTimer() {
             pauseTimer();
             if (clockMode === 'pomodoro') {
-                timeLeft = 25 * 60;
+                let mins = parseInt(document.getElementById("customMinutes").value);
+                if (isNaN(mins) || mins < 1) mins = 25;
+                timeLeft = mins * 60;
             } else {
                 stopwatchTime = 0;
             }
