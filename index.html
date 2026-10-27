@@ -340,6 +340,7 @@
             align-items: center;
             justify-content: center;
         }
+
         .delete-icon { color: var(--progress-alert); }
         .edit-icon { color: var(--text-muted); }
         .edit-icon:hover { color: var(--accent-blue); }
@@ -1312,16 +1313,22 @@
                 return;
             }
 
-            // Check if query is related to studies/science/math/curriculum keywords
-            const studyKeywords = ["physics", "chemistry", "math", "biology", "law", "equation", "formula", "cell", "atom", "reaction", "force", "energy", "integration", "derivative", "reproduction", "solution", "electricity", "optics", "wave", "ncert", "chapter", "explain", "what is", "how", "why"];
+            // Expanded list of academic keywords to capture various study-related queries
+            const studyKeywords = [
+                "physics", "chemistry", "math", "biology", "law", "equation", "formula", 
+                "cell", "atom", "reaction", "force", "energy", "integration", "derivative", 
+                "reproduction", "solution", "electricity", "optics", "wave", "ncert", 
+                "chapter", "explain", "what is", "how", "why", "define", "theorem"
+            ];
+            
             let isStudyRelated = studyKeywords.some(keyword => q.includes(keyword));
 
             ansBox.style.display = "block";
             if (!isStudyRelated) {
                 ansText.textContent = "I can only answer study-related questions regarding your Physics, Chemistry, Math, and Biology curriculum. Please ask an academic question!";
             } else {
-                // Generate a helpful context-based response for study queries
-                ansText.textContent = `Here is the explanation for your query ("${document.getElementById("studentQueryInput").value}"): This is a core concept under your ${userClass} ${userStream} syllabus. Make sure to review the relevant NCERT textbook chapter definitions, derivations, and practice problems to master this topic completely!`;
+                // Generate a clear definition paired with syllabus context
+                ansText.textContent = `Regarding your query ("${document.getElementById("studentQueryInput").value}"), this topic is covered under your ${userClass} ${userStream} syllabus. Make sure to review the relevant NCERT textbook chapter definitions, examples, and practice problems to master this completely!`;
             }
         }
 
