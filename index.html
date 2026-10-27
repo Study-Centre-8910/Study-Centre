@@ -1321,8 +1321,17 @@
                 ansText.textContent = "I can only answer study-related questions regarding your Physics, Chemistry, Math, and Biology curriculum. Please ask an academic question!";
             } else {
                 // Generate a helpful context-based response for study queries
+
+const ai = new GoogleGenAI({ apiKey: "AQ.Ab8RN6IsHO1Vc8OKZL_Sz2rQRh1Pba2pI5nWC6nlO28NudxUYQ" });
+
+const response = await ai.models.generateContent({
+  model: 'gemini-flash-latest',
+  contents: q,
+});
+
+console.log(response.text);
                 ansText.textContent = `Here is the explanation for your query ("${document.getElementById("studentQueryInput").value}"): This is a core concept under your ${userClass} ${userStream} syllabus. Make sure to review the relevant NCERT textbook chapter definitions, derivations, and practice problems to master this topic completely!`;
-            }
+ansText.textContent = response.text;
         }
 
         // Initial Load
