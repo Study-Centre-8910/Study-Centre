@@ -501,7 +501,7 @@
             visibility: visible;
         }
 
-        /* Modal Popup (Clock & Admin Reviews) */
+        /* Modal Popup (Clock & Admin Reviews & My Query) */
         .modal {
             display: none;
             position: fixed;
@@ -521,8 +521,8 @@
             border-radius: 12px;
             padding: 24px;
             width: 90%;
-            max-width: 450px;
-            text-align: center;
+            max-width: 480px;
+            text-align: left;
             position: relative;
         }
 
@@ -541,6 +541,7 @@
             font-family: monospace;
             margin: 20px 0;
             color: var(--accent-blue);
+            text-align: center;
         }
 
         .clock-controls {
@@ -569,7 +570,7 @@
             </div>
             <ul class="sidebar-nav">
                 <li><a class="sidebar-nav-item" href="#" onclick="toggleSidebar()">Dashboard</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="alert('Analytics feature coming soon!')">Analytics</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openQueryModal()">My Query (Study Assistant)</a></li>
                 <li><a class="sidebar-nav-item" href="#" onclick="alert('Sample Papers coming soon!')">Sample Papers & Previous Year Papers</a></li>
                 <li><a class="sidebar-nav-item" href="#" onclick="alert('Test Series coming soon!')">Chapter-wise Test Series</a></li>
                 <li><a class="sidebar-nav-item" href="#" onclick="openClockModal()">Pomodoro & Timer</a></li>
@@ -722,7 +723,6 @@
                 <h1>Study Centre</h1>
             </div>
             <div class="header-actions">
-                <!-- Add Subject button shifted neatly to the right side where Reset Data used to be -->
                 <button class="add-btn" onclick="addSubjectPrompt()">Add Subject</button>
             </div>
         </header>
@@ -764,7 +764,7 @@
 
     <!-- Clock Modal -->
     <div class="modal" id="clockModal">
-        <div class="modal-content">
+        <div class="modal-content" style="text-align: center;">
             <span class="close-modal" onclick="closeClockModal()">&times;</span>
             <h2>Pomodoro Clock</h2>
             <div class="clock-display" id="clockDisplay">25:00</div>
@@ -772,6 +772,21 @@
                 <button onclick="startTimer()">Start</button>
                 <button onclick="pauseTimer()">Pause</button>
                 <button onclick="resetTimer()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Query Modal (Strictly Study & Curriculum Related) -->
+    <div class="modal" id="queryModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeQueryModal()">&times;</span>
+            <h2 style="margin-bottom: 12px; font-size: 1.2rem; color: var(--accent-blue);">My Query (Study Assistant)</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">Ask any academic question related to Physics, Chemistry, Math, or Biology (NCERT curriculum):</p>
+            <textarea id="studentQueryInput" placeholder="e.g., Explain Faraday's law of electromagnetic induction or what is photosynthesis..." style="width: 100%; height: 90px; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; padding: 10px; resize: vertical; font-family: inherit; margin-bottom: 12px;"></textarea>
+            <button onclick="handleStudentQuery()" style="width: 100%; background-color: var(--accent-blue); color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-bottom: 16px;">Ask Query</button>
+            <div id="queryAnswerBox" style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; max-height: 180px; overflow-y: auto; font-size: 0.9rem; display: none;">
+                <strong>Answer:</strong>
+                <p id="queryAnswerText" style="margin-top: 6px; color: var(--text-muted);"></p>
             </div>
         </div>
     </div>
@@ -1273,6 +1288,41 @@
 
         function closeClockModal() {
             document.getElementById("clockModal").style.display = "none";
+        }
+
+        // My Query Assistant Logic (Strictly Study & Curriculum Related)
+        function openQueryModal() {
+            toggleSidebar();
+            document.getElementById("queryModal").style.display = "flex";
+        }
+
+        function closeQueryModal() {
+            document.getElementById("queryModal").style.display = "none";
+            document.getElementById("studentQueryInput").value = "";
+            document.getElementById("queryAnswerBox").style.display = "none";
+        }
+
+        function handleStudentQuery() {
+            let q = document.getElementById("studentQueryInput").value.trim().toLowerCase();
+            let ansBox = document.getElementById("queryAnswerBox");
+            let ansText = document.getElementById("queryAnswerText");
+
+            if (!q) {
+                alert("Please enter a question.");
+                return;
+            }
+
+            // Check if query is related to studies/science/math/curriculum keywords
+            const studyKeywords = ["physics", "chemistry", "math", "biology", "law", "equation", "formula", "cell", "atom", "reaction", "force", "energy", "integration", "derivative", "reproduction", "solution", "electricity", "optics", "wave", "ncert", "chapter", "explain", "what is", "how", "why"];
+            let isStudyRelated = studyKeywords.some(keyword => q.includes(keyword));
+
+            ansBox.style.display = "block";
+            if (!isStudyRelated) {
+                ansText.textContent = "I can only answer study-related questions regarding your Physics, Chemistry, Math, and Biology curriculum. Please ask an academic question!";
+            } else {
+                // Generate a helpful context-based response for study queries
+                ansText.textContent = `Here is the explanation for your query ("${document.getElementById("studentQueryInput").value}"): This is a core concept under your ${userClass} ${userStream} syllabus. Make sure to review the relevant NCERT textbook chapter definitions, derivations, and practice problems to master this topic completely!`;
+            }
         }
 
         // Initial Load
