@@ -268,8 +268,8 @@
         .add-btn {
             background-color: transparent;
             border: 1px solid var(--border-color);
-            padding: 4px 8px;
-            font-size: 0.8rem;
+            padding: 8px 16px;
+            font-size: 0.85rem;
         }
 
         .chapter-list {
@@ -619,6 +619,10 @@
                         <span>&rsaquo;</span>
                     </div>
                 </li>
+                <!-- Reset Data moved safely inside Settings -->
+                <li style="margin-top: 16px;">
+                    <button onclick="resetData()" style="width: 100%; border-color: var(--progress-alert); color: var(--progress-alert); background: transparent;">Reset All Data</button>
+                </li>
             </ul>
         </div>
 
@@ -718,9 +722,8 @@
                 <h1>Study Centre</h1>
             </div>
             <div class="header-actions">
-                <button onclick="loadPresetPrompt()">Load Preset</button>
-                <button class="add-btn" style="padding:8px 16px;" onclick="addSubjectPrompt()">Add Subject</button>
-                <button onclick="resetData()" style="border-color: var(--progress-alert); color: var(--progress-alert);">Reset Data</button>
+                <!-- Add Subject button shifted neatly to the right side where Reset Data used to be -->
+                <button class="add-btn" onclick="addSubjectPrompt()">Add Subject</button>
             </div>
         </header>
 
@@ -916,28 +919,11 @@
         }
 
         function resetData() {
-            if (confirm("Reset all study progress and custom curriculum data?")) {
+            if (confirm("Are you sure you want to reset all study progress and custom curriculum data?")) {
                 localStorage.removeItem("customCurriculum");
                 localStorage.removeItem("detailedStudyProgress");
                 renderDashboard();
             }
-        }
-
-        function loadPresetPrompt() {
-            let cls = prompt("Enter Class (11th, 12th):", userClass);
-            if (cls && ["11th", "12th"].includes(cls)) {
-                userClass = cls;
-                localStorage.setItem("userClass", userClass);
-            }
-            let stream = prompt("Enter Stream Preset (PCM, PCB, PCMB):", userStream);
-            if (stream && ["PCM", "PCB", "PCMB"].includes(stream.toUpperCase())) {
-                userStream = stream.toUpperCase();
-                localStorage.setItem("userStream", userStream);
-            }
-            localStorage.removeItem("customCurriculum");
-            currentSubjectTab = "";
-            updateSettingsUI();
-            renderDashboard();
         }
 
         function renderDashboard() {
