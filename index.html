@@ -169,7 +169,7 @@
 
         .subjects-overview {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 16px;
             margin-bottom: 32px;
         }
@@ -249,6 +249,7 @@
 
         .stream-pcm { background-color: rgba(56, 189, 248, 0.15); color: var(--accent-blue); }
         .stream-pcb { background-color: rgba(16, 185, 129, 0.15); color: var(--progress-green); }
+        .stream-pcmb { background-color: rgba(192, 132, 252, 0.15); color: var(--progress-purple); }
 
         .section-breakdown {
             margin-bottom: 32px;
@@ -426,14 +427,14 @@
             display: none;
         }
 
-        .theme-options {
+        .theme-options, .stream-options {
             display: flex;
             flex-direction: column;
             gap: 12px;
             margin-top: 16px;
         }
 
-        .theme-option-card {
+        .option-card {
             background-color: var(--bg-color);
             border: 1px solid var(--border-color);
             padding: 12px 16px;
@@ -446,9 +447,39 @@
             transition: border-color 0.2s;
         }
 
-        .theme-option-card.active {
+        .option-card.active {
             border-color: var(--accent-blue);
             color: var(--accent-blue);
+        }
+
+        /* Review Section in Settings */
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .feedback-form textarea {
+            width: 100%;
+            height: 100px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 6px;
+            padding: 10px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .feedback-form button {
+            background-color: var(--accent-blue);
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
         }
 
         .sidebar-overlay {
@@ -469,149 +500,57 @@
             visibility: visible;
         }
 
-        /* Pomodoro Clock Modal Styling */
-        .pomo-modal {
+        /* Modal Popup (Clock & Admin Reviews) */
+        .modal {
             display: none;
             position: fixed;
-            top: 0;
+            z-index: 2000;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            z-index: 2000;
+            background-color: rgba(0,0,0,0.7);
             justify-content: center;
             align-items: center;
         }
 
-        .pomo-modal.active {
-            display: flex;
-        }
-
-        .pomo-box {
-            background: var(--card-bg);
+        .modal-content {
+            background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 12px;
-            width: 90%;
-            max-width: 420px;
             padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
         }
 
-        .pomo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pomo-header h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .pomo-close {
+        .close-modal {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            font-size: 1.5rem;
             cursor: pointer;
             color: var(--text-muted);
-            font-size: 1.2rem;
         }
 
-        .pomo-tabs {
-            display: flex;
-            background: var(--bg-color);
-            padding: 4px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .pomo-tab {
-            flex: 1;
-            text-align: center;
-            padding: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .pomo-tab.active {
-            background: var(--card-bg);
-            color: var(--accent-blue);
-        }
-
-        .digital-clock-display {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 24px 12px;
-            text-align: center;
-        }
-
-        .clock-digits {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 3.5rem;
+        .clock-display {
+            font-size: 3rem;
             font-weight: 700;
+            font-family: monospace;
+            margin: 20px 0;
             color: var(--accent-blue);
-            letter-spacing: 2px;
-            text-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
         }
 
-        .inputs-row {
+        .clock-controls {
             display: flex;
+            justify-content: center;
             gap: 12px;
-            justify-content: center;
-            align-items: center;
         }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .input-group label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .pomo-input {
-            width: 60px;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-main);
-            padding: 6px;
-            text-align: center;
-            font-size: 0.95rem;
-        }
-
-        .pomo-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .btn-pomo {
-            flex: 1;
-            padding: 10px;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            border: none;
-        }
-
-        .btn-start { background: var(--accent-blue); color: #0b0f19; }
-        .btn-pause { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .btn-stop { background: rgba(239, 68, 68, 0.2); color: var(--progress-alert); border: 1px solid rgba(239, 68, 68, 0.3); }
 
         @media (max-width: 768px) {
             body { padding: 12px; }
             .stats-grid { grid-template-columns: 1fr; gap: 12px; }
-            .subjects-overview { grid-template-columns: 1fr; gap: 12px; }
             .chapter-item { flex-direction: column; align-items: flex-start; }
             .chapter-actions { width: 100%; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 8px; }
             .progress-controls { width: 100%; justify-content: space-between; }
@@ -628,11 +567,11 @@
                 <button class="close-sidebar-btn" id="closeSidebar">&times;</button>
             </div>
             <ul class="sidebar-nav">
-                <li><a class="sidebar-nav-item" href="#">Dashboard</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="alert('Previous year papers section coming soon!')">Previous year papers</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="alert('Sample Papers section coming soon!')">Sample Papers & Previous Year Papers</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="alert('Test Series section coming soon!')">Chapter-wise Test Series</a></li>
-                <li><a class="sidebar-nav-item" href="#" id="openPomodoroItem">Pomodoro & Timer</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="toggleSidebar()">Dashboard</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="alert('Analytics feature coming soon!')">Analytics</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="alert('Sample Papers coming soon!')">Sample Papers & Previous Year Papers</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="alert('Test Series coming soon!')">Chapter-wise Test Series</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openClockModal()">Pomodoro & Timer</a></li>
                 <li>
                     <div class="sidebar-nav-item" id="openSettingsBtn">
                         <span>Settings</span>
@@ -650,12 +589,52 @@
             </div>
             <ul class="sidebar-nav">
                 <li>
+                    <div class="sidebar-nav-item" id="openStreamBtn">
+                        <span>Select Stream (PCM/PCB/PCMB)</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
+                <li>
                     <div class="sidebar-nav-item" id="openThemeBtn">
                         <span>My Theme</span>
                         <span>&rsaquo;</span>
                     </div>
                 </li>
+                <li>
+                    <div class="sidebar-nav-item" id="openReviewBtn">
+                        <span>Submit Feedback / Review</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-nav-item" id="openAdminReviewBtn">
+                        <span>View Reviews (Admin)</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
             </ul>
+        </div>
+
+        <!-- Stream Select Sub-View -->
+        <div id="streamSidebarView" class="sidebar-view hidden">
+            <div class="sidebar-header">
+                <button class="back-sidebar-btn" id="backToSettingsFromStreamBtn">&larr; Back</button>
+                <h2>Select Stream</h2>
+            </div>
+            <div class="stream-options">
+                <div class="option-card" id="pcmStreamCard" onclick="setStream('PCM')">
+                    <span>PCM (Physics, Chemistry, Math)</span>
+                    <span id="pcmCheck">&#10003;</span>
+                </div>
+                <div class="option-card" id="pcbStreamCard" onclick="setStream('PCB')">
+                    <span>PCB (Physics, Chemistry, Biology)</span>
+                    <span id="pcbCheck" style="display:none;">&#10003;</span>
+                </div>
+                <div class="option-card" id="pcmbStreamCard" onclick="setStream('PCMB')">
+                    <span>PCMB (Physics, Chemistry, Math, Bio)</span>
+                    <span id="pcmbCheck" style="display:none;">&#10003;</span>
+                </div>
+            </div>
         </div>
 
         <!-- My Theme Sub-View -->
@@ -665,14 +644,38 @@
                 <h2>My Theme</h2>
             </div>
             <div class="theme-options">
-                <div class="theme-option-card" id="darkThemeCard" onclick="setTheme('dark')">
+                <div class="option-card" id="darkThemeCard" onclick="setTheme('dark')">
                     <span>Dark Theme (Default)</span>
                     <span id="darkCheck">&#10003;</span>
                 </div>
-                <div class="theme-option-card" id="lightThemeCard" onclick="setTheme('light')">
+                <div class="option-card" id="lightThemeCard" onclick="setTheme('light')">
                     <span>Light Theme</span>
                     <span id="lightCheck" style="display:none;">&#10003;</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- Review Sub-View -->
+        <div id="reviewSidebarView" class="sidebar-view hidden">
+            <div class="sidebar-header">
+                <button class="back-sidebar-btn" id="backToSettingsFromReviewBtn">&larr; Back</button>
+                <h2>Feedback & Review</h2>
+            </div>
+            <div class="feedback-form">
+                <p style="color:var(--text-muted); font-size:0.85rem;">Write your feedback or review for the Admin:</p>
+                <textarea id="userReviewText" placeholder="Write your review here..."></textarea>
+                <button onclick="submitReview()">Submit Review</button>
+            </div>
+        </div>
+
+        <!-- Admin Reviews View -->
+        <div id="adminReviewSidebarView" class="sidebar-view hidden">
+            <div class="sidebar-header">
+                <button class="back-sidebar-btn" id="backToSettingsFromAdminBtn">&larr; Back</button>
+                <h2>Admin Reviews</h2>
+            </div>
+            <div id="adminReviewsList" style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
+                <!-- Dynamically populated -->
             </div>
         </div>
     </div>
@@ -690,7 +693,7 @@
                 <h1>Study Centre</h1>
             </div>
             <div class="header-actions">
-                <button onclick="window.location.href='onboarding.html'">Load Preset</button>
+                <button onclick="loadPresetPrompt()">Load Preset</button>
                 <button class="add-btn" style="padding:8px 16px;" onclick="addSubjectPrompt()">Add Subject</button>
                 <button onclick="resetData()" style="border-color: var(--progress-alert); color: var(--progress-alert);">Reset Data</button>
             </div>
@@ -701,7 +704,7 @@
                 <h3>Overall Syllabus Progress</h3>
                 <div class="stat-value">
                     <span id="syllabusProgressText">0%</span>
-                    <span id="streamBadge" class="stream-indicator">Loading...</span>
+                    <span id="streamBadge" class="stream-indicator">PCM</span>
                 </div>
                 <div class="progress-bar-bg">
                     <div id="syllabusProgressBar" class="progress-bar-fill" style="width: 0%; background-color: var(--progress-blue);"></div>
@@ -731,34 +734,16 @@
         </div>
     </div>
 
-    <!-- Digital Pomodoro Clock Modal -->
-    <div class="pomo-modal" id="pomodoroModal">
-        <div class="pomo-box">
-            <div class="pomo-header">
-                <h3>Digital Pomodoro Clock</h3>
-                <span class="pomo-close" id="closePomodoro">&times;</span>
-            </div>
-            <div class="pomo-tabs">
-                <div class="pomo-tab active" id="tabTimer" onclick="switchMode('timer')">Countdown Timer</div>
-                <div class="pomo-tab" id="tabStopwatch" onclick="switchMode('stopwatch')">Stopwatch</div>
-            </div>
-            <div class="digital-clock-display">
-                <div class="clock-digits" id="clockDisplay">25:00</div>
-            </div>
-            <div class="inputs-row" id="timerInputs">
-                <div class="input-group">
-                    <label>Minutes</label>
-                    <input type="number" id="pomoMins" class="pomo-input" value="25" min="0" max="180">
-                </div>
-                <div class="input-group">
-                    <label>Seconds</label>
-                    <input type="number" id="pomoSecs" class="pomo-input" value="00" min="0" max="59">
-                </div>
-            </div>
-            <div class="pomo-controls">
-                <button class="btn-pomo btn-start" id="startBtn" onclick="startClock()">Start</button>
-                <button class="btn-pomo btn-pause" id="pauseBtn" onclick="pauseClock()">Pause</button>
-                <button class="btn-pomo btn-stop" id="stopBtn" onclick="stopClock()">Stop</button>
+    <!-- Clock Modal -->
+    <div class="modal" id="clockModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeClockModal()">&times;</span>
+            <h2>Pomodoro Clock</h2>
+            <div class="clock-display" id="clockDisplay">25:00</div>
+            <div class="clock-controls">
+                <button onclick="startTimer()">Start</button>
+                <button onclick="pauseTimer()">Pause</button>
+                <button onclick="resetTimer()">Reset</button>
             </div>
         </div>
     </div>
@@ -766,43 +751,25 @@
     <script>
         const DEFAULT_CURRICULUM = {
             "PCM": {
-                "Physics": {
-                    "color": "var(--accent-blue)",
-                    "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics: Materials, Devices and Simple Circuits"]
-                },
-                "Chemistry": {
-                    "color": "var(--progress-red)",
-                    "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
-                },
-                "Mathematics": {
-                    "color": "var(--progress-purple)",
-                    "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"]
-                }
+                "Physics": { "color": "var(--accent-blue)", "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"] },
+                "Chemistry": { "color": "var(--progress-red)", "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"] },
+                "Mathematics": { "color": "var(--progress-purple)", "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"] }
             },
             "PCB": {
-                "Physics": {
-                    "color": "var(--accent-blue)",
-                    "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics: Materials, Devices and Simple Circuits"]
-                },
-                "Chemistry": {
-                    "color": "var(--progress-red)",
-                    "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
-                },
-                "Biology": {
-                    "color": "var(--progress-green)",
-                    "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"]
-                }
+                "Physics": { "color": "var(--accent-blue)", "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"] },
+                "Chemistry": { "color": "var(--progress-red)", "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"] },
+                "Biology": { "color": "var(--progress-green)", "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"] }
+            },
+            "PCMB": {
+                "Physics": { "color": "var(--accent-blue)", "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"] },
+                "Chemistry": { "color": "var(--progress-red)", "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"] },
+                "Mathematics": { "color": "var(--progress-purple)", "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"] },
+                "Biology": { "color": "var(--progress-green)", "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"] }
             }
         };
 
         let currentSubjectTab = "";
         let userStream = localStorage.getItem("userStream") || "PCM";
-
-        // Clock Variables
-        let currentMode = 'timer'; 
-        let timerInterval = null;
-        let isRunning = false;
-        let totalSeconds = 25 * 60;
 
         function getCurriculum() {
             let data = localStorage.getItem("customCurriculum");
@@ -900,6 +867,21 @@
             }
         }
 
+        function resetData() {
+            if (confirm("Reset all study progress and custom curriculum data?")) {
+                localStorage.removeItem("customCurriculum");
+                localStorage.removeItem("detailedStudyProgress");
+                renderDashboard();
+            }
+        }
+
+        function loadPresetPrompt() {
+            let stream = prompt("Enter Stream Preset (PCM, PCB, PCMB):", userStream);
+            if (stream && ["PCM", "PCB", "PCMB"].includes(stream.toUpperCase())) {
+                setStream(stream.toUpperCase());
+            }
+        }
+
         function renderDashboard() {
             initData();
             let curriculum = getCurriculum();
@@ -987,7 +969,6 @@
                     let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) ? progress[currentSubjectTab][chapName] : { theory: 0, practice: 0 };
                     let theoryVal = chapProgress.theory !== undefined ? chapProgress.theory : 0;
                     let practiceVal = chapProgress.practice !== undefined ? chapProgress.practice : 0;
-
                     let escapedChapName = chapName.replace(/'/g, "\\'");
 
                     let li = document.createElement("li");
@@ -1029,167 +1010,186 @@
             }
         }
 
-        function resetData() {
-            if (confirm("Are you sure you want to reset all progress data and custom curriculum?")) {
-                localStorage.clear();
-                window.location.href = "onboarding.html";
-            }
+        // Stream & Theme Logic
+        function setStream(stream) {
+            userStream = stream;
+            localStorage.setItem("userStream", stream);
+            localStorage.removeItem("customCurriculum");
+            currentSubjectTab = "";
+            updateStreamUI();
+            renderDashboard();
+        }
+
+        function updateStreamUI() {
+            document.getElementById("pcmCheck").style.display = userStream === "PCM" ? "inline" : "none";
+            document.getElementById("pcbCheck").style.display = userStream === "PCB" ? "inline" : "none";
+            document.getElementById("pcmbCheck").style.display = userStream === "PCMB" ? "inline" : "none";
         }
 
         function setTheme(theme) {
             if (theme === 'light') {
                 document.body.classList.add('light-theme');
-                document.getElementById('lightThemeCard').classList.add('active');
-                document.getElementById('darkThemeCard').classList.remove('active');
                 document.getElementById('lightCheck').style.display = 'inline';
                 document.getElementById('darkCheck').style.display = 'none';
             } else {
                 document.body.classList.remove('light-theme');
-                document.getElementById('darkThemeCard').classList.add('active');
-                document.getElementById('lightThemeCard').classList.remove('active');
-                document.getElementById('darkCheck').style.display = 'inline';
                 document.getElementById('lightCheck').style.display = 'none';
+                document.getElementById('darkCheck').style.display = 'inline';
             }
-            localStorage.setItem('userTheme', theme);
+            localStorage.setItem("theme", theme);
         }
 
-        // Clock Functions
-        function switchMode(mode) {
-            currentMode = mode;
-            stopClock();
-            document.getElementById('tabTimer').classList.toggle('active', mode === 'timer');
-            document.getElementById('tabStopwatch').classList.toggle('active', mode === 'stopwatch');
-            document.getElementById('timerInputs').style.display = mode === 'timer' ? 'flex' : 'none';
-            resetClock();
-        }
-
-        function updateDisplay() {
-            const mins = Math.floor(totalSeconds / 60);
-            const secs = totalSeconds % 60;
-            document.getElementById('clockDisplay').innerText = 
-                `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        }
-
-        function resetClock() {
-            if (currentMode === 'timer') {
-                const m = parseInt(document.getElementById('pomoMins').value) || 0;
-                const s = parseInt(document.getElementById('pomoSecs').value) || 0;
-                totalSeconds = (m * 60) + s;
-            } else {
-                totalSeconds = 0;
+        // Reviews / Feedback Logic
+        function submitReview() {
+            let text = document.getElementById("userReviewText").value;
+            if (!text || text.trim() === "") {
+                alert("Please enter a review before submitting.");
+                return;
             }
-            updateDisplay();
+            let reviews = JSON.parse(localStorage.getItem("adminReviews") || "[]");
+            reviews.push({ text: text.trim(), time: new Date().toLocaleString() });
+            localStorage.setItem("adminReviews", JSON.stringify(reviews));
+            document.getElementById("userReviewText").value = "";
+            alert("Review submitted successfully!");
         }
 
-        function startClock() {
-            if (isRunning) return;
-
-            if (currentMode === 'timer' && totalSeconds <= 0) {
-                resetClock();
+        function loadAdminReviews() {
+            let list = document.getElementById("adminReviewsList");
+            let reviews = JSON.parse(localStorage.getItem("adminReviews") || "[]");
+            if (reviews.length === 0) {
+                list.innerHTML = "<p style='color:var(--text-muted);'>No reviews submitted yet.</p>";
+                return;
             }
+            list.innerHTML = reviews.map(r => `
+                <div style="background:var(--bg-color); border:1px solid var(--border-color); padding:10px; border-radius:6px;">
+                    <p style="font-size:0.9rem;">${r.text}</p>
+                    <small style="color:var(--text-muted); font-size:0.75rem;">${r.time}</small>
+                </div>
+            `).join('');
+        }
 
-            isRunning = true;
+        // Sidebar Navigation
+        const sidebar = document.getElementById("sidebar");
+        const sidebarOverlay = document.getElementById("sidebarOverlay");
+        const menuToggle = document.getElementById("menuToggle");
+        const closeSidebar = document.getElementById("closeSidebar");
+
+        function toggleSidebar() {
+            sidebar.classList.toggle("active");
+            sidebarOverlay.classList.toggle("active");
+        }
+
+        menuToggle.onclick = toggleSidebar;
+        closeSidebar.onclick = toggleSidebar;
+        sidebarOverlay.onclick = toggleSidebar;
+
+        // Subviews toggle inside Sidebar
+        const mainSidebarView = document.getElementById("mainSidebarView");
+        const settingsSidebarView = document.getElementById("settingsSidebarView");
+        const themeSidebarView = document.getElementById("themeSidebarView");
+        const streamSidebarView = document.getElementById("streamSidebarView");
+        const reviewSidebarView = document.getElementById("reviewSidebarView");
+        const adminReviewSidebarView = document.getElementById("adminReviewSidebarView");
+
+        document.getElementById("openSettingsBtn").onclick = () => {
+            mainSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("backToMainBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            mainSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("openStreamBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            streamSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("backToSettingsFromStreamBtn").onclick = () => {
+            streamSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("openThemeBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            themeSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("backToSettingsBtn").onclick = () => {
+            themeSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("openReviewBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            reviewSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("backToSettingsFromReviewBtn").onclick = () => {
+            reviewSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("openAdminReviewBtn").onclick = () => {
+            loadAdminReviews();
+            settingsSidebarView.classList.add("hidden");
+            adminReviewSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("backToSettingsFromAdminBtn").onclick = () => {
+            adminReviewSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+
+        // Pomodoro Clock Logic
+        let timerInterval;
+        let timeLeft = 25 * 60;
+
+        function updateClockDisplay() {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById("clockDisplay").textContent = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                if (currentMode === 'timer') {
-                    if (totalSeconds > 0) {
-                        totalSeconds--;
-                        updateDisplay();
-                    } else {
-                        stopClock();
-                        alert('Timer finished!');
-                    }
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateClockDisplay();
                 } else {
-                    totalSeconds++;
-                    updateDisplay();
+                    clearInterval(timerInterval);
+                    alert("Time's up!");
                 }
             }, 1000);
         }
 
-        function pauseClock() {
-            isRunning = false;
+        function pauseTimer() {
             clearInterval(timerInterval);
         }
 
-        function stopClock() {
-            pauseClock();
-            resetClock();
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 25 * 60;
+            updateClockDisplay();
         }
 
-        window.onload = function() {
-            if (!localStorage.getItem("userStream")) {
-                window.location.href = "onboarding.html";
-                return;
-            }
+        function openClockModal() {
+            toggleSidebar();
+            document.getElementById("clockModal").style.display = "flex";
+        }
 
-            const savedTheme = localStorage.getItem('userTheme') || 'dark';
-            setTheme(savedTheme);
+        function closeClockModal() {
+            document.getElementById("clockModal").style.display = "none";
+        }
+
+        // Initial Load
+        window.onload = () => {
+            let savedTheme = localStorage.getItem("theme");
+            if (savedTheme) setTheme(savedTheme);
+            updateStreamUI();
             renderDashboard();
-
-            // Sidebar Controls
-            const sidebar = document.getElementById('sidebar');
-            const menuToggle = document.getElementById('menuToggle');
-            const closeSidebar = document.getElementById('closeSidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-            const mainView = document.getElementById('mainSidebarView');
-            const settingsView = document.getElementById('settingsSidebarView');
-            const themeView = document.getElementById('themeSidebarView');
-
-            function toggleSidebar() {
-                sidebar.classList.toggle('active');
-                sidebarOverlay.classList.toggle('active');
-                if (!sidebar.classList.contains('active')) {
-                    showView(mainView);
-                }
-            }
-
-            function showView(viewToShow) {
-                mainView.classList.add('hidden');
-                settingsView.classList.add('hidden');
-                themeView.classList.add('hidden');
-                viewToShow.classList.remove('hidden');
-            }
-
-            menuToggle.addEventListener('click', toggleSidebar);
-            closeSidebar.addEventListener('click', toggleSidebar);
-            sidebarOverlay.addEventListener('click', toggleSidebar);
-
-            document.getElementById('openSettingsBtn').addEventListener('click', () => showView(settingsView));
-            document.getElementById('backToMainBtn').addEventListener('click', () => showView(mainView));
-            document.getElementById('openThemeBtn').addEventListener('click', () => showView(themeView));
-            document.getElementById('backToSettingsBtn').addEventListener('click', () => showView(settingsView));
-
-            // Input Event Listeners for real-time timer update
-            document.getElementById('pomoMins').addEventListener('change', resetClock);
-            document.getElementById('pomoSecs').addEventListener('change', resetClock);
-
-            // Pomodoro Modal Listeners
-            const pomoModal = document.getElementById('pomodoroModal');
-            document.getElementById('openPomodoroItem').addEventListener('click', (e) => {
-                e.preventDefault();
-                toggleSidebar();
-                pomoModal.classList.add('active');
-                resetClock();
-            });
-            document.getElementById('closePomodoro').addEventListener('click', () => {
-                pomoModal.classList.remove('active');
-            });
-
-            // Touch Swipe Gestures
-            let startX;
-            document.addEventListener('touchstart', function(e) {
-                startX = e.touches[0].clientX;
-            });
-
-            document.addEventListener('touchend', function(e) {
-                const endX = e.changedTouches[0].clientX;
-                const deltaX = endX - startX;
-                if (deltaX > 50 && startX < 50) {
-                    toggleSidebar();
-                } else if (deltaX < -50 && sidebar.classList.contains('active')) {
-                    toggleSidebar();
-                }
-            });
         };
     </script>
 </body>
