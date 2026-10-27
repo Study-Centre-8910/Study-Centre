@@ -376,6 +376,7 @@
         .sidebar-header h2 {
             font-size: 1.2rem;
             font-weight: 700;
+            cursor: pointer;
         }
 
         .close-sidebar-btn, .back-sidebar-btn {
@@ -427,7 +428,7 @@
             display: none;
         }
 
-        .theme-options, .stream-options {
+        .theme-options, .stream-options, .class-options {
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -585,9 +586,15 @@
         <div id="settingsSidebarView" class="sidebar-view hidden">
             <div class="sidebar-header">
                 <button class="back-sidebar-btn" id="backToMainBtn">&larr; Back</button>
-                <h2>Settings</h2>
+                <h2 id="settingsTitle" onclick="handleAdminSecretClick()" title="Click 3 times for Admin" style="user-select:none;">Settings</h2>
             </div>
             <ul class="sidebar-nav">
+                <li>
+                    <div class="sidebar-nav-item" id="openClassBtn">
+                        <span>Select Class (11th / 12th)</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
                 <li>
                     <div class="sidebar-nav-item" id="openStreamBtn">
                         <span>Select Stream (PCM/PCB/PCMB)</span>
@@ -606,13 +613,31 @@
                         <span>&rsaquo;</span>
                     </div>
                 </li>
-                <li>
+                <li id="adminReviewMenuLi" style="display:none;">
                     <div class="sidebar-nav-item" id="openAdminReviewBtn">
                         <span>View Reviews (Admin)</span>
                         <span>&rsaquo;</span>
                     </div>
                 </li>
             </ul>
+        </div>
+
+        <!-- Class Select Sub-View -->
+        <div id="classSidebarView" class="sidebar-view hidden">
+            <div class="sidebar-header">
+                <button class="back-sidebar-btn" id="backToSettingsFromClassBtn">&larr; Back</button>
+                <h2>Select Class</h2>
+            </div>
+            <div class="class-options">
+                <div class="option-card" id="class11Card" onclick="setClass('11th')">
+                    <span>Class 11th</span>
+                    <span id="class11Check">&#10003;</span>
+                </div>
+                <div class="option-card" id="class12Card" onclick="setClass('12th')">
+                    <span>Class 12th</span>
+                    <span id="class12Check" style="display:none;">&#10003;</span>
+                </div>
+            </div>
         </div>
 
         <!-- Stream Select Sub-View -->
@@ -749,31 +774,54 @@
     </div>
 
     <script>
-        const DEFAULT_CURRICULUM = {
-            "PCM": {
-                "Physics": { "color": "var(--accent-blue)", "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"] },
-                "Chemistry": { "color": "var(--progress-red)", "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"] },
-                "Mathematics": { "color": "var(--progress-purple)", "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"] }
+        const CURRICULUM_DATA = {
+            "12th": {
+                "PCM": {
+                    "Physics": { "color": "var(--accent-blue)", "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"] },
+                    "Chemistry": { "color": "var(--progress-red)", "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"] },
+                    "Mathematics": { "color": "var(--progress-purple)", "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"] }
+                },
+                "PCB": {
+                    "Physics": { "color": "var(--accent-blue)", "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"] },
+                    "Chemistry": { "color": "var(--progress-red)", "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"] },
+                    "Biology": { "color": "var(--progress-green)", "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"] }
+                },
+                "PCMB": {
+                    "Physics": { "color": "var(--accent-blue)", "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"] },
+                    "Chemistry": { "color": "var(--progress-red)", "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"] },
+                    "Mathematics": { "color": "var(--progress-purple)", "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"] },
+                    "Biology": { "color": "var(--progress-green)", "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"] }
+                }
             },
-            "PCB": {
-                "Physics": { "color": "var(--accent-blue)", "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"] },
-                "Chemistry": { "color": "var(--progress-red)", "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"] },
-                "Biology": { "color": "var(--progress-green)", "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"] }
-            },
-            "PCMB": {
-                "Physics": { "color": "var(--accent-blue)", "chapters": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"] },
-                "Chemistry": { "color": "var(--progress-red)", "chapters": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"] },
-                "Mathematics": { "color": "var(--progress-purple)", "chapters": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"] },
-                "Biology": { "color": "var(--progress-green)", "chapters": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"] }
+            "11th": {
+                "PCM": {
+                    "Physics": { "color": "var(--accent-blue)", "chapters": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles and Rotational Motion", "Gravitation", "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves"] },
+                    "Chemistry": { "color": "var(--progress-red)", "chapters": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements and Periodicity", "Chemical Bonding and Molecular Structure", "States of Matter", "Thermodynamics", "Equilibrium", "Redox Reactions", "Hydrogen", "s-Block Elements", "p-Block Elements", "Organic Chemistry: Basic Principles and Techniques", "Hydrocarbons", "Environmental Chemistry"] },
+                    "Mathematics": { "color": "var(--progress-purple)", "chapters": ["Sets", "Relations and Functions", "Trigonometric Functions", "Principle of Mathematical Induction", "Complex Numbers and Quadratic Equations", "Linear Inequalities", "Permutations and Combinations", "Binomial Theorem", "Sequences and Series", "Straight Lines", "Conic Sections", "Introduction to Three Dimensional Geometry", "Limits and Derivatives", "Mathematical Reasoning", "Statistics", "Probability"] }
+                },
+                "PCB": {
+                    "Physics": { "color": "var(--accent-blue)", "chapters": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles and Rotational Motion", "Gravitation", "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves"] },
+                    "Chemistry": { "color": "var(--progress-red)", "chapters": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements and Periodicity", "Chemical Bonding and Molecular Structure", "States of Matter", "Thermodynamics", "Equilibrium", "Redox Reactions", "Hydrogen", "s-Block Elements", "p-Block Elements", "Organic Chemistry: Basic Principles and Techniques", "Hydrocarbons", "Environmental Chemistry"] },
+                    "Biology": { "color": "var(--progress-green)", "chapters": ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Flowering Plants", "Anatomy of Flowering Plants", "Structural Organisation in Animals", "Cell: The Unit of Life", "Biomolecules", "Cell Cycle and Cell Division", "Transport in Plants", "Mineral Nutrition", "Photosynthesis in Higher Plants", "Respiration in Plants", "Plant Growth and Development", "Digestion and Absorption", "Breathing and Exchange of Gases", "Body Fluids and Circulation", "Excretory Products and their Elimination", "Locomotion and Movement", "Neural Control and Coordination", "Chemical Coordination and Integration"] }
+                },
+                "PCMB": {
+                    "Physics": { "color": "var(--accent-blue)", "chapters": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles and Rotational Motion", "Gravitation", "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves"] },
+                    "Chemistry": { "color": "var(--progress-red)", "chapters": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements and Periodicity", "Chemical Bonding and Molecular Structure", "States of Matter", "Thermodynamics", "Equilibrium", "Redox Reactions", "Hydrogen", "s-Block Elements", "p-Block Elements", "Organic Chemistry: Basic Principles and Techniques", "Hydrocarbons", "Environmental Chemistry"] },
+                    "Mathematics": { "color": "var(--progress-purple)", "chapters": ["Sets", "Relations and Functions", "Trigonometric Functions", "Principle of Mathematical Induction", "Complex Numbers and Quadratic Equations", "Linear Inequalities", "Permutations and Combinations", "Binomial Theorem", "Sequences and Series", "Straight Lines", "Conic Sections", "Introduction to Three Dimensional Geometry", "Limits and Derivatives", "Mathematical Reasoning", "Statistics", "Probability"] },
+                    "Biology": { "color": "var(--progress-green)", "chapters": ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Flowering Plants", "Anatomy of Flowering Plants", "Structural Organisation in Animals", "Cell: The Unit of Life", "Biomolecules", "Cell Cycle and Cell Division", "Transport in Plants", "Mineral Nutrition", "Photosynthesis in Higher Plants", "Respiration in Plants", "Plant Growth and Development", "Digestion and Absorption", "Breathing and Exchange of Gases", "Body Fluids and Circulation", "Excretory Products and their Elimination", "Locomotion and Movement", "Neural Control and Coordination", "Chemical Coordination and Integration"] }
+                }
             }
         };
 
         let currentSubjectTab = "";
+        let userClass = localStorage.getItem("userClass") || "12th";
         let userStream = localStorage.getItem("userStream") || "PCM";
+        let isAdmin = localStorage.getItem("isAdmin") === "true";
 
         function getCurriculum() {
             let data = localStorage.getItem("customCurriculum");
-            return data ? JSON.parse(data) : DEFAULT_CURRICULUM[userStream] || DEFAULT_CURRICULUM["PCM"];
+            if (data) return JSON.parse(data);
+            return (CURRICULUM_DATA[userClass] && CURRICULUM_DATA[userClass][userStream]) || CURRICULUM_DATA["12th"]["PCM"];
         }
 
         function saveCurriculum(data) {
@@ -876,10 +924,20 @@
         }
 
         function loadPresetPrompt() {
+            let cls = prompt("Enter Class (11th, 12th):", userClass);
+            if (cls && ["11th", "12th"].includes(cls)) {
+                userClass = cls;
+                localStorage.setItem("userClass", userClass);
+            }
             let stream = prompt("Enter Stream Preset (PCM, PCB, PCMB):", userStream);
             if (stream && ["PCM", "PCB", "PCMB"].includes(stream.toUpperCase())) {
-                setStream(stream.toUpperCase());
+                userStream = stream.toUpperCase();
+                localStorage.setItem("userStream", userStream);
             }
+            localStorage.removeItem("customCurriculum");
+            currentSubjectTab = "";
+            updateSettingsUI();
+            renderDashboard();
         }
 
         function renderDashboard() {
@@ -888,7 +946,7 @@
             let progress = getStoredProgress();
 
             let streamBadge = document.getElementById("streamBadge");
-            streamBadge.textContent = userStream;
+            streamBadge.textContent = `${userClass} - ${userStream}`;
             streamBadge.className = `stream-indicator stream-${userStream.toLowerCase()}`;
 
             let overviewGrid = document.getElementById("subjectsOverviewGrid");
@@ -1010,20 +1068,34 @@
             }
         }
 
-        // Stream & Theme Logic
+        // Class, Stream & Theme Logic
+        function setClass(cls) {
+            userClass = cls;
+            localStorage.setItem("userClass", cls);
+            localStorage.removeItem("customCurriculum");
+            currentSubjectTab = "";
+            updateSettingsUI();
+            renderDashboard();
+        }
+
         function setStream(stream) {
             userStream = stream;
             localStorage.setItem("userStream", stream);
             localStorage.removeItem("customCurriculum");
             currentSubjectTab = "";
-            updateStreamUI();
+            updateSettingsUI();
             renderDashboard();
         }
 
-        function updateStreamUI() {
+        function updateSettingsUI() {
+            document.getElementById("class11Check").style.display = userClass === "11th" ? "inline" : "none";
+            document.getElementById("class12Check").style.display = userClass === "12th" ? "inline" : "none";
+
             document.getElementById("pcmCheck").style.display = userStream === "PCM" ? "inline" : "none";
             document.getElementById("pcbCheck").style.display = userStream === "PCB" ? "inline" : "none";
             document.getElementById("pcmbCheck").style.display = userStream === "PCMB" ? "inline" : "none";
+
+            document.getElementById("adminReviewMenuLi").style.display = isAdmin ? "block" : "none";
         }
 
         function setTheme(theme) {
@@ -1037,6 +1109,24 @@
                 document.getElementById('darkCheck').style.display = 'inline';
             }
             localStorage.setItem("theme", theme);
+        }
+
+        // Admin Secret Trigger (Triple click on "Settings" header title)
+        let adminClickCount = 0;
+        function handleAdminSecretClick() {
+            adminClickCount++;
+            if (adminClickCount >= 3) {
+                adminClickCount = 0;
+                let pass = prompt("Enter Admin Passcode/Email token:");
+                if (pass === "admin123" || pass === "admin") {
+                    isAdmin = true;
+                    localStorage.setItem("isAdmin", "true");
+                    updateSettingsUI();
+                    alert("Admin mode activated successfully!");
+                } else {
+                    alert("Incorrect token.");
+                }
+            }
         }
 
         // Reviews / Feedback Logic
@@ -1086,6 +1176,7 @@
         // Subviews toggle inside Sidebar
         const mainSidebarView = document.getElementById("mainSidebarView");
         const settingsSidebarView = document.getElementById("settingsSidebarView");
+        const classSidebarView = document.getElementById("classSidebarView");
         const themeSidebarView = document.getElementById("themeSidebarView");
         const streamSidebarView = document.getElementById("streamSidebarView");
         const reviewSidebarView = document.getElementById("reviewSidebarView");
@@ -1099,6 +1190,16 @@
         document.getElementById("backToMainBtn").onclick = () => {
             settingsSidebarView.classList.add("hidden");
             mainSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("openClassBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            classSidebarView.classList.remove("hidden");
+        };
+
+        document.getElementById("backToSettingsFromClassBtn").onclick = () => {
+            classSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
         };
 
         document.getElementById("openStreamBtn").onclick = () => {
@@ -1132,6 +1233,10 @@
         };
 
         document.getElementById("openAdminReviewBtn").onclick = () => {
+            if (!isAdmin) {
+                alert("Access Denied!");
+                return;
+            }
             loadAdminReviews();
             settingsSidebarView.classList.add("hidden");
             adminReviewSidebarView.classList.remove("hidden");
@@ -1188,7 +1293,7 @@
         window.onload = () => {
             let savedTheme = localStorage.getItem("theme");
             if (savedTheme) setTheme(savedTheme);
-            updateStreamUI();
+            updateSettingsUI();
             renderDashboard();
         };
     </script>
