@@ -346,11 +346,10 @@
             align-items: center;
             justify-content: center;
         }
-        .delete-icon { color: var(--progress-alert); font-size: 1rem; font-weight: bold; }
+        .delete-icon { color: var(--progress-alert); font-size: 1.1rem; }
         .edit-icon { color: var(--text-muted); font-size: 0.9rem; }
         .edit-icon:hover { color: var(--accent-blue); }
 
-        /* Sidebar & Submenu Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -368,9 +367,7 @@
             overflow-y: auto;
         }
 
-        .sidebar.active {
-            transform: translateX(0);
-        }
+        .sidebar.active { transform: translateX(0); }
 
         .sidebar-header {
             display: flex;
@@ -379,11 +376,7 @@
             margin-bottom: 24px;
         }
 
-        .sidebar-header h2 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
+        .sidebar-header h2 { font-size: 1.2rem; font-weight: 700; }
 
         .close-sidebar-btn, .back-sidebar-btn {
             background: transparent;
@@ -394,10 +387,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-        }
-
-        .close-sidebar-btn:hover, .back-sidebar-btn:hover {
-            color: var(--text-main);
         }
 
         .sidebar-nav {
@@ -426,20 +415,8 @@
             color: var(--accent-blue);
         }
 
-        .sidebar-view {
-            display: block;
-        }
-
-        .sidebar-view.hidden {
-            display: none;
-        }
-
-        .theme-options, .stream-options, .class-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 16px;
-        }
+        .sidebar-view { display: block; }
+        .sidebar-view.hidden { display: none; }
 
         .option-card {
             background-color: var(--bg-color);
@@ -451,15 +428,9 @@
             align-items: center;
             justify-content: space-between;
             font-weight: 600;
-            transition: border-color 0.2s;
+            margin-bottom: 12px;
         }
 
-        .option-card.active {
-            border-color: var(--accent-blue);
-            color: var(--accent-blue);
-        }
-
-        /* Review Section in Settings */
         .feedback-form {
             display: flex;
             flex-direction: column;
@@ -502,12 +473,8 @@
             transition: opacity 0.3s, visibility 0.3s;
         }
 
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
 
-        /* Modal Popup (Clock & Admin Reviews) */
         .modal {
             display: none;
             position: fixed;
@@ -527,8 +494,7 @@
             border-radius: 12px;
             padding: 24px;
             width: 90%;
-            max-width: 450px;
-            text-align: center;
+            max-width: 550px;
             position: relative;
         }
 
@@ -541,44 +507,40 @@
             color: var(--text-muted);
         }
 
-        .clock-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: 16px 0;
-        }
-
-        .custom-time-container {
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .custom-time-container input {
-            width: 70px;
-            padding: 6px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            border-radius: 4px;
-            text-align: center;
-            font-weight: 600;
-        }
-
         .clock-display {
             font-size: 3rem;
             font-weight: 700;
             font-family: monospace;
             margin: 15px 0;
             color: var(--accent-blue);
+            text-align: center;
         }
 
         .clock-controls {
             display: flex;
             justify-content: center;
             gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            padding: 8px 12px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 6px;
+            font-size: 0.9rem;
         }
 
         @media (max-width: 768px) {
@@ -603,7 +565,7 @@
                 <li><a class="sidebar-nav-item" href="#" onclick="toggleSidebar()">Dashboard</a></li>
                 <li><a class="sidebar-nav-item" href="#" onclick="openMyTasksModal()">My Tasks</a></li>
                 <li><a class="sidebar-nav-item" href="#" onclick="openSamplePapersModal()">Sample Papers & Previous Year Papers</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="alert('Chapter-wise Test Series coming soon!')">Chapter-wise Test Series</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openTestSeriesModal()">Chapter-wise Test Series</a></li>
                 <li><a class="sidebar-nav-item" href="#" onclick="openClockModal()">Pomodoro & Timer</a></li>
                 <li>
                     <div class="sidebar-nav-item" id="openSettingsBtn">
@@ -664,11 +626,11 @@
                 <h2>Select Class</h2>
             </div>
             <div class="class-options">
-                <div class="option-card" id="class11Card" onclick="setClass('11th')">
+                <div class="option-card" onclick="setClass('11th')">
                     <span>Class 11th</span>
                     <span id="class11Check">&#10003;</span>
                 </div>
-                <div class="option-card" id="class12Card" onclick="setClass('12th')">
+                <div class="option-card" onclick="setClass('12th')">
                     <span>Class 12th</span>
                     <span id="class12Check" style="display:none;">&#10003;</span>
                 </div>
@@ -682,15 +644,15 @@
                 <h2>Select Stream</h2>
             </div>
             <div class="stream-options">
-                <div class="option-card" id="pcmStreamCard" onclick="setStream('PCM')">
+                <div class="option-card" onclick="setStream('PCM')">
                     <span>PCM (Physics, Chemistry, Math)</span>
                     <span id="pcmCheck">&#10003;</span>
                 </div>
-                <div class="option-card" id="pcbStreamCard" onclick="setStream('PCB')">
+                <div class="option-card" onclick="setStream('PCB')">
                     <span>PCB (Physics, Chemistry, Biology)</span>
                     <span id="pcbCheck" style="display:none;">&#10003;</span>
                 </div>
-                <div class="option-card" id="pcmbStreamCard" onclick="setStream('PCMB')">
+                <div class="option-card" onclick="setStream('PCMB')">
                     <span>PCMB (Physics, Chemistry, Math, Bio)</span>
                     <span id="pcmbCheck" style="display:none;">&#10003;</span>
                 </div>
@@ -704,11 +666,11 @@
                 <h2>My Theme</h2>
             </div>
             <div class="theme-options">
-                <div class="option-card" id="darkThemeCard" onclick="setTheme('dark')">
+                <div class="option-card" onclick="setTheme('dark')">
                     <span>Dark Theme (Default)</span>
                     <span id="darkCheck">&#10003;</span>
                 </div>
-                <div class="option-card" id="lightThemeCard" onclick="setTheme('light')">
+                <div class="option-card" onclick="setTheme('light')">
                     <span>Light Theme</span>
                     <span id="lightCheck" style="display:none;">&#10003;</span>
                 </div>
@@ -734,9 +696,7 @@
                 <button class="back-sidebar-btn" id="backToSettingsFromAdminBtn">&larr; Back</button>
                 <h2>Admin Reviews</h2>
             </div>
-            <div id="adminReviewsList" style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
-                <!-- Dynamically populated -->
-            </div>
+            <div id="adminReviewsList" style="margin-top:16px; display:flex; flex-direction:column; gap:10px;"></div>
         </div>
     </div>
 
@@ -794,16 +754,16 @@
 
     <!-- Clock Modal -->
     <div class="modal" id="clockModal">
-        <div class="modal-content">
+        <div class="modal-content" style="text-align: center;">
             <span class="close-modal" onclick="closeClockModal()">&times;</span>
             <h2 id="clockTitle">Pomodoro Clock</h2>
-            <div class="clock-tabs">
+            <div style="display: flex; justify-content: center; gap: 12px; margin: 16px 0;">
                 <button id="pomodoroTabBtn" class="tab-btn active" onclick="switchClockMode('pomodoro')">Pomodoro</button>
                 <button id="stopwatchTabBtn" class="tab-btn" onclick="switchClockMode('stopwatch')">Stopwatch</button>
             </div>
-            <div class="custom-time-container" id="customTimeContainer">
+            <div id="customTimeContainer" style="margin-bottom: 12px; display: flex; justify-content: center; align-items: center; gap: 8px;">
                 <label for="customMinutes" style="font-size: 0.85rem; color: var(--text-muted);">Set Minutes:</label>
-                <input type="number" id="customMinutes" value="25" min="1" max="180" onchange="updateCustomTime()">
+                <input type="number" id="customMinutes" value="25" min="1" max="180" onchange="updateCustomTime()" class="form-control" style="width: 70px; text-align: center;">
             </div>
             <div class="clock-display" id="clockDisplay">25:00</div>
             <div class="clock-controls">
@@ -816,33 +776,77 @@
 
     <!-- My Tasks Modal -->
     <div class="modal" id="myTasksModal">
-        <div class="modal-content" style="max-width: 550px; text-align: left;">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeMyTasksModal()">&times;</span>
             <h2>My Tasks</h2>
-            <div style="margin: 16px 0; display: flex; gap: 8px;">
-                <input type="text" id="newTaskInput" placeholder="Enter task (e.g. Complete Physics Chapter 1)" style="flex: 1; padding: 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px;">
-                <input type="number" id="newTaskDays" placeholder="Days" min="1" max="30" value="3" style="width: 70px; padding: 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px;">
-                <button onclick="addTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700;">Add</button>
+            <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 10px; background: var(--bg-color); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Task Type / Subject:</label>
+                    <select id="taskSubjectSelect" class="form-control" onchange="handleTaskSubjectChange()">
+                        <option value="CUSTOM">Custom Task (General)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="taskChapterGroup" style="display:none; margin-bottom:0;">
+                    <label>Chapter:</label>
+                    <select id="taskChapterSelect" class="form-control"></select>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Task Title / Detail:</label>
+                    <input type="text" id="newTaskInput" placeholder="Enter task title..." class="form-control">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label>Target Days:</label>
+                        <input type="number" id="newTaskDays" min="1" max="60" value="3" class="form-control">
+                    </div>
+                    <button onclick="addTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 0 20px; border-radius: 6px; font-weight: 700; align-self: flex-end; height: 38px;">Add Task</button>
+                </div>
             </div>
-            <div id="tasksListContainer" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-                <!-- Tasks will load here -->
-            </div>
+            <div id="tasksListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
     </div>
 
     <!-- Sample Papers Modal -->
     <div class="modal" id="samplePapersModal">
-        <div class="modal-content" style="max-width: 550px; text-align: left;">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeSamplePapersModal()">&times;</span>
             <h2>Sample & Previous Year Papers</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">Upload or link local PDF files/folders for offline practice:</p>
-            <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 10px;">
-                <input type="file" id="localPaperFile" multiple accept=".pdf,.doc,.docx" style="padding: 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px;">
-                <button onclick="uploadLocalPaper()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700;">Save / Add Paper</button>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Available resource materials for practice:</p>
+            
+            <div id="adminPaperUploadSection" style="display:none; margin: 16px 0; background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="font-weight: 600; margin-bottom: 8px; color: var(--accent-blue);">Admin Upload Controls</div>
+                <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+                    <label><input type="radio" name="uploadType" value="file" checked onchange="toggleUploadType('file')"> Individual Files</label>
+                    <label><input type="radio" name="uploadType" value="folder" onchange="toggleUploadType('folder')"> Entire Folder</label>
+                </div>
+                <input type="file" id="paperFileInput" multiple accept=".pdf,.doc,.docx" class="form-control" style="margin-bottom: 8px;">
+                <input type="file" id="paperFolderInput" webkitdirectory directory multiple class="form-control" style="display:none; margin-bottom: 8px;">
+                <button onclick="uploadPapers()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; width: 100%;">Upload Resource</button>
             </div>
-            <div id="papersListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-                <!-- Papers list -->
+
+            <div id="papersListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;"></div>
+        </div>
+    </div>
+
+    <!-- Chapter-wise Test Series Modal -->
+    <div class="modal" id="testSeriesModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeTestSeriesModal()">&times;</span>
+            <h2>Chapter-wise Test Series</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Practice test papers and mock test sets:</p>
+
+            <div id="adminTestUploadSection" style="display:none; margin: 16px 0; background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="font-weight: 600; margin-bottom: 8px; color: var(--accent-blue);">Admin Upload Controls</div>
+                <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+                    <label><input type="radio" name="testUploadType" value="file" checked onchange="toggleTestUploadType('file')"> Individual Files</label>
+                    <label><input type="radio" name="testUploadType" value="folder" onchange="toggleTestUploadType('folder')"> Entire Folder</label>
+                </div>
+                <input type="file" id="testFileInput" multiple accept=".pdf,.doc,.docx" class="form-control" style="margin-bottom: 8px;">
+                <input type="file" id="testFolderInput" webkitdirectory directory multiple class="form-control" style="display:none; margin-bottom: 8px;">
+                <button onclick="uploadTestSeries()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; width: 100%;">Upload Test Series</button>
             </div>
+
+            <div id="testSeriesListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;"></div>
         </div>
     </div>
 
@@ -1058,6 +1062,7 @@
                 localStorage.removeItem("detailedStudyProgress");
                 localStorage.removeItem("myTasksList");
                 localStorage.removeItem("localPapersList");
+                localStorage.removeItem("testSeriesList");
                 currentSubjectTab = "";
                 renderDashboard();
             }
@@ -1188,7 +1193,7 @@
                             <div class="chapter-title-container">
                                 <h5>${chapName}</h5>
                                 <button class="icon-btn edit-icon" title="Edit Chapter Name" onclick="editChapter('${escapedSubName}', '${escapedChapName}')">✎</button>
-                                <button class="icon-btn delete-icon" title="Delete Chapter" onclick="deleteChapter('${escapedSubName}', '${escapedChapName}')">×</button>
+                                <button class="icon-btn delete-icon" title="Delete Chapter" onclick="deleteChapter('${escapedSubName}', '${escapedChapName}')">🗑</button>
                             </div>
                         </div>
                         <div class="chapter-actions">
@@ -1216,7 +1221,7 @@
             }
         }
 
-        // Class, Stream & Theme Logic with ticks
+        // Class, Stream & Theme Logic
         function setClass(cls) {
             userClass = cls;
             localStorage.setItem("userClass", cls);
@@ -1248,6 +1253,8 @@
             document.getElementById("darkCheck").style.display = savedTheme === "dark" ? "inline" : "none";
 
             document.getElementById("adminReviewMenuLi").style.display = isAdmin ? "block" : "none";
+            document.getElementById("adminPaperUploadSection").style.display = isAdmin ? "block" : "none";
+            document.getElementById("adminTestUploadSection").style.display = isAdmin ? "block" : "none";
         }
 
         function setTheme(theme) {
@@ -1260,14 +1267,14 @@
             updateSettingsUI();
         }
 
-        // Admin Secret Trigger
+        // Admin Secret Trigger (Password: admin8910)
         let adminClickCount = 0;
         function handleAdminSecretClick() {
             adminClickCount++;
             if (adminClickCount >= 3) {
                 adminClickCount = 0;
-                let pass = prompt("Enter Admin Passcode/Email token:");
-                if (pass === "admin123" || pass === "admin") {
+                let pass = prompt("Enter Admin Passcode:");
+                if (pass === "admin8910") {
                     isAdmin = true;
                     localStorage.setItem("isAdmin", "true");
                     updateSettingsUI();
@@ -1307,95 +1314,261 @@
             `).join('');
         }
 
-        // My Tasks Logic
+        // My Tasks Logic (With Subject/Chapter Filters)
         function openMyTasksModal() {
             toggleSidebar();
+            populateTaskSubjectDropdown();
             document.getElementById("myTasksModal").style.display = "flex";
             renderTasksList();
         }
+
         function closeMyTasksModal() {
             document.getElementById("myTasksModal").style.display = "none";
         }
+
+        function populateTaskSubjectDropdown() {
+            let select = document.getElementById("taskSubjectSelect");
+            select.innerHTML = '<option value="CUSTOM">Custom Task (General)</option>';
+            let curriculum = getCurriculum();
+            Object.keys(curriculum).forEach(sub => {
+                let opt = document.createElement("option");
+                opt.value = sub;
+                opt.textContent = sub;
+                select.appendChild(opt);
+            });
+            handleTaskSubjectChange();
+        }
+
+        function handleTaskSubjectChange() {
+            let sub = document.getElementById("taskSubjectSelect").value;
+            let group = document.getElementById("taskChapterGroup");
+            let chapSelect = document.getElementById("taskChapterSelect");
+            chapSelect.innerHTML = "";
+
+            if (sub === "CUSTOM") {
+                group.style.display = "none";
+            } else {
+                group.style.display = "flex";
+                let curriculum = getCurriculum();
+                let chapters = (curriculum[sub] && curriculum[sub].chapters) || [];
+                chapters.forEach(chap => {
+                    let opt = document.createElement("option");
+                    opt.value = chap;
+                    opt.textContent = chap;
+                    chapSelect.appendChild(opt);
+                });
+            }
+        }
+
         function addTask() {
-            let input = document.getElementById("newTaskInput");
+            let sub = document.getElementById("taskSubjectSelect").value;
+            let chap = document.getElementById("taskChapterSelect").value;
+            let titleInput = document.getElementById("newTaskInput");
             let daysInput = document.getElementById("newTaskDays");
-            let text = input.value.trim();
+
+            let title = titleInput.value.trim();
             let days = daysInput.value;
-            if (!text) return;
+
+            if (!title) {
+                alert("Please enter a task title!");
+                return;
+            }
+
             let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
-            tasks.push({ text, days, completed: false });
+            tasks.push({
+                id: Date.now(),
+                subject: sub === "CUSTOM" ? "General" : sub,
+                chapter: sub === "CUSTOM" ? null : chap,
+                title: title,
+                days: days,
+                completed: false
+            });
             localStorage.setItem("myTasksList", JSON.stringify(tasks));
-            input.value = "";
+            titleInput.value = "";
             renderTasksList();
         }
-        function deleteTask(index) {
+
+        function toggleTaskComplete(id) {
             let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
-            tasks.splice(index, 1);
+            let t = tasks.find(x => x.id === id);
+            if (t) {
+                t.completed = !t.completed;
+                localStorage.setItem("myTasksList", JSON.stringify(tasks));
+                renderTasksList();
+            }
+        }
+
+        function deleteTask(id) {
+            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
+            tasks = tasks.filter(t => t.id !== id);
             localStorage.setItem("myTasksList", JSON.stringify(tasks));
             renderTasksList();
         }
+
         function renderTasksList() {
             let container = document.getElementById("tasksListContainer");
             let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
             if (tasks.length === 0) {
-                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No tasks added yet.</p>";
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No tasks created yet.</p>";
                 return;
             }
-            container.innerHTML = tasks.map((t, i) => `
+            container.innerHTML = tasks.map(t => `
                 <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <span style="font-weight: 600; font-size: 0.95rem;">${t.text}</span>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">Target: Within ${t.days} days</div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTaskComplete(${t.id})">
+                        <div style="${t.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
+                            <div style="font-weight: 600; font-size: 0.9rem;">${t.title}</div>
+                            <div style="font-size: 0.75rem; color: var(--accent-blue);">${t.subject} ${t.chapter ? '• ' + t.chapter : ''}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">Deadline: Within ${t.days} Days</div>
+                        </div>
                     </div>
-                    <button onclick="deleteTask(${i})" style="border-color: var(--progress-alert); color: var(--progress-alert); background: transparent; padding: 4px 8px; font-size: 0.8rem;">Delete</button>
+                    <button class="icon-btn delete-icon" onclick="deleteTask(${t.id})" title="Delete Task">🗑</button>
                 </div>
             `).join('');
         }
 
-        // Sample Papers Local Folder Logic
+        // Sample Papers Logic (Admin Folder / File Upload Support)
         function openSamplePapersModal() {
             toggleSidebar();
+            updateSettingsUI();
             document.getElementById("samplePapersModal").style.display = "flex";
             renderPapersList();
         }
+
         function closeSamplePapersModal() {
             document.getElementById("samplePapersModal").style.display = "none";
         }
-        function uploadLocalPaper() {
-            let fileInput = document.getElementById("localPaperFile");
-            if (fileInput.files.length === 0) {
-                alert("Please select at least one file.");
+
+        function toggleUploadType(type) {
+            if (type === 'file') {
+                document.getElementById("paperFileInput").style.display = "block";
+                document.getElementById("paperFolderInput").style.display = "none";
+            } else {
+                document.getElementById("paperFileInput").style.display = "none";
+                document.getElementById("paperFolderInput").style.display = "block";
+            }
+        }
+
+        function uploadPapers() {
+            if (!isAdmin) return;
+            let fileMode = document.querySelector('input[name="uploadType"]:checked').value;
+            let input = fileMode === 'file' ? document.getElementById("paperFileInput") : document.getElementById("paperFolderInput");
+
+            if (input.files.length === 0) {
+                alert("Please select files or a folder to upload.");
                 return;
             }
+
             let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
-            for (let i = 0; i < fileInput.files.length; i++) {
-                papers.push({ name: fileInput.files[i].name, size: (fileInput.files[i].size / 1024).toFixed(1) + " KB" });
+            for (let i = 0; i < input.files.length; i++) {
+                let f = input.files[i];
+                papers.push({
+                    name: f.webkitRelativePath || f.name,
+                    size: (f.size / 1024).toFixed(1) + " KB",
+                    type: fileMode === 'folder' ? 'Folder Item' : 'File'
+                });
             }
             localStorage.setItem("localPapersList", JSON.stringify(papers));
-            fileInput.value = "";
+            input.value = "";
             renderPapersList();
-            alert("Paper added successfully!");
+            alert("Resources uploaded successfully!");
         }
+
         function deletePaper(index) {
+            if (!isAdmin) return;
             let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
             papers.splice(index, 1);
             localStorage.setItem("localPapersList", JSON.stringify(papers));
             renderPapersList();
         }
+
         function renderPapersList() {
             let container = document.getElementById("papersListContainer");
             let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
             if (papers.length === 0) {
-                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No papers added yet.</p>";
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No resources uploaded yet.</p>";
                 return;
             }
             container.innerHTML = papers.map((p, i) => `
                 <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <span style="font-weight: 600; font-size: 0.9rem;">📄 ${p.name}</span>
+                        <span style="font-weight: 600; font-size: 0.9rem;">📁 ${p.name}</span>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">Size: ${p.size}</div>
                     </div>
-                    <button onclick="deletePaper(${i})" style="border-color: var(--progress-alert); color: var(--progress-alert); background: transparent; padding: 4px 8px; font-size: 0.8rem;">Delete</button>
+                    ${isAdmin ? `<button class="icon-btn delete-icon" onclick="deletePaper(${i})" title="Delete File">🗑</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Chapter-wise Test Series Logic (Admin Uploads + Student Consumer View)
+        function openTestSeriesModal() {
+            toggleSidebar();
+            updateSettingsUI();
+            document.getElementById("testSeriesModal").style.display = "flex";
+            renderTestSeriesList();
+        }
+
+        function closeTestSeriesModal() {
+            document.getElementById("testSeriesModal").style.display = "none";
+        }
+
+        function toggleTestUploadType(type) {
+            if (type === 'file') {
+                document.getElementById("testFileInput").style.display = "block";
+                document.getElementById("testFolderInput").style.display = "none";
+            } else {
+                document.getElementById("testFileInput").style.display = "none";
+                document.getElementById("testFolderInput").style.display = "block";
+            }
+        }
+
+        function uploadTestSeries() {
+            if (!isAdmin) return;
+            let fileMode = document.querySelector('input[name="testUploadType"]:checked').value;
+            let input = fileMode === 'file' ? document.getElementById("testFileInput") : document.getElementById("testFolderInput");
+
+            if (input.files.length === 0) {
+                alert("Please select files or a folder to upload.");
+                return;
+            }
+
+            let testSeries = JSON.parse(localStorage.getItem("testSeriesList") || "[]");
+            for (let i = 0; i < input.files.length; i++) {
+                let f = input.files[i];
+                testSeries.push({
+                    name: f.webkitRelativePath || f.name,
+                    size: (f.size / 1024).toFixed(1) + " KB",
+                    type: fileMode === 'folder' ? 'Folder Item' : 'File'
+                });
+            }
+            localStorage.setItem("testSeriesList", JSON.stringify(testSeries));
+            input.value = "";
+            renderTestSeriesList();
+            alert("Test series uploaded successfully!");
+        }
+
+        function deleteTestSeries(index) {
+            if (!isAdmin) return;
+            let testSeries = JSON.parse(localStorage.getItem("testSeriesList") || "[]");
+            testSeries.splice(index, 1);
+            localStorage.setItem("testSeriesList", JSON.stringify(testSeries));
+            renderTestSeriesList();
+        }
+
+        function renderTestSeriesList() {
+            let container = document.getElementById("testSeriesListContainer");
+            let testSeries = JSON.parse(localStorage.getItem("testSeriesList") || "[]");
+            if (testSeries.length === 0) {
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No test series uploaded yet.</p>";
+                return;
+            }
+            container.innerHTML = testSeries.map((t, i) => `
+                <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-weight: 600; font-size: 0.9rem;">📝 ${t.name}</span>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Size: ${t.size}</div>
+                    </div>
+                    ${isAdmin ? `<button class="icon-btn delete-icon" onclick="deleteTestSeries(${i})" title="Delete Test Item">🗑</button>` : ''}
                 </div>
             `).join('');
         }
@@ -1464,8 +1637,9 @@
             settingsSidebarView.classList.remove("hidden");
         };
         document.getElementById("openAdminReviewBtn").onclick = () => {
-            if (!isAdmin) {
-                alert("Access Denied!");
+            let pass = prompt("Enter Admin Passcode to view reviews:");
+            if (pass !== "admin8910") {
+                alert("Incorrect passcode!");
                 return;
             }
             loadAdminReviews();
@@ -1477,7 +1651,7 @@
             settingsSidebarView.classList.remove("hidden");
         };
 
-        // Pomodoro Clock & Stopwatch Logic
+        // Pomodoro Clock Logic
         let clockMode = 'pomodoro';
         let timerInterval = null;
         let timeLeft = 25 * 60;
@@ -1570,7 +1744,6 @@
             document.getElementById("clockModal").style.display = "none";
         }
 
-        // Initial Load
         window.onload = () => {
             let savedTheme = localStorage.getItem("theme") || "dark";
             setTheme(savedTheme);
