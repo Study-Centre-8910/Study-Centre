@@ -66,7 +66,9 @@
             margin-bottom: 24px;
             flex-wrap: wrap;
             gap: 16px;
-            position: relative; /* लोगो की सही पोजीशनिंग के लिए */
+            position: relative; /* Container for absolute logo positioning */
+            min-height: 50px;
+            padding-right: 120px; /* Leave adequate space for top-right logo */
         }
 
         h1 {
@@ -104,16 +106,19 @@
             gap: 12px;
             align-items: center;
             flex-wrap: wrap;
-            margin-right: 60px; /* लोगो के लिए सुरक्षित जगह */
         }
 
-        /* लोगो स्टाइलिंग - टॉप राइट कॉर्नर */
+        /* Logo Styling - Top Right Corner */
         .site-logo {
-            height: 40px;
+            height: 42px;
             width: auto;
+            max-width: 100px;
+            object-fit: contain;
             position: absolute;
-            top: 0;
+            top: 50%;
             right: 0;
+            transform: translateY(-50%);
+            border-radius: 4px;
         }
 
         button {
@@ -554,13 +559,52 @@
             font-size: 0.9rem;
         }
 
+        /* Grouped Folder Tree View CSS */
+        .folder-group {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            background: var(--bg-color);
+        }
+        .folder-header {
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.03);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--accent-blue);
+        }
+        .folder-body {
+            display: none;
+            padding: 8px 12px;
+            border-top: 1px solid var(--border-color);
+        }
+        .folder-body.open {
+            display: block;
+        }
+        .file-link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--card-border);
+        }
+        .file-link-item:last-child {
+            border-bottom: none;
+        }
+
         @media (max-width: 768px) {
             body { padding: 12px; }
+            header { padding-right: 80px; }
+            .site-logo { height: 32px; }
             .stats-grid { grid-template-columns: 1fr; gap: 12px; }
             .chapter-item { flex-direction: column; align-items: flex-start; }
             .chapter-actions { width: 100%; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 8px; }
             .progress-controls { width: 100%; justify-content: space-between; }
-            .header-actions { width: 100%; justify-content: space-between; margin-right: 50px; }
+            .header-actions { width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
@@ -573,11 +617,11 @@
                 <button class="close-sidebar-btn" id="closeSidebar">&times;</button>
             </div>
             <ul class="sidebar-nav">
-                <li><a class="sidebar-nav-item" href="#" onclick="toggleSidebar()">Dashboard</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openMyTasksModal()">My Tasks</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openSamplePapersModal()">Sample Papers & Previous Year Papers</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openTestSeriesModal()">Chapter-wise Test Series</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openClockModal()">Pomodoro & Timer</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="toggleSidebar(); return false;">Dashboard</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openMyTasksModal(); return false;">My Tasks</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openSamplePapersModal(); return false;">Sample Papers & Previous Year Papers</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openTestSeriesModal(); return false;">Chapter-wise Test Series</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openClockModal(); return false;">Pomodoro & Timer</a></li>
                 <li>
                     <div class="sidebar-nav-item" id="openSettingsBtn">
                         <span>Settings</span>
@@ -723,13 +767,13 @@
                 </button>
                 <h1>Study Centre</h1>
             </div>
-            
-            <!-- लोगो को हेडर के टॉप राइट कॉर्नर पर यहां जोड़ा गया है -->
-            <img src="logo.png" alt="Study Centre Logo" class="site-logo">
 
             <div class="header-actions">
                 <button class="add-btn" onclick="addSubjectPrompt()">Add Subject</button>
             </div>
+
+            <!-- Single exact Top-Right Logo -->
+            <img src="logo.png" alt="Study Centre Logo" class="site-logo">
         </header>
 
         <div class="stats-grid">
@@ -1333,9 +1377,76 @@
             `).join('');
         }
 
-        // My Tasks Logic (Days + Target Date synchronization)
+        // My Tasks Logic
+        function addTask() {
+            let sub = document.getElementById("taskSubjectSelect").value;
+            let chap = document.getElementById("taskChapterSelect").value;
+            let titleInput = document.getElementById("newTaskInput");
+            let daysInput = document.getElementById("newTaskDays");
+            let dateInput = document.getElementById("newTaskDate");
+
+            let title = titleInput.value.trim();
+            if (!title) {
+                alert("Please enter a task title!");
+                return;
+            }
+
+            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
+            tasks.push({
+                id: Date.now(),
+                subject: sub === "CUSTOM" ? "General" : sub,
+                chapter: sub === "CUSTOM" ? null : chap,
+                title: title,
+                days: daysInput.value,
+                targetDate: dateInput.value,
+                completed: false
+            });
+            localStorage.setItem("myTasksList", JSON.stringify(tasks));
+            titleInput.value = "";
+            renderTasksList();
+        }
+
+        function toggleTaskComplete(id) {
+            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
+            let t = tasks.find(x => x.id === id);
+            if (t) {
+                t.completed = !t.completed;
+                localStorage.setItem("myTasksList", JSON.stringify(tasks));
+                renderTasksList();
+            }
+        }
+
+        function deleteTask(id) {
+            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
+            tasks = tasks.filter(t => t.id !== id);
+            localStorage.setItem("myTasksList", JSON.stringify(tasks));
+            renderTasksList();
+        }
+
+        function renderTasksList() {
+            let container = document.getElementById("tasksListContainer");
+            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
+            if (tasks.length === 0) {
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No tasks created yet.</p>";
+                return;
+            }
+            container.innerHTML = tasks.map(t => `
+                <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTaskComplete(${t.id})">
+                        <div style="${t.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
+                            <div style="font-weight: 600; font-size: 0.9rem;">${t.title}</div>
+                            <div style="font-size: 0.75rem; color: var(--accent-blue);">${t.subject} ${t.chapter ? '• ' + t.chapter : ''}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">Due Date: ${t.targetDate || 'In ' + t.days + ' Days'}</div>
+                        </div>
+                    </div>
+                    <button class="icon-btn delete-icon" onclick="deleteTask(${t.id})" title="Delete Task">🗑</button>
+                </div>
+            `).join('');
+        }
+
         function openMyTasksModal() {
-            toggleSidebar();
+            if (sidebar.classList.contains("active")) toggleSidebar();
             populateTaskSubjectDropdown();
             syncDateFromDays();
             document.getElementById("myTasksModal").style.display = "flex";
@@ -1387,142 +1498,362 @@
             document.getElementById("newTaskDate").value = targetDate.toISOString().split('T')[0];
         }
 
-        // Sidebar & UI Initialization toggle bindings
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const closeSidebar = document.getElementById('closeSidebar');
-        const openSettingsBtn = document.getElementById('openSettingsBtn');
-        const backToMainBtn = document.getElementById('backToMainBtn');
-        const mainSidebarView = document.getElementById('mainSidebarView');
-        const settingsSidebarView = document.getElementById('settingsSidebarView');
+        // Sample Papers & Test Series Upload Logic
+        function openSamplePapersModal() {
+            if (sidebar.classList.contains("active")) toggleSidebar();
+            updateSettingsUI();
+            document.getElementById("samplePapersModal").style.display = "flex";
+            renderResourceTree("localPapersList", "papersListContainer");
+        }
+
+        function closeSamplePapersModal() {
+            document.getElementById("samplePapersModal").style.display = "none";
+        }
+
+        function openTestSeriesModal() {
+            if (sidebar.classList.contains("active")) toggleSidebar();
+            updateSettingsUI();
+            document.getElementById("testSeriesModal").style.display = "flex";
+            renderResourceTree("testSeriesList", "testSeriesListContainer");
+        }
+
+        function closeTestSeriesModal() {
+            document.getElementById("testSeriesModal").style.display = "none";
+        }
+
+        function toggleUploadType(type) {
+            document.getElementById("paperFileInput").style.display = type === 'file' ? "block" : "none";
+            document.getElementById("paperFolderInput").style.display = type === 'folder' ? "block" : "none";
+        }
+
+        function toggleTestUploadType(type) {
+            document.getElementById("testFileInput").style.display = type === 'file' ? "block" : "none";
+            document.getElementById("testFolderInput").style.display = type === 'folder' ? "block" : "none";
+        }
+
+        function getBlobUrlFromFile(file) {
+            return URL.createObjectURL(file);
+        }
+
+        async function uploadPapers() {
+            if (!isAdmin) return;
+            let fileMode = document.querySelector('input[name="uploadType"]:checked').value;
+            let input = fileMode === 'file' ? document.getElementById("paperFileInput") : document.getElementById("paperFolderInput");
+
+            if (!input.files || input.files.length === 0) {
+                alert("Please select files or a folder to upload.");
+                return;
+            }
+
+            let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
+            for (let i = 0; i < input.files.length; i++) {
+                let f = input.files[i];
+                let blobUrl = getBlobUrlFromFile(f);
+                papers.push({
+                    id: Date.now() + i + Math.random(),
+                    path: f.webkitRelativePath || f.name,
+                    fileName: f.name,
+                    size: (f.size / 1024).toFixed(1) + " KB",
+                    blobUrl: blobUrl
+                });
+            }
+            try {
+                localStorage.setItem("localPapersList", JSON.stringify(papers));
+                input.value = "";
+                renderResourceTree("localPapersList", "papersListContainer");
+                alert("Resources uploaded successfully!");
+            } catch (err) {
+                alert("Storage limit reached! Please try uploading fewer files at once.");
+            }
+        }
+
+        async function uploadTestSeries() {
+            if (!isAdmin) return;
+            let fileMode = document.querySelector('input[name="testUploadType"]:checked').value;
+            let input = fileMode === 'file' ? document.getElementById("testFileInput") : document.getElementById("testFolderInput");
+
+            if (!input.files || input.files.length === 0) {
+                alert("Please select files or a folder to upload.");
+                return;
+            }
+
+            let testSeries = JSON.parse(localStorage.getItem("testSeriesList") || "[]");
+            for (let i = 0; i < input.files.length; i++) {
+                let f = input.files[i];
+                let blobUrl = getBlobUrlFromFile(f);
+                testSeries.push({
+                    id: Date.now() + i + Math.random(),
+                    path: f.webkitRelativePath || f.name,
+                    fileName: f.name,
+                    size: (f.size / 1024).toFixed(1) + " KB",
+                    blobUrl: blobUrl
+                });
+            }
+            try {
+                localStorage.setItem("testSeriesList", JSON.stringify(testSeries));
+                input.value = "";
+                renderResourceTree("testSeriesList", "testSeriesListContainer");
+                alert("Test series uploaded successfully!");
+            } catch (err) {
+                alert("Storage limit reached! Please try uploading fewer files at once.");
+            }
+        }
+
+        function deleteResource(storageKey, id, containerId) {
+            if (!isAdmin) return;
+            let items = JSON.parse(localStorage.getItem(storageKey) || "[]");
+            items = items.filter(x => x.id !== id);
+            localStorage.setItem(storageKey, JSON.stringify(items));
+            renderResourceTree(storageKey, containerId);
+        }
+
+        function renderResourceTree(storageKey, containerId) {
+            let container = document.getElementById(containerId);
+            let items = JSON.parse(localStorage.getItem(storageKey) || "[]");
+
+            if (items.length === 0) {
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No resources uploaded yet.</p>";
+                return;
+            }
+
+            let folders = {};
+            let rootFiles = [];
+
+            items.forEach(item => {
+                let parts = item.path.split('/');
+                if (parts.length > 1) {
+                    let folderName = parts[0];
+                    if (!folders[folderName]) folders[folderName] = [];
+                    folders[folderName].push(item);
+                } else {
+                    rootFiles.push(item);
+                }
+            });
+
+            let html = "";
+
+            Object.keys(folders).forEach((fName, index) => {
+                html += `
+                    <div class="folder-group">
+                        <div class="folder-header" onclick="toggleFolderView('folder_${containerId}_${index}')">
+                            <span>📁 ${fName} (${folders[fName].length} Files)</span>
+                            <span>&#9660;</span>
+                        </div>
+                        <div class="folder-body" id="folder_${containerId}_${index}">
+                            ${folders[fName].map(file => `
+                                <div class="file-link-item">
+                                    <a href="${file.blobUrl || '#'}" target="_blank" style="color: var(--text-main); text-decoration: none; font-weight: 600; font-size:0.85rem;">
+                                        📄 ${file.fileName} <small style="color:var(--text-muted);">(${file.size})</small>
+                                    </a>
+                                    ${isAdmin ? `<button class="icon-btn delete-icon" onclick="deleteResource('${storageKey}', ${file.id}, '${containerId}')" title="Delete File">🗑</button>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            rootFiles.forEach(file => {
+                html += `
+                    <div class="file-link-item" style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px;">
+                        <a href="${file.blobUrl || '#'}" target="_blank" style="color: var(--text-main); text-decoration: none; font-weight: 600; font-size:0.9rem;">
+                            📄 ${file.fileName} <small style="color:var(--text-muted);">(${file.size})</small>
+                        </a>
+                        ${isAdmin ? `<button class="icon-btn delete-icon" onclick="deleteResource('${storageKey}', ${file.id}, '${containerId}')" title="Delete File">🗑</button>` : ''}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function toggleFolderView(id) {
+            let body = document.getElementById(id);
+            if (body) {
+                body.classList.toggle("open");
+            }
+        }
+
+        // Pomodoro Clock & Stopwatch Complete Fixed Logic
+        let clockMode = 'pomodoro'; // 'pomodoro' | 'stopwatch'
+        let timerInterval = null;
+        let timeLeft = 25 * 60;
+        let stopwatchTime = 0;
+
+        function updateClockDisplay() {
+            let totalSecs = clockMode === 'pomodoro' ? timeLeft : stopwatchTime;
+            let m = Math.floor(totalSecs / 60);
+            let s = totalSecs % 60;
+            let displayElem = document.getElementById("clockDisplay");
+            if (displayElem) {
+                displayElem.textContent = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+            }
+        }
+
+        function switchClockMode(mode) {
+            pauseTimer();
+            clockMode = mode;
+            let pBtn = document.getElementById("pomodoroTabBtn");
+            let sBtn = document.getElementById("stopwatchTabBtn");
+            let title = document.getElementById("clockTitle");
+            let customContainer = document.getElementById("customTimeContainer");
+
+            if (mode === 'pomodoro') {
+                if (pBtn) pBtn.classList.add("active");
+                if (sBtn) sBtn.classList.remove("active");
+                if (title) title.textContent = "Pomodoro Clock";
+                if (customContainer) customContainer.style.display = "flex";
+            } else {
+                if (sBtn) sBtn.classList.add("active");
+                if (pBtn) pBtn.classList.remove("active");
+                if (title) title.textContent = "Stopwatch";
+                if (customContainer) customContainer.style.display = "none";
+            }
+            resetTimer();
+        }
+
+        function updateCustomTime() {
+            if (clockMode === 'pomodoro') {
+                let mins = parseInt(document.getElementById("customMinutes").value);
+                if (isNaN(mins) || mins < 1) mins = 25;
+                timeLeft = mins * 60;
+                updateClockDisplay();
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) return; // Prevent multiple running intervals
+            timerInterval = setInterval(() => {
+                if (clockMode === 'pomodoro') {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateClockDisplay();
+                    } else {
+                        pauseTimer();
+                        alert("Time's up!");
+                    }
+                } else {
+                    stopwatchTime++;
+                    updateClockDisplay();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            if (clockMode === 'pomodoro') {
+                let inputElem = document.getElementById("customMinutes");
+                let mins = inputElem ? parseInt(inputElem.value) : 25;
+                if (isNaN(mins) || mins < 1) mins = 25;
+                timeLeft = mins * 60;
+            } else {
+                stopwatchTime = 0;
+            }
+            updateClockDisplay();
+        }
+
+        function openClockModal() {
+            if (sidebar.classList.contains("active")) toggleSidebar();
+            document.getElementById("clockModal").style.display = "flex";
+            updateClockDisplay();
+        }
+
+        function closeClockModal() {
+            pauseTimer();
+            document.getElementById("clockModal").style.display = "none";
+        }
+
+        // Sidebar & UI Event Bindings
+        const sidebar = document.getElementById("sidebar");
+        const sidebarOverlay = document.getElementById("sidebarOverlay");
+        const menuToggle = document.getElementById("menuToggle");
+        const closeSidebar = document.getElementById("closeSidebar");
 
         function toggleSidebar() {
-            sidebar.classList.toggle('active');
-            sidebarOverlay.classList.toggle('active');
+            sidebar.classList.toggle("active");
+            sidebarOverlay.classList.toggle("active");
         }
 
         if (menuToggle) menuToggle.onclick = toggleSidebar;
-        if (sidebarOverlay) sidebarOverlay.onclick = toggleSidebar;
         if (closeSidebar) closeSidebar.onclick = toggleSidebar;
+        if (sidebarOverlay) sidebarOverlay.onclick = toggleSidebar;
 
-        if (openSettingsBtn) {
-            openSettingsBtn.onclick = () => {
-                mainSidebarView.classList.add('hidden');
-                settingsSidebarView.classList.remove('hidden');
-            };
-        }
+        const mainSidebarView = document.getElementById("mainSidebarView");
+        const settingsSidebarView = document.getElementById("settingsSidebarView");
+        const classSidebarView = document.getElementById("classSidebarView");
+        const themeSidebarView = document.getElementById("themeSidebarView");
+        const streamSidebarView = document.getElementById("streamSidebarView");
+        const reviewSidebarView = document.getElementById("reviewSidebarView");
+        const adminReviewSidebarView = document.getElementById("adminReviewSidebarView");
 
-        if (backToMainBtn) {
-            backToMainBtn.onclick = () => {
-                settingsSidebarView.classList.add('hidden');
-                mainSidebarView.classList.remove('hidden');
-            };
-        }
+        document.getElementById("openSettingsBtn").onclick = () => {
+            mainSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToMainBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            mainSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openClassBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            classSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsFromClassBtn").onclick = () => {
+            classSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openStreamBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            streamSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsFromStreamBtn").onclick = () => {
+            streamSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openThemeBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            themeSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsBtn").onclick = () => {
+            themeSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openReviewBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            reviewSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsFromReviewBtn").onclick = () => {
+            reviewSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openAdminReviewBtn").onclick = () => {
+            let pass = prompt("Enter Admin Passcode to view reviews:");
+            if (pass !== "admin8910") {
+                alert("Incorrect passcode!");
+                return;
+            }
+            loadAdminReviews();
+            settingsSidebarView.classList.add("hidden");
+            adminReviewSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsFromAdminBtn").onclick = () => {
+            adminReviewSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
 
-        // Sub-views navigation handlers inside settings
-        const openClassBtn = document.getElementById('openClassBtn');
-        const classSidebarView = document.getElementById('classSidebarView');
-        const backToSettingsFromClassBtn = document.getElementById('backToSettingsFromClassBtn');
-
-        if (openClassBtn) {
-            openClassBtn.onclick = () => {
-                settingsSidebarView.classList.add('hidden');
-                classSidebarView.classList.remove('hidden');
-            };
-        }
-        if (backToSettingsFromClassBtn) {
-            backToSettingsFromClassBtn.onclick = () => {
-                classSidebarView.classList.add('hidden');
-                settingsSidebarView.classList.remove('hidden');
-            };
-        }
-
-        const openStreamBtn = document.getElementById('openStreamBtn');
-        const streamSidebarView = document.getElementById('streamSidebarView');
-        const backToSettingsFromStreamBtn = document.getElementById('backToSettingsFromStreamBtn');
-
-        if (openStreamBtn) {
-            openStreamBtn.onclick = () => {
-                settingsSidebarView.classList.add('hidden');
-                streamSidebarView.classList.remove('hidden');
-            };
-        }
-        if (backToSettingsFromStreamBtn) {
-            backToSettingsFromStreamBtn.onclick = () => {
-                streamSidebarView.classList.add('hidden');
-                settingsSidebarView.classList.remove('hidden');
-            };
-        }
-
-        const openThemeBtn = document.getElementById('openThemeBtn');
-        const themeSidebarView = document.getElementById('themeSidebarView');
-        const backToSettingsBtn = document.getElementById('backToSettingsBtn');
-
-        if (openThemeBtn) {
-            openThemeBtn.onclick = () => {
-                settingsSidebarView.classList.add('hidden');
-                themeSidebarView.classList.remove('hidden');
-            };
-        }
-        if (backToSettingsBtn) {
-            backToSettingsBtn.onclick = () => {
-                themeSidebarView.classList.add('hidden');
-                settingsSidebarView.classList.remove('hidden');
-            };
-        }
-
-        const openReviewBtn = document.getElementById('openReviewBtn');
-        const reviewSidebarView = document.getElementById('reviewSidebarView');
-        const backToSettingsFromReviewBtn = document.getElementById('backToSettingsFromReviewBtn');
-
-        if (openReviewBtn) {
-            openReviewBtn.onclick = () => {
-                settingsSidebarView.classList.add('hidden');
-                reviewSidebarView.classList.remove('hidden');
-            };
-        }
-        if (backToSettingsFromReviewBtn) {
-            backToSettingsFromReviewBtn.onclick = () => {
-                reviewSidebarView.classList.add('hidden');
-                settingsSidebarView.classList.remove('hidden');
-            };
-        }
-
-        const openAdminReviewBtn = document.getElementById('openAdminReviewBtn');
-        const adminReviewSidebarView = document.getElementById('adminReviewSidebarView');
-        const backToSettingsFromAdminBtn = document.getElementById('backToSettingsFromAdminBtn');
-
-        if (openAdminReviewBtn) {
-            openAdminReviewBtn.onclick = () => {
-                loadAdminReviews();
-                settingsSidebarView.classList.add('hidden');
-                adminReviewSidebarView.classList.remove('hidden');
-            };
-        }
-        if (backToSettingsFromAdminBtn) {
-            backToSettingsFromAdminBtn.onclick = () => {
-                adminReviewSidebarView.classList.add('hidden');
-                settingsSidebarView.classList.remove('hidden');
-            };
-        }
-
-        // Modal placeholders for sample papers / test series / clock
-        function openSamplePapersModal() { toggleSidebar(); document.getElementById('samplePapersModal').style.display = 'flex'; }
-        function closeSamplePapersModal() { document.getElementById('samplePapersModal').style.display = 'none'; }
-        
-        function openTestSeriesModal() { toggleSidebar(); document.getElementById('testSeriesModal').style.display = 'flex'; }
-        function closeTestSeriesModal() { document.getElementById('testSeriesModal').style.display = 'none'; }
-
-        function openClockModal() { toggleSidebar(); document.getElementById('clockModal').style.display = 'flex'; }
-        function closeClockModal() { document.getElementById('clockModal').style.display = 'none'; }
-
-        // Initial launch setup
-        if (localStorage.getItem("theme") === "light") {
-            document.body.classList.add("light-theme");
-        }
-        updateSettingsUI();
-        renderDashboard();
+        window.onload = () => {
+            let savedTheme = localStorage.getItem("theme") || "dark";
+            setTheme(savedTheme);
+            updateSettingsUI();
+            renderDashboard();
+        };
     </script>
 </body>
 </html>
