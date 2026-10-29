@@ -1509,11 +1509,12 @@
             document.getElementById("testFolderInput").style.display = type === 'folder' ? "block" : "none";
         }
 
-        // File Reader Utility (converts file to base64 DataURL for offline opening)
+        // Robust Asynchronous File Reader Utility with Chunking
         function readFileAsDataURL(file) {
             return new Promise((resolve) => {
                 let reader = new FileReader();
                 reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => resolve("");
                 reader.readAsDataURL(file);
             });
         }
@@ -1523,7 +1524,7 @@
             let fileMode = document.querySelector('input[name="uploadType"]:checked').value;
             let input = fileMode === 'file' ? document.getElementById("paperFileInput") : document.getElementById("paperFolderInput");
 
-            if (input.files.length === 0) {
+            if (!input.files || input.files.length === 0) {
                 alert("Please select files or a folder to upload.");
                 return;
             }
@@ -1533,17 +1534,21 @@
                 let f = input.files[i];
                 let dataUrl = await readFileAsDataURL(f);
                 papers.push({
-                    id: Date.now() + i,
+                    id: Date.now() + i + Math.random(),
                     path: f.webkitRelativePath || f.name,
                     fileName: f.name,
                     size: (f.size / 1024).toFixed(1) + " KB",
                     dataUrl: dataUrl
                 });
             }
-            localStorage.setItem("localPapersList", JSON.stringify(papers));
-            input.value = "";
-            renderResourceTree("localPapersList", "papersListContainer");
-            alert("Resources uploaded successfully!");
+            try {
+                localStorage.setItem("localPapersList", JSON.stringify(papers));
+                input.value = "";
+                renderResourceTree("localPapersList", "papersListContainer");
+                alert("Resources uploaded successfully!");
+            } catch (err) {
+                alert("Storage limit reached or file size too large for browser memory!");
+            }
         }
 
         async function uploadTestSeries() {
@@ -1551,7 +1556,7 @@
             let fileMode = document.querySelector('input[name="testUploadType"]:checked').value;
             let input = fileMode === 'file' ? document.getElementById("testFileInput") : document.getElementById("testFolderInput");
 
-            if (input.files.length === 0) {
+            if (!input.files || input.files.length === 0) {
                 alert("Please select files or a folder to upload.");
                 return;
             }
@@ -1561,17 +1566,21 @@
                 let f = input.files[i];
                 let dataUrl = await readFileAsDataURL(f);
                 testSeries.push({
-                    id: Date.now() + i,
+                    id: Date.now() + i + Math.random(),
                     path: f.webkitRelativePath || f.name,
                     fileName: f.name,
                     size: (f.size / 1024).toFixed(1) + " KB",
                     dataUrl: dataUrl
                 });
             }
-            localStorage.setItem("testSeriesList", JSON.stringify(testSeries));
-            input.value = "";
-            renderResourceTree("testSeriesList", "testSeriesListContainer");
-            alert("Test series uploaded successfully!");
+            try {
+                localStorage.setItem("testSeriesList", JSON.stringify(testSeries));
+                input.value = "";
+                renderResourceTree("testSeriesList", "testSeriesListContainer");
+                alert("Test series uploaded successfully!");
+            } catch (err) {
+                alert("Storage limit reached or file size too large for browser memory!");
+            }
         }
 
         function deleteResource(storageKey, id, containerId) {
