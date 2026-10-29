@@ -346,11 +346,11 @@
             align-items: center;
             justify-content: center;
         }
-        .delete-icon { color: var(--progress-alert); }
-        .edit-icon { color: var(--text-muted); }
+        .delete-icon { color: var(--progress-alert); font-size: 1rem; font-weight: bold; }
+        .edit-icon { color: var(--text-muted); font-size: 0.9rem; }
         .edit-icon:hover { color: var(--accent-blue); }
 
-        /* Sidebar Styling */
+        /* Sidebar & Submenu Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -382,6 +382,7 @@
         .sidebar-header h2 {
             font-size: 1.2rem;
             font-weight: 700;
+            cursor: pointer;
         }
 
         .close-sidebar-btn, .back-sidebar-btn {
@@ -393,6 +394,10 @@
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+
+        .close-sidebar-btn:hover, .back-sidebar-btn:hover {
+            color: var(--text-main);
         }
 
         .sidebar-nav {
@@ -421,8 +426,13 @@
             color: var(--accent-blue);
         }
 
-        .sidebar-view { display: block; }
-        .sidebar-view.hidden { display: none; }
+        .sidebar-view {
+            display: block;
+        }
+
+        .sidebar-view.hidden {
+            display: none;
+        }
 
         .theme-options, .stream-options, .class-options {
             display: flex;
@@ -441,27 +451,74 @@
             align-items: center;
             justify-content: space-between;
             font-weight: 600;
+            transition: border-color 0.2s;
+        }
+
+        .option-card.active {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        /* Review Section in Settings */
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .feedback-form textarea {
+            width: 100%;
+            height: 100px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 6px;
+            padding: 10px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .feedback-form button {
+            background-color: var(--accent-blue);
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
         }
 
         .sidebar-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 999;
-            opacity: 0; visibility: hidden;
+            opacity: 0;
+            visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
         }
 
-        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
 
-        /* Modals */
+        /* Modal Popup (Clock & Admin Reviews) */
         .modal {
             display: none;
             position: fixed;
             z-index: 2000;
-            left: 0; top: 0; width: 100%; height: 100%;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(0,0,0,0.7);
-            justify-content: center; align-items: center;
+            justify-content: center;
+            align-items: center;
         }
 
         .modal-content {
@@ -470,16 +527,44 @@
             border-radius: 12px;
             padding: 24px;
             width: 90%;
-            max-width: 500px;
+            max-width: 450px;
+            text-align: center;
             position: relative;
         }
 
         .close-modal {
             position: absolute;
-            right: 16px; top: 16px;
+            right: 16px;
+            top: 16px;
             font-size: 1.5rem;
             cursor: pointer;
             color: var(--text-muted);
+        }
+
+        .clock-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .custom-time-container {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-time-container input {
+            width: 70px;
+            padding: 6px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
         }
 
         .clock-display {
@@ -487,33 +572,14 @@
             font-weight: 700;
             font-family: monospace;
             margin: 15px 0;
-            text-align: center;
             color: var(--accent-blue);
         }
 
-        /* Task & File Section Inputs */
-        .input-group {
-            display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; text-align: left;
+        .clock-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
         }
-        .input-group label { color: var(--text-muted); font-size: 0.85rem; }
-        .input-group input, .input-group select {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-
-        .task-card {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .task-card.completed h5 { text-decoration: line-through; opacity: 0.5; }
 
         @media (max-width: 768px) {
             body { padding: 12px; }
@@ -521,11 +587,13 @@
             .chapter-item { flex-direction: column; align-items: flex-start; }
             .chapter-actions { width: 100%; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 8px; }
             .progress-controls { width: 100%; justify-content: space-between; }
+            .header-actions { width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
 <body>
     <div class="sidebar" id="sidebar">
+        <!-- Main Sidebar View -->
         <div id="mainSidebarView" class="sidebar-view">
             <div class="sidebar-header">
                 <h2>Study Centre</h2>
@@ -533,63 +601,141 @@
             </div>
             <ul class="sidebar-nav">
                 <li><a class="sidebar-nav-item" href="#" onclick="toggleSidebar()">Dashboard</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openTasksModal()">My Tasks</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openPapersModal()">Sample & PYQ Papers</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openMyTasksModal()">My Tasks</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openSamplePapersModal()">Sample Papers & Previous Year Papers</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="alert('Chapter-wise Test Series coming soon!')">Chapter-wise Test Series</a></li>
                 <li><a class="sidebar-nav-item" href="#" onclick="openClockModal()">Pomodoro & Timer</a></li>
                 <li>
                     <div class="sidebar-nav-item" id="openSettingsBtn">
-                        <span>Settings</span><span>&rsaquo;</span>
+                        <span>Settings</span>
+                        <span>&rsaquo;</span>
                     </div>
                 </li>
             </ul>
         </div>
 
+        <!-- Settings Sidebar Sub-View -->
         <div id="settingsSidebarView" class="sidebar-view hidden">
             <div class="sidebar-header">
                 <button class="back-sidebar-btn" id="backToMainBtn">&larr; Back</button>
-                <h2>Settings</h2>
+                <h2 id="settingsTitle" onclick="handleAdminSecretClick()" title="Click 3 times for Admin" style="user-select:none;">Settings</h2>
             </div>
             <ul class="sidebar-nav">
-                <li><div class="sidebar-nav-item" id="openClassBtn"><span>Select Class (11th/12th)</span><span>&rsaquo;</span></div></li>
-                <li><div class="sidebar-nav-item" id="openStreamBtn"><span>Select Stream (PCM/PCB/PCMB)</span><span>&rsaquo;</span></div></li>
-                <li><div class="sidebar-nav-item" id="openThemeBtn"><span>My Theme</span><span>&rsaquo;</span></div></li>
-                <li style="margin-top:16px;">
-                    <button onclick="resetData()" style="width:100%; border-color:var(--progress-alert); color:var(--progress-alert); background:transparent;">Reset All Data</button>
+                <li>
+                    <div class="sidebar-nav-item" id="openClassBtn">
+                        <span>Select Class (11th / 12th)</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-nav-item" id="openStreamBtn">
+                        <span>Select Stream (PCM/PCB/PCMB)</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-nav-item" id="openThemeBtn">
+                        <span>My Theme</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-nav-item" id="openReviewBtn">
+                        <span>Submit Feedback / Review</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
+                <li id="adminReviewMenuLi" style="display:none;">
+                    <div class="sidebar-nav-item" id="openAdminReviewBtn">
+                        <span>View Reviews (Admin)</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                </li>
+                <li style="margin-top: 16px;">
+                    <button onclick="resetData()" style="width: 100%; border-color: var(--progress-alert); color: var(--progress-alert); background: transparent;">Reset All Data</button>
                 </li>
             </ul>
         </div>
 
+        <!-- Class Select Sub-View -->
         <div id="classSidebarView" class="sidebar-view hidden">
             <div class="sidebar-header">
                 <button class="back-sidebar-btn" id="backToSettingsFromClassBtn">&larr; Back</button>
                 <h2>Select Class</h2>
             </div>
             <div class="class-options">
-                <div class="option-card" onclick="setClass('11th')"><span>Class 11th</span></div>
-                <div class="option-card" onclick="setClass('12th')"><span>Class 12th</span></div>
+                <div class="option-card" id="class11Card" onclick="setClass('11th')">
+                    <span>Class 11th</span>
+                    <span id="class11Check">&#10003;</span>
+                </div>
+                <div class="option-card" id="class12Card" onclick="setClass('12th')">
+                    <span>Class 12th</span>
+                    <span id="class12Check" style="display:none;">&#10003;</span>
+                </div>
             </div>
         </div>
 
+        <!-- Stream Select Sub-View -->
         <div id="streamSidebarView" class="sidebar-view hidden">
             <div class="sidebar-header">
                 <button class="back-sidebar-btn" id="backToSettingsFromStreamBtn">&larr; Back</button>
                 <h2>Select Stream</h2>
             </div>
             <div class="stream-options">
-                <div class="option-card" onclick="setStream('PCM')"><span>PCM</span></div>
-                <div class="option-card" onclick="setStream('PCB')"><span>PCB</span></div>
-                <div class="option-card" onclick="setStream('PCMB')"><span>PCMB</span></div>
+                <div class="option-card" id="pcmStreamCard" onclick="setStream('PCM')">
+                    <span>PCM (Physics, Chemistry, Math)</span>
+                    <span id="pcmCheck">&#10003;</span>
+                </div>
+                <div class="option-card" id="pcbStreamCard" onclick="setStream('PCB')">
+                    <span>PCB (Physics, Chemistry, Biology)</span>
+                    <span id="pcbCheck" style="display:none;">&#10003;</span>
+                </div>
+                <div class="option-card" id="pcmbStreamCard" onclick="setStream('PCMB')">
+                    <span>PCMB (Physics, Chemistry, Math, Bio)</span>
+                    <span id="pcmbCheck" style="display:none;">&#10003;</span>
+                </div>
             </div>
         </div>
 
+        <!-- My Theme Sub-View -->
         <div id="themeSidebarView" class="sidebar-view hidden">
             <div class="sidebar-header">
                 <button class="back-sidebar-btn" id="backToSettingsBtn">&larr; Back</button>
                 <h2>My Theme</h2>
             </div>
             <div class="theme-options">
-                <div class="option-card" onclick="setTheme('dark')"><span>Dark Theme</span></div>
-                <div class="option-card" onclick="setTheme('light')"><span>Light Theme</span></div>
+                <div class="option-card" id="darkThemeCard" onclick="setTheme('dark')">
+                    <span>Dark Theme (Default)</span>
+                    <span id="darkCheck">&#10003;</span>
+                </div>
+                <div class="option-card" id="lightThemeCard" onclick="setTheme('light')">
+                    <span>Light Theme</span>
+                    <span id="lightCheck" style="display:none;">&#10003;</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Sub-View -->
+        <div id="reviewSidebarView" class="sidebar-view hidden">
+            <div class="sidebar-header">
+                <button class="back-sidebar-btn" id="backToSettingsFromReviewBtn">&larr; Back</button>
+                <h2>Feedback & Review</h2>
+            </div>
+            <div class="feedback-form">
+                <p style="color:var(--text-muted); font-size:0.85rem;">Write your feedback or review for the Admin:</p>
+                <textarea id="userReviewText" placeholder="Write your review here..."></textarea>
+                <button onclick="submitReview()">Submit Review</button>
+            </div>
+        </div>
+
+        <!-- Admin Reviews View -->
+        <div id="adminReviewSidebarView" class="sidebar-view hidden">
+            <div class="sidebar-header">
+                <button class="back-sidebar-btn" id="backToSettingsFromAdminBtn">&larr; Back</button>
+                <h2>Admin Reviews</h2>
+            </div>
+            <div id="adminReviewsList" style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
+                <!-- Dynamically populated -->
             </div>
         </div>
     </div>
@@ -600,7 +746,9 @@
         <header>
             <div class="header-left">
                 <button class="menu-toggle" id="menuToggle">
-                    <span></span><span></span><span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
                 <h1>Study Centre</h1>
             </div>
@@ -644,60 +792,56 @@
         </div>
     </div>
 
-    <!-- My Tasks Modal -->
-    <div class="modal" id="tasksModal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeTasksModal()">&times;</span>
-            <h2>My Target Tasks</h2>
-            <div style="margin: 16px 0;">
-                <div class="input-group">
-                    <label>Task Title / Chapter:</label>
-                    <input type="text" id="taskTitleInput" placeholder="e.g. Complete Integration Ex 7.2">
-                </div>
-                <div class="input-group">
-                    <label>Subject:</label>
-                    <input type="text" id="taskSubInput" placeholder="e.g. Mathematics">
-                </div>
-                <div class="input-group">
-                    <label>Target Days to finish:</label>
-                    <input type="number" id="taskDaysInput" value="3" min="1">
-                </div>
-                <button onclick="addTask()" style="width:100%; background:var(--accent-blue); color:#000; font-weight:700;">+ Add Task</button>
-            </div>
-            <div id="taskListContainer" style="max-height: 250px; overflow-y: auto;"></div>
-        </div>
-    </div>
-
-    <!-- Sample & PYQ Local Storage Modal -->
-    <div class="modal" id="papersModal">
-        <div class="modal-content" style="max-width: 600px;">
-            <span class="close-modal" onclick="closePapersModal()">&times;</span>
-            <h2>Sample & Previous Year Papers</h2>
-            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">Add local PDFs/Docs directly to your app folder view.</p>
-            
-            <div class="input-group">
-                <label>Upload/Add Local File Link or Name:</label>
-                <input type="file" id="paperFileInput" accept=".pdf,.doc,.docx">
-            </div>
-            
-            <div id="papersList" style="margin-top:16px; max-height:220px; overflow-y:auto; text-align:left;"></div>
-        </div>
-    </div>
-
-    <!-- Pomodoro Modal -->
+    <!-- Clock Modal -->
     <div class="modal" id="clockModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeClockModal()">&times;</span>
             <h2 id="clockTitle">Pomodoro Clock</h2>
-            <div style="margin:12px 0; display:flex; justify-content:center; gap:8px;">
-                <label style="color:var(--text-muted);">Minutes:</label>
-                <input type="number" id="customMinutes" value="25" min="1" max="180" onchange="updateCustomTime()" style="width:60px; text-align:center;">
+            <div class="clock-tabs">
+                <button id="pomodoroTabBtn" class="tab-btn active" onclick="switchClockMode('pomodoro')">Pomodoro</button>
+                <button id="stopwatchTabBtn" class="tab-btn" onclick="switchClockMode('stopwatch')">Stopwatch</button>
+            </div>
+            <div class="custom-time-container" id="customTimeContainer">
+                <label for="customMinutes" style="font-size: 0.85rem; color: var(--text-muted);">Set Minutes:</label>
+                <input type="number" id="customMinutes" value="25" min="1" max="180" onchange="updateCustomTime()">
             </div>
             <div class="clock-display" id="clockDisplay">25:00</div>
-            <div style="display:flex; justify-content:center; gap:8px;">
+            <div class="clock-controls">
                 <button onclick="startTimer()">Start</button>
                 <button onclick="pauseTimer()">Pause</button>
                 <button onclick="resetTimer()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Tasks Modal -->
+    <div class="modal" id="myTasksModal">
+        <div class="modal-content" style="max-width: 550px; text-align: left;">
+            <span class="close-modal" onclick="closeMyTasksModal()">&times;</span>
+            <h2>My Tasks</h2>
+            <div style="margin: 16px 0; display: flex; gap: 8px;">
+                <input type="text" id="newTaskInput" placeholder="Enter task (e.g. Complete Physics Chapter 1)" style="flex: 1; padding: 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px;">
+                <input type="number" id="newTaskDays" placeholder="Days" min="1" max="30" value="3" style="width: 70px; padding: 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px;">
+                <button onclick="addTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700;">Add</button>
+            </div>
+            <div id="tasksListContainer" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                <!-- Tasks will load here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Sample Papers Modal -->
+    <div class="modal" id="samplePapersModal">
+        <div class="modal-content" style="max-width: 550px; text-align: left;">
+            <span class="close-modal" onclick="closeSamplePapersModal()">&times;</span>
+            <h2>Sample & Previous Year Papers</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">Upload or link local PDF files/folders for offline practice:</p>
+            <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 10px;">
+                <input type="file" id="localPaperFile" multiple accept=".pdf,.doc,.docx" style="padding: 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px;">
+                <button onclick="uploadLocalPaper()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700;">Save / Add Paper</button>
+            </div>
+            <div id="papersListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                <!-- Papers list -->
             </div>
         </div>
     </div>
@@ -745,6 +889,7 @@
         let currentSubjectTab = "";
         let userClass = localStorage.getItem("userClass") || "12th";
         let userStream = localStorage.getItem("userStream") || "PCM";
+        let isAdmin = localStorage.getItem("isAdmin") === "true";
 
         function getDefaultCurriculum() {
             return (CURRICULUM_DATA[userClass] && CURRICULUM_DATA[userClass][userStream]) || CURRICULUM_DATA["12th"]["PCM"];
@@ -752,12 +897,22 @@
 
         function getCurriculum() {
             let data = localStorage.getItem("customCurriculum");
-            return data ? JSON.parse(data) : getDefaultCurriculum();
+            if (data) return JSON.parse(data);
+            return getDefaultCurriculum();
         }
 
-        function saveCurriculum(data) { localStorage.setItem("customCurriculum", JSON.stringify(data)); }
-        function getStoredProgress() { let data = localStorage.getItem("detailedStudyProgress"); return data ? JSON.parse(data) : {}; }
-        function saveStoredProgress(data) { localStorage.setItem("detailedStudyProgress", JSON.stringify(data)); }
+        function saveCurriculum(data) {
+            localStorage.setItem("customCurriculum", JSON.stringify(data));
+        }
+
+        function getStoredProgress() {
+            let data = localStorage.getItem("detailedStudyProgress");
+            return data ? JSON.parse(data) : {};
+        }
+
+        function saveStoredProgress(data) {
+            localStorage.setItem("detailedStudyProgress", JSON.stringify(data));
+        }
 
         function initData() {
             let curriculum = getCurriculum();
@@ -790,19 +945,25 @@
         function editChapter(subject, oldChapName) {
             let newName = prompt("Edit Chapter Name:", oldChapName);
             if (newName && newName.trim() !== "" && newName !== oldChapName) {
+                newName = newName.trim();
                 let curriculum = getCurriculum();
                 let chapList = curriculum[subject].chapters;
                 let index = chapList.indexOf(oldChapName);
-                if (index > -1) { chapList[index] = newName.trim(); saveCurriculum(curriculum); }
+                if (index > -1) { chapList[index] = newName; saveCurriculum(curriculum); }
+                let progress = getStoredProgress();
+                if (progress[subject] && progress[subject][oldChapName]) { progress[subject][newName] = progress[subject][oldChapName]; delete progress[subject][oldChapName]; saveStoredProgress(progress); }
                 renderDashboard();
             }
         }
 
         function deleteChapter(subject, chapter) {
-            if (confirm(`Delete "${chapter}"?`)) {
+            if (confirm(`Are you sure you want to delete "${chapter}"?`)) {
                 let curriculum = getCurriculum();
-                let index = curriculum[subject].chapters.indexOf(chapter);
-                if (index > -1) { curriculum[subject].chapters.splice(index, 1); saveCurriculum(curriculum); }
+                let chapList = curriculum[subject].chapters;
+                let index = chapList.indexOf(chapter);
+                if (index > -1) { chapList.splice(index, 1); saveCurriculum(curriculum); }
+                let progress = getStoredProgress();
+                if (progress[subject]) { delete progress[subject][chapter]; saveStoredProgress(progress); }
                 renderDashboard();
             }
         }
@@ -827,6 +988,8 @@
                     saveCurriculum(curriculum);
                     currentSubjectTab = name;
                     renderDashboard();
+                } else {
+                    alert("Subject already exists!");
                 }
             }
         }
@@ -836,20 +999,66 @@
             if (newName && newName.trim() !== "" && newName !== oldSubName) {
                 newName = newName.trim();
                 let curriculum = getCurriculum();
-                curriculum[newName] = curriculum[oldSubName];
-                delete curriculum[oldSubName];
-                saveCurriculum(curriculum);
-                currentSubjectTab = newName;
+                if (curriculum[newName]) {
+                    alert("Subject with this name already exists!");
+                    return;
+                }
+                let newCurriculum = {};
+                Object.keys(curriculum).forEach(sub => {
+                    if (sub === oldSubName) {
+                        newCurriculum[newName] = curriculum[oldSubName];
+                    } else {
+                        newCurriculum[sub] = curriculum[sub];
+                    }
+                });
+                saveCurriculum(newCurriculum);
+
+                let progress = getStoredProgress();
+                if (progress[oldSubName]) {
+                    progress[newName] = progress[oldSubName];
+                    delete progress[oldSubName];
+                    saveStoredProgress(progress);
+                }
+
+                if (currentSubjectTab === oldSubName) {
+                    currentSubjectTab = newName;
+                }
                 renderDashboard();
             }
         }
 
         function deleteSubject(subName) {
-            if (confirm(`Delete subject "${subName}"?`)) {
+            let defaultCurr = getDefaultCurriculum();
+            let isDefaultSub = defaultCurr[subName] !== undefined;
+
+            let msg = isDefaultSub 
+                ? `Are you sure you want to delete default subject "${subName}" for this stream?` 
+                : `Are you sure you want to delete custom subject "${subName}"?`;
+
+            if (confirm(msg)) {
                 let curriculum = getCurriculum();
                 delete curriculum[subName];
                 saveCurriculum(curriculum);
-                currentSubjectTab = Object.keys(curriculum)[0] || "";
+
+                let progress = getStoredProgress();
+                if (progress[subName]) {
+                    delete progress[subName];
+                    saveStoredProgress(progress);
+                }
+
+                let remainingSubs = Object.keys(curriculum);
+                currentSubjectTab = remainingSubs.length > 0 ? remainingSubs[0] : "";
+                renderDashboard();
+            }
+        }
+
+        function resetData() {
+            if (confirm("Reset all study progress and custom curriculum data?")) {
+                localStorage.removeItem("customCurriculum");
+                localStorage.removeItem("detailedStudyProgress");
+                localStorage.removeItem("myTasksList");
+                localStorage.removeItem("localPapersList");
+                currentSubjectTab = "";
                 renderDashboard();
             }
         }
@@ -861,12 +1070,19 @@
 
             let streamBadge = document.getElementById("streamBadge");
             streamBadge.textContent = `${userClass} - ${userStream}`;
+            streamBadge.className = `stream-indicator stream-${userStream.toLowerCase()}`;
 
             let overviewGrid = document.getElementById("subjectsOverviewGrid");
             overviewGrid.innerHTML = "";
 
-            let totalChaptersAll = 0, totalTheorySum = 0, totalPracticeSum = 0;
+            let totalChaptersAll = 0;
+            let totalTheorySum = 0;
+            let totalPracticeSum = 0;
+
             let subKeys = Object.keys(curriculum);
+            if (subKeys.length > 0 && (!currentSubjectTab || !curriculum[currentSubjectTab])) {
+                currentSubjectTab = subKeys[0];
+            }
 
             subKeys.forEach(subName => {
                 let chapList = curriculum[subName].chapters;
@@ -876,18 +1092,25 @@
                 let subjectTheorySum = 0;
                 chapList.forEach(chapName => {
                     if (progress[subName] && progress[subName][chapName]) {
-                        subjectTheorySum += progress[subName][chapName].theory || 0;
-                        totalTheorySum += progress[subName][chapName].theory || 0;
-                        totalPracticeSum += progress[subName][chapName].practice || 0;
+                        let theoryVal = progress[subName][chapName].theory || 0;
+                        let practiceVal = progress[subName][chapName].practice || 0;
+                        subjectTheorySum += theoryVal;
+                        totalTheorySum += theoryVal;
+                        totalPracticeSum += practiceVal;
                     }
                 });
 
                 let subPercentage = totalCount > 0 ? Math.round(subjectTheorySum / totalCount) : 0;
+                let cardColor = subName === "Chemistry" ? "var(--progress-red)" : (curriculum[subName].color || "var(--accent-blue)");
+
                 let card = document.createElement("div");
                 card.className = "subject-card";
                 card.innerHTML = `
-                    <div class="subject-info"><h4>${subName}</h4><p>${totalCount} Chapters</p></div>
-                    <div class="subject-stat" style="color:${curriculum[subName].color || 'var(--accent-blue)'}">${subPercentage}%</div>
+                    <div class="subject-info">
+                        <h4>${subName}</h4>
+                        <p>${totalCount} Chapters</p>
+                    </div>
+                    <div class="subject-stat" style="color: ${cardColor}">${subPercentage}%</div>
                 `;
                 overviewGrid.appendChild(card);
             });
@@ -899,6 +1122,7 @@
             let practicePercentage = totalChaptersAll > 0 ? Math.round(totalPracticeSum / totalChaptersAll) : 0;
             document.getElementById("practiceProgressText").textContent = practicePercentage + "%";
             document.getElementById("practiceProgressBar").style.width = practicePercentage + "%";
+            document.getElementById("practiceSubText").textContent = `${totalChaptersAll} Exercises Total`;
 
             let tabsContainer = document.getElementById("subjectTabsContainer");
             tabsContainer.innerHTML = "";
@@ -915,20 +1139,36 @@
 
             if (currentSubjectTab && curriculum[currentSubjectTab]) {
                 let activeSubjectData = curriculum[currentSubjectTab];
+                let escapedSubName = currentSubjectTab.replace(/'/g, "\\'");
                 let isCustomSub = activeSubjectData.customAdded === true;
 
                 let sectionDiv = document.createElement("div");
                 sectionDiv.className = "section-breakdown";
+                
+                let titleLeftHtml = `
+                    <div class="section-title-left">
+                        <span>${currentSubjectTab}</span>
+                `;
+                
+                if (isCustomSub) {
+                    titleLeftHtml += `
+                        <button class="icon-btn edit-icon" title="Edit Subject Name" onclick="editSubjectName('${escapedSubName}')">✎</button>
+                    `;
+                }
+
+                titleLeftHtml += `</div>`;
+
+                let titleRightHtml = `
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button class="add-btn" onclick="addChapter('${escapedSubName}')">+ Add Chapter</button>
+                        <button class="add-btn" style="border-color: var(--progress-alert); color: var(--progress-alert);" onclick="deleteSubject('${escapedSubName}')">Delete Subject</button>
+                    </div>
+                `;
+
                 sectionDiv.innerHTML = `
                     <div class="section-title">
-                        <div class="section-title-left">
-                            <span>${currentSubjectTab}</span>
-                            ${isCustomSub ? `<button class="icon-btn edit-icon" onclick="editSubjectName('${currentSubjectTab}')">✏️</button>` : ''}
-                        </div>
-                        <div>
-                            <button class="add-btn" onclick="addChapter('${currentSubjectTab}')">+ Add Chapter</button>
-                            <button class="add-btn" style="color:var(--progress-alert);" onclick="deleteSubject('${currentSubjectTab}')">Delete Subject</button>
-                        </div>
+                        ${titleLeftHtml}
+                        ${titleRightHtml}
                     </div>
                 `;
 
@@ -936,25 +1176,35 @@
                 ul.className = "chapter-list";
 
                 activeSubjectData.chapters.forEach(chapName => {
-                    let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) || { theory: 0, practice: 0 };
+                    let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) ? progress[currentSubjectTab][chapName] : { theory: 0, practice: 0 };
+                    let theoryVal = chapProgress.theory !== undefined ? chapProgress.theory : 0;
+                    let practiceVal = chapProgress.practice !== undefined ? chapProgress.practice : 0;
+                    let escapedChapName = chapName.replace(/'/g, "\\'");
+
                     let li = document.createElement("li");
                     li.className = "chapter-item";
                     li.innerHTML = `
                         <div class="chapter-info">
                             <div class="chapter-title-container">
                                 <h5>${chapName}</h5>
-                                <button class="icon-btn edit-icon" onclick="editChapter('${currentSubjectTab}', '${chapName}')">✏️</button>
-                                <button class="icon-btn delete-icon" onclick="deleteChapter('${currentSubjectTab}', '${chapName}')">🗑️</button>
+                                <button class="icon-btn edit-icon" title="Edit Chapter Name" onclick="editChapter('${escapedSubName}', '${escapedChapName}')">✎</button>
+                                <button class="icon-btn delete-icon" title="Delete Chapter" onclick="deleteChapter('${escapedSubName}', '${escapedChapName}')">×</button>
                             </div>
                         </div>
                         <div class="chapter-actions">
                             <div class="progress-controls">
-                                <span style="color:var(--text-muted); font-size:0.8rem;">Theory:</span>
-                                ${[0, 25, 50, 75, 100].map(val => `<button class="btn-radio ${chapProgress.theory === val ? 'active' : ''}" onclick="updateProgress('${currentSubjectTab}', '${chapName}', 'theory', ${val})">${val}%</button>`).join('')}
+                                <span style="color:var(--text-muted); font-size:0.8rem; width:45px;">Theory:</span>
+                                ${[0, 25, 50, 75, 100].map(val => `
+                                    <button class="btn-radio ${theoryVal === val ? "active" : ""}" 
+                                            onclick="updateProgress('${escapedSubName}', '${escapedChapName}', 'theory', ${val})">${val}%</button>
+                                `).join('')}
                             </div>
                             <div class="progress-controls">
-                                <span style="color:var(--text-muted); font-size:0.8rem;">Practice:</span>
-                                ${[0, 25, 50, 75, 100].map(val => `<button class="btn-radio ${chapProgress.practice === val ? 'active' : ''}" onclick="updateProgress('${currentSubjectTab}', '${chapName}', 'practice', ${val})">${val}%</button>`).join('')}
+                                <span style="color:var(--text-muted); font-size:0.8rem; width:55px;">Practice:</span>
+                                ${[0, 25, 50, 75, 100].map(val => `
+                                    <button class="btn-radio ${practiceVal === val ? "active" : ""}" 
+                                            onclick="updateProgress('${escapedSubName}', '${escapedChapName}', 'practice', ${val})">${val}%</button>
+                                `).join('')}
                             </div>
                         </div>
                     `;
@@ -966,132 +1216,365 @@
             }
         }
 
-        // My Tasks System
-        function getTasks() { return JSON.parse(localStorage.getItem("userMyTasks") || "[]"); }
-        function saveTasks(t) { localStorage.setItem("userMyTasks", JSON.stringify(t)); }
+        // Class, Stream & Theme Logic with ticks
+        function setClass(cls) {
+            userClass = cls;
+            localStorage.setItem("userClass", cls);
+            localStorage.removeItem("customCurriculum");
+            currentSubjectTab = "";
+            updateSettingsUI();
+            renderDashboard();
+        }
 
+        function setStream(stream) {
+            userStream = stream;
+            localStorage.setItem("userStream", stream);
+            localStorage.removeItem("customCurriculum");
+            currentSubjectTab = "";
+            updateSettingsUI();
+            renderDashboard();
+        }
+
+        function updateSettingsUI() {
+            document.getElementById("class11Check").style.display = userClass === "11th" ? "inline" : "none";
+            document.getElementById("class12Check").style.display = userClass === "12th" ? "inline" : "none";
+
+            document.getElementById("pcmCheck").style.display = userStream === "PCM" ? "inline" : "none";
+            document.getElementById("pcbCheck").style.display = userStream === "PCB" ? "inline" : "none";
+            document.getElementById("pcmbCheck").style.display = userStream === "PCMB" ? "inline" : "none";
+
+            let savedTheme = localStorage.getItem("theme") || "dark";
+            document.getElementById("lightCheck").style.display = savedTheme === "light" ? "inline" : "none";
+            document.getElementById("darkCheck").style.display = savedTheme === "dark" ? "inline" : "none";
+
+            document.getElementById("adminReviewMenuLi").style.display = isAdmin ? "block" : "none";
+        }
+
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+            }
+            localStorage.setItem("theme", theme);
+            updateSettingsUI();
+        }
+
+        // Admin Secret Trigger
+        let adminClickCount = 0;
+        function handleAdminSecretClick() {
+            adminClickCount++;
+            if (adminClickCount >= 3) {
+                adminClickCount = 0;
+                let pass = prompt("Enter Admin Passcode/Email token:");
+                if (pass === "admin123" || pass === "admin") {
+                    isAdmin = true;
+                    localStorage.setItem("isAdmin", "true");
+                    updateSettingsUI();
+                    alert("Admin mode activated successfully!");
+                } else {
+                    alert("Incorrect token.");
+                }
+            }
+        }
+
+        // Reviews / Feedback Logic
+        function submitReview() {
+            let text = document.getElementById("userReviewText").value;
+            if (!text || text.trim() === "") {
+                alert("Please enter a review before submitting.");
+                return;
+            }
+            let reviews = JSON.parse(localStorage.getItem("adminReviews") || "[]");
+            reviews.push({ text: text.trim(), time: new Date().toLocaleString() });
+            localStorage.setItem("adminReviews", JSON.stringify(reviews));
+            document.getElementById("userReviewText").value = "";
+            alert("Review submitted successfully!");
+        }
+
+        function loadAdminReviews() {
+            let list = document.getElementById("adminReviewsList");
+            let reviews = JSON.parse(localStorage.getItem("adminReviews") || "[]");
+            if (reviews.length === 0) {
+                list.innerHTML = "<p style='color:var(--text-muted);'>No reviews submitted yet.</p>";
+                return;
+            }
+            list.innerHTML = reviews.map(r => `
+                <div style="background:var(--bg-color); border:1px solid var(--border-color); padding:10px; border-radius:6px;">
+                    <p style="font-size:0.9rem;">${r.text}</p>
+                    <small style="color:var(--text-muted); font-size:0.75rem;">${r.time}</small>
+                </div>
+            `).join('');
+        }
+
+        // My Tasks Logic
+        function openMyTasksModal() {
+            toggleSidebar();
+            document.getElementById("myTasksModal").style.display = "flex";
+            renderTasksList();
+        }
+        function closeMyTasksModal() {
+            document.getElementById("myTasksModal").style.display = "none";
+        }
         function addTask() {
-            let title = document.getElementById("taskTitleInput").value;
-            let sub = document.getElementById("taskSubInput").value;
-            let days = document.getElementById("taskDaysInput").value;
-            if(!title) return;
-
-            let tasks = getTasks();
-            tasks.push({ id: Date.now(), title, subject: sub, days, done: false });
-            saveTasks(tasks);
-            document.getElementById("taskTitleInput").value = "";
-            renderTasks();
+            let input = document.getElementById("newTaskInput");
+            let daysInput = document.getElementById("newTaskDays");
+            let text = input.value.trim();
+            let days = daysInput.value;
+            if (!text) return;
+            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
+            tasks.push({ text, days, completed: false });
+            localStorage.setItem("myTasksList", JSON.stringify(tasks));
+            input.value = "";
+            renderTasksList();
         }
-
-        function toggleTask(id) {
-            let tasks = getTasks();
-            let task = tasks.find(t => t.id === id);
-            if(task) { task.done = !task.done; saveTasks(tasks); renderTasks(); }
+        function deleteTask(index) {
+            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
+            tasks.splice(index, 1);
+            localStorage.setItem("myTasksList", JSON.stringify(tasks));
+            renderTasksList();
         }
-
-        function deleteTask(id) {
-            let tasks = getTasks().filter(t => t.id !== id);
-            saveTasks(tasks);
-            renderTasks();
-        }
-
-        function renderTasks() {
-            let tasks = getTasks();
-            let container = document.getElementById("taskListContainer");
-            container.innerHTML = tasks.length === 0 ? "<p style='color:var(--text-muted); text-align:center;'>No active tasks!</p>" : "";
-            
-            tasks.forEach(t => {
-                let div = document.createElement("div");
-                div.className = `task-card ${t.done ? 'completed' : ''}`;
-                div.innerHTML = `
+        function renderTasksList() {
+            let container = document.getElementById("tasksListContainer");
+            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
+            if (tasks.length === 0) {
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No tasks added yet.</p>";
+                return;
+            }
+            container.innerHTML = tasks.map((t, i) => `
+                <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <h5 style="cursor:pointer;" onclick="toggleTask(${t.id})">${t.done ? '✅' : '⏳'} ${t.title}</h5>
-                        <small style="color:var(--text-muted);">${t.subject ? t.subject + ' • ' : ''}${t.days} Days Goal</small>
+                        <span style="font-weight: 600; font-size: 0.95rem;">${t.text}</span>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Target: Within ${t.days} days</div>
                     </div>
-                    <button class="icon-btn delete-icon" onclick="deleteTask(${t.id})">🗑️</button>
-                `;
-                container.appendChild(div);
-            });
+                    <button onclick="deleteTask(${i})" style="border-color: var(--progress-alert); color: var(--progress-alert); background: transparent; padding: 4px 8px; font-size: 0.8rem;">Delete</button>
+                </div>
+            `).join('');
         }
 
-        function openTasksModal() { toggleSidebar(); document.getElementById("tasksModal").style.display = "flex"; renderTasks(); }
-        function closeTasksModal() { document.getElementById("tasksModal").style.display = "none"; }
-
-        // Local Files / Sample Papers
-        document.getElementById("paperFileInput").addEventListener("change", function(e) {
-            let file = e.target.files[0];
-            if(!file) return;
-            let filesArr = JSON.parse(localStorage.getItem("userLocalFiles") || "[]");
-            filesArr.push({ name: file.name, date: new Date().toLocaleDateString() });
-            localStorage.setItem("userLocalFiles", JSON.stringify(filesArr));
+        // Sample Papers Local Folder Logic
+        function openSamplePapersModal() {
+            toggleSidebar();
+            document.getElementById("samplePapersModal").style.display = "flex";
             renderPapersList();
-        });
-
+        }
+        function closeSamplePapersModal() {
+            document.getElementById("samplePapersModal").style.display = "none";
+        }
+        function uploadLocalPaper() {
+            let fileInput = document.getElementById("localPaperFile");
+            if (fileInput.files.length === 0) {
+                alert("Please select at least one file.");
+                return;
+            }
+            let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
+            for (let i = 0; i < fileInput.files.length; i++) {
+                papers.push({ name: fileInput.files[i].name, size: (fileInput.files[i].size / 1024).toFixed(1) + " KB" });
+            }
+            localStorage.setItem("localPapersList", JSON.stringify(papers));
+            fileInput.value = "";
+            renderPapersList();
+            alert("Paper added successfully!");
+        }
+        function deletePaper(index) {
+            let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
+            papers.splice(index, 1);
+            localStorage.setItem("localPapersList", JSON.stringify(papers));
+            renderPapersList();
+        }
         function renderPapersList() {
-            let filesArr = JSON.parse(localStorage.getItem("userLocalFiles") || "[]");
-            let container = document.getElementById("papersList");
-            container.innerHTML = filesArr.length === 0 ? "<p style='color:var(--text-muted);'>No local sample papers added yet.</p>" : "";
-            filesArr.forEach((f, index) => {
-                let div = document.createElement("div");
-                div.style.cssText = "background:var(--bg-color); border:1px solid var(--border-color); padding:10px; border-radius:6px; margin-bottom:8px; display:flex; justify-content:space-between;";
-                div.innerHTML = `<span>📄 ${f.name} <small style="color:var(--text-muted);">(${f.date})</small></span>
-                <button class="icon-btn delete-icon" onclick="removeFile(${index})">🗑️</button>`;
-                container.appendChild(div);
-            });
+            let container = document.getElementById("papersListContainer");
+            let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
+            if (papers.length === 0) {
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No papers added yet.</p>";
+                return;
+            }
+            container.innerHTML = papers.map((p, i) => `
+                <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-weight: 600; font-size: 0.9rem;">📄 ${p.name}</span>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Size: ${p.size}</div>
+                    </div>
+                    <button onclick="deletePaper(${i})" style="border-color: var(--progress-alert); color: var(--progress-alert); background: transparent; padding: 4px 8px; font-size: 0.8rem;">Delete</button>
+                </div>
+            `).join('');
         }
 
-        function removeFile(index) {
-            let filesArr = JSON.parse(localStorage.getItem("userLocalFiles") || "[]");
-            filesArr.splice(index, 1);
-            localStorage.setItem("userLocalFiles", JSON.stringify(filesArr));
-            renderPapersList();
-        }
-
-        function openPapersModal() { toggleSidebar(); document.getElementById("papersModal").style.display = "flex"; renderPapersList(); }
-        function closePapersModal() { document.getElementById("papersModal").style.display = "none"; }
-
-        // Sidebar Controls
+        // Sidebar Navigation
         const sidebar = document.getElementById("sidebar");
         const sidebarOverlay = document.getElementById("sidebarOverlay");
-        function toggleSidebar() { sidebar.classList.toggle("active"); sidebarOverlay.classList.toggle("active"); }
+        const menuToggle = document.getElementById("menuToggle");
+        const closeSidebar = document.getElementById("closeSidebar");
 
-        document.getElementById("menuToggle").onclick = toggleSidebar;
-        document.getElementById("closeSidebar").onclick = toggleSidebar;
+        function toggleSidebar() {
+            sidebar.classList.toggle("active");
+            sidebarOverlay.classList.toggle("active");
+        }
+
+        menuToggle.onclick = toggleSidebar;
+        closeSidebar.onclick = toggleSidebar;
         sidebarOverlay.onclick = toggleSidebar;
 
-        document.getElementById("openSettingsBtn").onclick = () => { document.getElementById("mainSidebarView").classList.add("hidden"); document.getElementById("settingsSidebarView").classList.remove("hidden"); };
-        document.getElementById("backToMainBtn").onclick = () => { document.getElementById("settingsSidebarView").classList.add("hidden"); document.getElementById("mainSidebarView").classList.remove("hidden"); };
+        const mainSidebarView = document.getElementById("mainSidebarView");
+        const settingsSidebarView = document.getElementById("settingsSidebarView");
+        const classSidebarView = document.getElementById("classSidebarView");
+        const themeSidebarView = document.getElementById("themeSidebarView");
+        const streamSidebarView = document.getElementById("streamSidebarView");
+        const reviewSidebarView = document.getElementById("reviewSidebarView");
+        const adminReviewSidebarView = document.getElementById("adminReviewSidebarView");
 
-        document.getElementById("openClassBtn").onclick = () => { document.getElementById("settingsSidebarView").classList.add("hidden"); document.getElementById("classSidebarView").classList.remove("hidden"); };
-        document.getElementById("backToSettingsFromClassBtn").onclick = () => { document.getElementById("classSidebarView").classList.add("hidden"); document.getElementById("settingsSidebarView").classList.remove("hidden"); };
+        document.getElementById("openSettingsBtn").onclick = () => {
+            mainSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToMainBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            mainSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openClassBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            classSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsFromClassBtn").onclick = () => {
+            classSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openStreamBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            streamSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsFromStreamBtn").onclick = () => {
+            streamSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openThemeBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            themeSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsBtn").onclick = () => {
+            themeSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openReviewBtn").onclick = () => {
+            settingsSidebarView.classList.add("hidden");
+            reviewSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsFromReviewBtn").onclick = () => {
+            reviewSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("openAdminReviewBtn").onclick = () => {
+            if (!isAdmin) {
+                alert("Access Denied!");
+                return;
+            }
+            loadAdminReviews();
+            settingsSidebarView.classList.add("hidden");
+            adminReviewSidebarView.classList.remove("hidden");
+        };
+        document.getElementById("backToSettingsFromAdminBtn").onclick = () => {
+            adminReviewSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.remove("hidden");
+        };
 
-        document.getElementById("openStreamBtn").onclick = () => { document.getElementById("settingsSidebarView").classList.add("hidden"); document.getElementById("streamSidebarView").classList.remove("hidden"); };
-        document.getElementById("backToSettingsFromStreamBtn").onclick = () => { document.getElementById("streamSidebarView").classList.add("hidden"); document.getElementById("settingsSidebarView").classList.remove("hidden"); };
+        // Pomodoro Clock & Stopwatch Logic
+        let clockMode = 'pomodoro';
+        let timerInterval = null;
+        let timeLeft = 25 * 60;
+        let stopwatchTime = 0;
 
-        document.getElementById("openThemeBtn").onclick = () => { document.getElementById("settingsSidebarView").classList.add("hidden"); document.getElementById("themeSidebarView").classList.remove("hidden"); };
-        document.getElementById("backToSettingsBtn").onclick = () => { document.getElementById("themeSidebarView").classList.add("hidden"); document.getElementById("settingsSidebarView").classList.remove("hidden"); };
-
-        function setClass(c) { userClass = c; localStorage.setItem("userClass", c); localStorage.removeItem("customCurriculum"); currentSubjectTab = ""; renderDashboard(); }
-        function setStream(s) { userStream = s; localStorage.setItem("userStream", s); localStorage.removeItem("customCurriculum"); currentSubjectTab = ""; renderDashboard(); }
-        function setTheme(t) { if(t==='light') document.body.classList.add('light-theme'); else document.body.classList.remove('light-theme'); localStorage.setItem("theme", t); }
-        function resetData() { if(confirm("Reset all data?")) { localStorage.clear(); location.reload(); } }
-
-        // Timer
-        let timerInterval = null, timeLeft = 25 * 60;
         function updateClockDisplay() {
-            let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+            let totalSecs = clockMode === 'pomodoro' ? timeLeft : stopwatchTime;
+            let m = Math.floor(totalSecs / 60);
+            let s = totalSecs % 60;
             document.getElementById("clockDisplay").textContent = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
         }
-        function updateCustomTime() { timeLeft = (parseInt(document.getElementById("customMinutes").value) || 25) * 60; updateClockDisplay(); }
-        function startTimer() { if (!timerInterval) timerInterval = setInterval(() => { if (timeLeft > 0) { timeLeft--; updateClockDisplay(); } else clearInterval(timerInterval); }, 1000); }
-        function pauseTimer() { clearInterval(timerInterval); timerInterval = null; }
-        function resetTimer() { pauseTimer(); updateCustomTime(); }
-        function openClockModal() { toggleSidebar(); document.getElementById("clockModal").style.display = "flex"; }
-        function closeClockModal() { pauseTimer(); document.getElementById("clockModal").style.display = "none"; }
 
+        function switchClockMode(mode) {
+            pauseTimer();
+            clockMode = mode;
+            let pBtn = document.getElementById("pomodoroTabBtn");
+            let sBtn = document.getElementById("stopwatchTabBtn");
+            let title = document.getElementById("clockTitle");
+            let customContainer = document.getElementById("customTimeContainer");
+
+            if (mode === 'pomodoro') {
+                pBtn.classList.add("active");
+                sBtn.classList.remove("active");
+                title.textContent = "Pomodoro Clock";
+                customContainer.style.display = "flex";
+            } else {
+                sBtn.classList.add("active");
+                pBtn.classList.remove("active");
+                title.textContent = "Stopwatch";
+                customContainer.style.display = "none";
+            }
+            resetTimer();
+        }
+
+        function updateCustomTime() {
+            if (clockMode === 'pomodoro') {
+                let mins = parseInt(document.getElementById("customMinutes").value);
+                if (isNaN(mins) || mins < 1) mins = 25;
+                timeLeft = mins * 60;
+                updateClockDisplay();
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+            timerInterval = setInterval(() => {
+                if (clockMode === 'pomodoro') {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateClockDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        alert("Time's up!");
+                    }
+                } else {
+                    stopwatchTime++;
+                    updateClockDisplay();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            if (clockMode === 'pomodoro') {
+                let mins = parseInt(document.getElementById("customMinutes").value);
+                if (isNaN(mins) || mins < 1) mins = 25;
+                timeLeft = mins * 60;
+            } else {
+                stopwatchTime = 0;
+            }
+            updateClockDisplay();
+        }
+
+        function openClockModal() {
+            toggleSidebar();
+            document.getElementById("clockModal").style.display = "flex";
+            updateClockDisplay();
+        }
+
+        function closeClockModal() {
+            pauseTimer();
+            document.getElementById("clockModal").style.display = "none";
+        }
+
+        // Initial Load
         window.onload = () => {
-            let savedTheme = localStorage.getItem("theme");
-            if (savedTheme) setTheme(savedTheme);
+            let savedTheme = localStorage.getItem("theme") || "dark";
+            setTheme(savedTheme);
+            updateSettingsUI();
             renderDashboard();
         };
     </script>
