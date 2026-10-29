@@ -543,6 +543,43 @@
             font-size: 0.9rem;
         }
 
+        /* Grouped Folder Tree View CSS */
+        .folder-group {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            background: var(--bg-color);
+        }
+        .folder-header {
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.03);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--accent-blue);
+        }
+        .folder-body {
+            display: none;
+            padding: 8px 12px;
+            border-top: 1px solid var(--border-color);
+        }
+        .folder-body.open {
+            display: block;
+        }
+        .file-link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--card-border);
+        }
+        .file-link-item:last-child {
+            border-bottom: none;
+        }
+
         @media (max-width: 768px) {
             body { padding: 12px; }
             .stats-grid { grid-template-columns: 1fr; gap: 12px; }
@@ -797,10 +834,14 @@
                 <div style="display: flex; gap: 10px;">
                     <div class="form-group" style="flex:1; margin-bottom:0;">
                         <label>Target Days:</label>
-                        <input type="number" id="newTaskDays" min="1" max="60" value="3" class="form-control">
+                        <input type="number" id="newTaskDays" min="1" max="60" value="3" class="form-control" onchange="syncDateFromDays()">
                     </div>
-                    <button onclick="addTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 0 20px; border-radius: 6px; font-weight: 700; align-self: flex-end; height: 38px;">Add Task</button>
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label>Target Date:</label>
+                        <input type="date" id="newTaskDate" class="form-control">
+                    </div>
                 </div>
+                <button onclick="addTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: 700; margin-top:4px;">Add Task</button>
             </div>
             <div id="tasksListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
@@ -824,7 +865,7 @@
                 <button onclick="uploadPapers()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; width: 100%;">Upload Resource</button>
             </div>
 
-            <div id="papersListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;"></div>
+            <div id="papersListContainer" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;"></div>
         </div>
     </div>
 
@@ -846,7 +887,7 @@
                 <button onclick="uploadTestSeries()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; width: 100%;">Upload Test Series</button>
             </div>
 
-            <div id="testSeriesListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;"></div>
+            <div id="testSeriesListContainer" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;"></div>
         </div>
     </div>
 
@@ -1221,7 +1262,7 @@
             }
         }
 
-        // Class, Stream & Theme Logic
+        // Settings Navigation
         function setClass(cls) {
             userClass = cls;
             localStorage.setItem("userClass", cls);
@@ -1314,10 +1355,11 @@
             `).join('');
         }
 
-        // My Tasks Logic (With Subject/Chapter Filters)
+        // My Tasks Logic (Days + Target Date synchronization)
         function openMyTasksModal() {
             toggleSidebar();
             populateTaskSubjectDropdown();
+            syncDateFromDays();
             document.getElementById("myTasksModal").style.display = "flex";
             renderTasksList();
         }
@@ -1360,15 +1402,21 @@
             }
         }
 
+        function syncDateFromDays() {
+            let days = parseInt(document.getElementById("newTaskDays").value) || 1;
+            let targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + days);
+            document.getElementById("newTaskDate").value = targetDate.toISOString().split('T')[0];
+        }
+
         function addTask() {
             let sub = document.getElementById("taskSubjectSelect").value;
             let chap = document.getElementById("taskChapterSelect").value;
             let titleInput = document.getElementById("newTaskInput");
             let daysInput = document.getElementById("newTaskDays");
+            let dateInput = document.getElementById("newTaskDate");
 
             let title = titleInput.value.trim();
-            let days = daysInput.value;
-
             if (!title) {
                 alert("Please enter a task title!");
                 return;
@@ -1380,7 +1428,8 @@
                 subject: sub === "CUSTOM" ? "General" : sub,
                 chapter: sub === "CUSTOM" ? null : chap,
                 title: title,
-                days: days,
+                days: daysInput.value,
+                targetDate: dateInput.value,
                 completed: false
             });
             localStorage.setItem("myTasksList", JSON.stringify(tasks));
@@ -1419,7 +1468,7 @@
                         <div style="${t.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
                             <div style="font-weight: 600; font-size: 0.9rem;">${t.title}</div>
                             <div style="font-size: 0.75rem; color: var(--accent-blue);">${t.subject} ${t.chapter ? '• ' + t.chapter : ''}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted);">Deadline: Within ${t.days} Days</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">Due Date: ${t.targetDate || 'In ' + t.days + ' Days'}</div>
                         </div>
                     </div>
                     <button class="icon-btn delete-icon" onclick="deleteTask(${t.id})" title="Delete Task">🗑</button>
@@ -1427,29 +1476,49 @@
             `).join('');
         }
 
-        // Sample Papers Logic (Admin Folder / File Upload Support)
+        // Folder Hierarchy Helper & File Reader (Sample Papers & Test Series)
         function openSamplePapersModal() {
             toggleSidebar();
             updateSettingsUI();
             document.getElementById("samplePapersModal").style.display = "flex";
-            renderPapersList();
+            renderResourceTree("localPapersList", "papersListContainer");
         }
 
         function closeSamplePapersModal() {
             document.getElementById("samplePapersModal").style.display = "none";
         }
 
-        function toggleUploadType(type) {
-            if (type === 'file') {
-                document.getElementById("paperFileInput").style.display = "block";
-                document.getElementById("paperFolderInput").style.display = "none";
-            } else {
-                document.getElementById("paperFileInput").style.display = "none";
-                document.getElementById("paperFolderInput").style.display = "block";
-            }
+        function openTestSeriesModal() {
+            toggleSidebar();
+            updateSettingsUI();
+            document.getElementById("testSeriesModal").style.display = "flex";
+            renderResourceTree("testSeriesList", "testSeriesListContainer");
         }
 
-        function uploadPapers() {
+        function closeTestSeriesModal() {
+            document.getElementById("testSeriesModal").style.display = "none";
+        }
+
+        function toggleUploadType(type) {
+            document.getElementById("paperFileInput").style.display = type === 'file' ? "block" : "none";
+            document.getElementById("paperFolderInput").style.display = type === 'folder' ? "block" : "none";
+        }
+
+        function toggleTestUploadType(type) {
+            document.getElementById("testFileInput").style.display = type === 'file' ? "block" : "none";
+            document.getElementById("testFolderInput").style.display = type === 'folder' ? "block" : "none";
+        }
+
+        // File Reader Utility (converts file to base64 DataURL for offline opening)
+        function readFileAsDataURL(file) {
+            return new Promise((resolve) => {
+                let reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function uploadPapers() {
             if (!isAdmin) return;
             let fileMode = document.querySelector('input[name="uploadType"]:checked').value;
             let input = fileMode === 'file' ? document.getElementById("paperFileInput") : document.getElementById("paperFolderInput");
@@ -1462,67 +1531,22 @@
             let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
             for (let i = 0; i < input.files.length; i++) {
                 let f = input.files[i];
+                let dataUrl = await readFileAsDataURL(f);
                 papers.push({
-                    name: f.webkitRelativePath || f.name,
+                    id: Date.now() + i,
+                    path: f.webkitRelativePath || f.name,
+                    fileName: f.name,
                     size: (f.size / 1024).toFixed(1) + " KB",
-                    type: fileMode === 'folder' ? 'Folder Item' : 'File'
+                    dataUrl: dataUrl
                 });
             }
             localStorage.setItem("localPapersList", JSON.stringify(papers));
             input.value = "";
-            renderPapersList();
+            renderResourceTree("localPapersList", "papersListContainer");
             alert("Resources uploaded successfully!");
         }
 
-        function deletePaper(index) {
-            if (!isAdmin) return;
-            let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
-            papers.splice(index, 1);
-            localStorage.setItem("localPapersList", JSON.stringify(papers));
-            renderPapersList();
-        }
-
-        function renderPapersList() {
-            let container = document.getElementById("papersListContainer");
-            let papers = JSON.parse(localStorage.getItem("localPapersList") || "[]");
-            if (papers.length === 0) {
-                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No resources uploaded yet.</p>";
-                return;
-            }
-            container.innerHTML = papers.map((p, i) => `
-                <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <span style="font-weight: 600; font-size: 0.9rem;">📁 ${p.name}</span>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">Size: ${p.size}</div>
-                    </div>
-                    ${isAdmin ? `<button class="icon-btn delete-icon" onclick="deletePaper(${i})" title="Delete File">🗑</button>` : ''}
-                </div>
-            `).join('');
-        }
-
-        // Chapter-wise Test Series Logic (Admin Uploads + Student Consumer View)
-        function openTestSeriesModal() {
-            toggleSidebar();
-            updateSettingsUI();
-            document.getElementById("testSeriesModal").style.display = "flex";
-            renderTestSeriesList();
-        }
-
-        function closeTestSeriesModal() {
-            document.getElementById("testSeriesModal").style.display = "none";
-        }
-
-        function toggleTestUploadType(type) {
-            if (type === 'file') {
-                document.getElementById("testFileInput").style.display = "block";
-                document.getElementById("testFolderInput").style.display = "none";
-            } else {
-                document.getElementById("testFileInput").style.display = "none";
-                document.getElementById("testFolderInput").style.display = "block";
-            }
-        }
-
-        function uploadTestSeries() {
+        async function uploadTestSeries() {
             if (!isAdmin) return;
             let fileMode = document.querySelector('input[name="testUploadType"]:checked').value;
             let input = fileMode === 'file' ? document.getElementById("testFileInput") : document.getElementById("testFolderInput");
@@ -1535,45 +1559,98 @@
             let testSeries = JSON.parse(localStorage.getItem("testSeriesList") || "[]");
             for (let i = 0; i < input.files.length; i++) {
                 let f = input.files[i];
+                let dataUrl = await readFileAsDataURL(f);
                 testSeries.push({
-                    name: f.webkitRelativePath || f.name,
+                    id: Date.now() + i,
+                    path: f.webkitRelativePath || f.name,
+                    fileName: f.name,
                     size: (f.size / 1024).toFixed(1) + " KB",
-                    type: fileMode === 'folder' ? 'Folder Item' : 'File'
+                    dataUrl: dataUrl
                 });
             }
             localStorage.setItem("testSeriesList", JSON.stringify(testSeries));
             input.value = "";
-            renderTestSeriesList();
+            renderResourceTree("testSeriesList", "testSeriesListContainer");
             alert("Test series uploaded successfully!");
         }
 
-        function deleteTestSeries(index) {
+        function deleteResource(storageKey, id, containerId) {
             if (!isAdmin) return;
-            let testSeries = JSON.parse(localStorage.getItem("testSeriesList") || "[]");
-            testSeries.splice(index, 1);
-            localStorage.setItem("testSeriesList", JSON.stringify(testSeries));
-            renderTestSeriesList();
+            let items = JSON.parse(localStorage.getItem(storageKey) || "[]");
+            items = items.filter(x => x.id !== id);
+            localStorage.setItem(storageKey, JSON.stringify(items));
+            renderResourceTree(storageKey, containerId);
         }
 
-        function renderTestSeriesList() {
-            let container = document.getElementById("testSeriesListContainer");
-            let testSeries = JSON.parse(localStorage.getItem("testSeriesList") || "[]");
-            if (testSeries.length === 0) {
-                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No test series uploaded yet.</p>";
+        // Folder Grouping Renderer
+        function renderResourceTree(storageKey, containerId) {
+            let container = document.getElementById(containerId);
+            let items = JSON.parse(localStorage.getItem(storageKey) || "[]");
+
+            if (items.length === 0) {
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No resources uploaded yet.</p>";
                 return;
             }
-            container.innerHTML = testSeries.map((t, i) => `
-                <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <span style="font-weight: 600; font-size: 0.9rem;">📝 ${t.name}</span>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">Size: ${t.size}</div>
+
+            let folders = {};
+            let rootFiles = [];
+
+            items.forEach(item => {
+                let parts = item.path.split('/');
+                if (parts.length > 1) {
+                    let folderName = parts[0];
+                    if (!folders[folderName]) folders[folderName] = [];
+                    folders[folderName].push(item);
+                } else {
+                    rootFiles.push(item);
+                }
+            });
+
+            let html = "";
+
+            Object.keys(folders).forEach((fName, index) => {
+                html += `
+                    <div class="folder-group">
+                        <div class="folder-header" onclick="toggleFolderView('folder_${containerId}_${index}')">
+                            <span>📁 ${fName} (${folders[fName].length} Files)</span>
+                            <span>&#9660;</span>
+                        </div>
+                        <div class="folder-body" id="folder_${containerId}_${index}">
+                            ${folders[fName].map(file => `
+                                <div class="file-link-item">
+                                    <a href="${file.dataUrl}" target="_blank" style="color: var(--text-main); text-decoration: none; font-weight: 600; font-size:0.85rem;">
+                                        📄 ${file.fileName} <small style="color:var(--text-muted);">(${file.size})</small>
+                                    </a>
+                                    ${isAdmin ? `<button class="icon-btn delete-icon" onclick="deleteResource('${storageKey}', ${file.id}, '${containerId}')" title="Delete File">🗑</button>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
-                    ${isAdmin ? `<button class="icon-btn delete-icon" onclick="deleteTestSeries(${i})" title="Delete Test Item">🗑</button>` : ''}
-                </div>
-            `).join('');
+                `;
+            });
+
+            rootFiles.forEach(file => {
+                html += `
+                    <div class="file-link-item" style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px;">
+                        <a href="${file.dataUrl}" target="_blank" style="color: var(--text-main); text-decoration: none; font-weight: 600; font-size:0.9rem;">
+                            📄 ${file.fileName} <small style="color:var(--text-muted);">(${file.size})</small>
+                        </a>
+                        ${isAdmin ? `<button class="icon-btn delete-icon" onclick="deleteResource('${storageKey}', ${file.id}, '${containerId}')" title="Delete File">🗑</button>` : ''}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
-        // Sidebar Navigation
+        function toggleFolderView(id) {
+            let body = document.getElementById(id);
+            if (body) {
+                body.classList.toggle("open");
+            }
+        }
+
+        // Sidebar Navigation Controls
         const sidebar = document.getElementById("sidebar");
         const sidebarOverlay = document.getElementById("sidebarOverlay");
         const menuToggle = document.getElementById("menuToggle");
