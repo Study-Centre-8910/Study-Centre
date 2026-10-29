@@ -110,12 +110,12 @@
 
         /* Logo Styling - Top Right Corner */
         .site-logo {
-            height: 40px;
+            height: 42px;
             width: auto;
             max-width: 100px;
             object-fit: contain;
             position: absolute;
-            top: 25%;
+            top: 50%;
             right: 0;
             transform: translateY(-50%);
             border-radius: 4px;
@@ -596,6 +596,32 @@
             border-bottom: none;
         }
 
+        /* Chapter Item Header Styling */
+        .chapter-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            width: 100%;
+        }
+        .chapter-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+            min-width: 0;
+        }
+        .chapter-actions-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
         @media (max-width: 768px) {
             body { padding: 12px; }
             header { padding-right: 80px; }
@@ -974,7 +1000,8 @@
 
         function getStoredProgress() {
             let data = localStorage.getItem("detailedStudyProgress");
-            return data ? JSON.parse(data) : {};
+            if (data) return JSON.parse(data);
+            return {};
         }
 
         function saveStoredProgress(data) {
@@ -984,16 +1011,11 @@
         function initData() {
             let curriculum = getCurriculum();
             let progress = getStoredProgress();
-
-            if (!currentSubjectTab || !curriculum[currentSubjectTab]) {
-                currentSubjectTab = Object.keys(curriculum)[0] || "";
-            }
-
-            Object.keys(curriculum).forEach(subName => {
-                if (!progress[subName]) progress[subName] = {};
-                curriculum[subName].chapters.forEach(chapName => {
-                    if (!progress[subName][chapName]) {
-                        progress[subName][chapName] = { theory: 0, practice: 0 };
+            Object.keys(curriculum).forEach(sub => {
+                if (!progress[sub]) progress[sub] = {};
+                curriculum[sub].chapters.forEach(chap => {
+                    if (!progress[sub][chap]) {
+                        progress[sub][chap] = { theory: 0, practice: 0 };
                     }
                 });
             });
@@ -1243,23 +1265,29 @@
                 let ul = document.createElement("ul");
                 ul.className = "chapter-list";
 
-                activeSubjectData.chapters.forEach(chapName => {
-                    let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) ? progress[currentSubjectTab][chapName] : { theory: 0, practice: 0 };
-                    let theoryVal = chapProgress.theory !== undefined ? chapProgress.theory : 0;
-                    let practiceVal = chapProgress.practice !== undefined ? chapProgress.practice : 0;
+                activeSubjectData.chapters.forEach((chapName, chapIdx) => {
                     let escapedChapName = chapName.replace(/'/g, "\\'");
+                    let chapProgress = (progress[currentSubjectTab] && progress[currentSubjectTab][chapName]) || { theory: 0, practice: 0 };
+                    let theoryVal = chapProgress.theory || 0;
+                    let practiceVal = chapProgress.practice || 0;
 
                     let li = document.createElement("li");
                     li.className = "chapter-item";
+                    li.style.flexDirection = "column";
+                    li.style.alignItems = "stretch";
+
                     li.innerHTML = `
-                        <div class="chapter-info">
-                            <div class="chapter-title-container">
-                                <h5>${chapName}</h5>
-                                <button class="icon-btn edit-icon" title="Edit Chapter Name" onclick="editChapter('${escapedSubName}', '${escapedChapName}')">✎</button>
-                                <button class="icon-btn delete-icon" title="Delete Chapter" onclick="deleteChapter('${escapedSubName}', '${escapedChapName}')">🗑</button>
+                        <div class="chapter-item-header">
+                            <div class="chapter-title-group">
+                                <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: var(--card-border); padding: 2px 6px; border-radius: 4px;">Ch ${chapIdx + 1}</span>
+                                <h5 style="margin:0; font-size: 1rem; font-weight: 600;">${chapName}</h5>
+                            </div>
+                            <div class="chapter-actions-right">
+                                <button class="icon-btn edit-icon" onclick="editChapter('${escapedSubName}', '${escapedChapName}')" title="Edit Chapter">✎</button>
+                                <button class="icon-btn delete-icon" onclick="deleteChapter('${escapedSubName}', '${escapedChapName}')" title="Delete Chapter">🗑</button>
                             </div>
                         </div>
-                        <div class="chapter-actions">
+                        <div class="chapter-actions" style="margin-top: 8px; justify-content: space-between; width: 100%;">
                             <div class="progress-controls">
                                 <span style="color:var(--text-muted); font-size:0.8rem; width:45px;">Theory:</span>
                                 ${[0, 25, 50, 75, 100].map(val => `
