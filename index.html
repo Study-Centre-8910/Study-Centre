@@ -866,7 +866,29 @@
                 </div>
             </div>
         </div>
+<!-- Dashboard View me Insert karein -->
+<div id="currentTaskCard" class="card" style="display: none; margin-bottom: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px;">
+    <div>
+      <span style="font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px;">Current Task</span>
+      <h3 id="currentTaskTitle" style="margin: 5px 0 0 0; font-size: 18px; font-weight: 600;"></h3>
+      <p id="currentTaskDates" style="margin: 5px 0 0 0; font-size: 13px; color: #aaa;"></p>
+    </div>
+    <div>
+      <input type="checkbox" id="currentTaskCheckbox" onchange="completeCurrentTask()" style="width: 20px; height: 20px; cursor: pointer;">
+    </div>
+  </div>
+</div>
 
+<!-- My Tasks Modal/Section Input Form -->
+<div class="task-input-group">
+  <input type="text" id="taskTitleInput" placeholder="Task ka naam likhein...">
+  <label>Start Date:</label>
+  <input type="date" id="taskStartDateInput">
+  <label>Target Date:</label>
+  <input type="date" id="taskTargetDateInput">
+  <button onclick="addNewTask()">Add Task</button>
+</div>
         <h2>Subject Overview Cards</h2>
         <div class="subjects-overview" id="subjectsOverviewGrid"></div>
 
@@ -1971,6 +1993,97 @@
             updateSettingsUI();
             renderDashboard();
         };
+        // Tasks Data Array Structure
+let tasks = JSON.parse(localStorage.getItem('myTasks')) || [];
+
+// 1. Naya Task Add karne ka Function
+function addNewTask() {
+  const title = document.getElementById('taskTitleInput').value.trim();
+  const startDate = document.getElementById('taskStartDateInput').value;
+  const targetDate = document.getElementById('taskTargetDateInput').value;
+
+  if (!title || !startDate || !targetDate) {
+    alert("Kripya sabhi fields (Task Name, Start Date, Target Date) bharein!");
+    return;
+  }
+
+  const newTask = {
+    id: Date.now(),
+    title: title,
+    startDate: startDate,
+    targetDate: targetDate,
+    completed: false
+  };
+
+  tasks.push(newTask);
+  saveAndRefresh();
+  
+  // Reset Inputs
+  document.getElementById('taskTitleInput').value = '';
+  document.getElementById('taskStartDateInput').value = '';
+  document.getElementById('taskTargetDateInput').value = '';
+}
+
+// 2. Dashboard par sabse closest pending task dikhane ka logic
+function renderCurrentTask() {
+  const currentTaskCard = document.getElementById('currentTaskCard');
+  
+  // Sirf woh tasks jo complete nahi hue hain
+  const pendingTasks = tasks.filter(task => !task.completed);
+
+  if (pendingTasks.length === 0) {
+    currentTaskCard.style.display = 'none';
+    return;
+  }
+
+  // Target Date ke hisaab se sort karke sabse nazdeeki task pehle layeint
+  pendingTasks.sort((a, b) => new Date(a.targetDate) - new Date(b.targetDate));
+
+  const closestTask = pendingTasks[0];
+
+  // Start Date aur Target Date ke beech ke dino ki ginti (Total Days)
+  const start = new Date(closestTask.startDate);
+  const target = new Date(closestTask.targetDate);
+  const diffTime = Math.abs(target - start);
+  const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Including start day
+
+  // UI update
+  document.getElementById('currentTaskTitle').innerText = closestTask.title;
+  document.getElementById('currentTaskDates').innerText = 
+    `Target: ${totalDays} Days (${closestTask.startDate} to ${closestTask.targetDate})`;
+  
+  const checkbox = document.getElementById('currentTaskCheckbox');
+  checkbox.checked = false;
+  checkbox.setAttribute('data-id', closestTask.id);
+
+  currentTaskCard.style.display = 'block';
+}
+
+// 3. Current Task ko Dashboard se Complete mark karne ka Function
+function completeCurrentTask() {
+  const checkbox = document.getElementById('currentTaskCheckbox');
+  const taskId = Number(checkbox.getAttribute('data-id'));
+
+  const taskIndex = tasks.findIndex(t => t.id === taskId);
+  if (taskIndex !== -1) {
+    tasks[taskIndex].completed = true;
+    saveAndRefresh(); // LocalStorage me save karega aur UI refresh karega
+  }
+}
+
+// 4. Data Save aur UI Refresh
+function saveAndRefresh() {
+  localStorage.setItem('myTasks', JSON.stringify(tasks));
+  renderCurrentTask(); // Dashboard Widget refresh
+  if (typeof renderMyTasksList === 'function') {
+    renderMyTasksList(); // Agar My Tasks page open ho toh wahan bhi list update ho
+  }
+}
+
+// App initial load par execute karein
+document.addEventListener('DOMContentLoaded', () => {
+  renderCurrentTask();
+});
     </script>
 </body>
 </html>
