@@ -961,21 +961,21 @@
                     <input type="text" id="taskTitleInput" placeholder="Enter task title..." class="form-control">
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label>Start Date (DD/MM/YYYY):</label>
-                        <div style="position:relative; width:100%;">
-                            <input type="text" id="taskStartDateDisplay" value="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color); color: var(--text-muted);">
-                            <input type="date" id="taskStartDateInput" onchange="onDateSelected('Start')" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
-                        </div>
-                    </div>
-                    <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label>Target Date (DD/MM/YYYY):</label>
-                        <div style="position:relative; width:100%;">
-                            <input type="text" id="taskTargetDateDisplay" value="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color); color: var(--text-muted);">
-                            <input type="date" id="taskTargetDateInput" onchange="onDateSelected('Target')" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
-                        </div>
-                    </div>
-                </div>
+    <div class="form-group" style="flex:1; margin-bottom:0;">
+        <label>Start Date (DD/MM/YYYY):</label>
+        <div style="position:relative; width:100%; height:38px;">
+            <input type="text" id="taskStartDateDisplay" value="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color); color: var(--text-muted); position:absolute; top:0; left:0; width:100%; height:100%; z-index:1;">
+            <input type="date" id="taskStartDateInput" onchange="onDateSelected('Start')" onclick="try{this.showPicker();}catch(e){}" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:2; cursor:pointer;">
+        </div>
+    </div>
+    <div class="form-group" style="flex:1; margin-bottom:0;">
+        <label>Target Date (DD/MM/YYYY):</label>
+        <div style="position:relative; width:100%; height:38px;">
+            <input type="text" id="taskTargetDateDisplay" value="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color); color: var(--text-muted); position:absolute; top:0; left:0; width:100%; height:100%; z-index:1;">
+            <input type="date" id="taskTargetDateInput" onchange="onDateSelected('Target')" onclick="try{this.showPicker();}catch(e){}" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:2; cursor:pointer;">
+        </div>
+    </div>
+</div>
                 <button onclick="addNewTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: 700; margin-top:4px; cursor:pointer;">Add Task</button>
             </div>
             <div id="tasksListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
