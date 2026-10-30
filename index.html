@@ -1542,7 +1542,6 @@
         function onDateSelected(type) {
             const inputVal = document.getElementById(`task${type}DateInput`).value;
             if (inputVal) {
-                // inputVal is YYYY-MM-DD from calendar picker
                 const parts = inputVal.split('-');
                 if (parts.length === 3) {
                     const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // DD/MM/YYYY
@@ -1639,7 +1638,6 @@
                 return;
             }
 
-            // Helper to parse DD/MM/YYYY for sorting comparison
             function parseDateDMY(str) {
                 if (!str) return new Date();
                 const p = str.split('/');
@@ -2044,7 +2042,6 @@
         };
         document.getElementById("backToSettingsFromStreamBtn").onclick = () => {
             streamSidebarView.classList.add("hidden");
-            settingsSidebarView.classList.add("hidden"); // fixed
             settingsSidebarView.classList.remove("hidden");
         };
         document.getElementById("openThemeBtn").onclick = () => {
