@@ -66,9 +66,9 @@
             margin-bottom: 24px;
             flex-wrap: wrap;
             gap: 16px;
-            position: relative; /* Container for absolute logo positioning */
+            position: relative;
             min-height: 50px;
-            padding-right: 120px; /* Leave adequate space for top-right logo */
+            padding-right: 120px;
         }
 
         h1 {
@@ -108,7 +108,6 @@
             flex-wrap: wrap;
         }
 
-        /* Logo Styling - Top Right Corner */
         .site-logo {
             height: 42px;
             width: auto;
@@ -512,15 +511,27 @@
             width: 90%;
             max-width: 550px;
             position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 { font-size: 1.25rem; font-weight: 700; }
 
         .close-modal {
             position: absolute;
             right: 16px;
             top: 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--text-muted);
         }
 
         .clock-display {
@@ -548,15 +559,29 @@
         .form-group label {
             font-size: 0.85rem;
             color: var(--text-muted);
+            font-weight: 600;
         }
 
         .form-control {
+            width: 100%;
             padding: 8px 12px;
             background: var(--bg-color);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             border-radius: 6px;
             font-size: 0.9rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
         }
 
         /* Grouped Folder Tree View CSS */
@@ -635,36 +660,36 @@
     </style>
 </head>
 <body>
-    <!-- Under Maintenance Overlay -->
-<div id="maintenanceOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-color, #121212); z-index:99999; justify-content:center; align-items:center; text-align:center; padding:20px; color:var(--text-main, #fff);">
-    <div style="max-width:500px; background:var(--card-bg, #1e1e1e); border:1px solid var(--card-border, #333); padding:40px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
-        <h1 style="color:var(--accent-blue, #3b82f6); margin-bottom:15px; font-size:2rem;">⚠️ Website Under Maintenance</h1>
-        <p style="color:var(--text-muted, #aaa); font-size:1rem; line-height:1.5;">हम अभी वेबसाइट पर कुछ ज़रूरी अपडेट और सुधार कर रहे हैं। कृपया कुछ समय बाद दोबारा विजिट करें।</p>
-    </div>
-</div>
 
-<script>
-    // Check Maintenance Status from maintenance.json
-    async function checkMaintenanceStatus() {
-        try {
-            let response = await fetch('maintenance.json?t=' + new Date().getTime());
-            if (response.ok) {
-                let data = await response.json();
-                if (data.maintenance === true) {
-                    // Check if admin is logged in (so admin won't be blocked)
-                    let isAdmin = localStorage.getItem("isAdmin") === "true";
-                    if (!isAdmin) {
-                        let overlay = document.getElementById("maintenanceOverlay");
-                        if (overlay) overlay.style.display = "flex";
+    <!-- Under Maintenance Overlay -->
+    <div id="maintenanceOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-color, #121212); z-index:99999; justify-content:center; align-items:center; text-align:center; padding:20px; color:var(--text-main, #fff);">
+        <div style="max-width:500px; background:var(--card-bg, #1e1e1e); border:1px solid var(--card-border, #333); padding:40px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+            <h1 style="color:var(--accent-blue, #3b82f6); margin-bottom:15px; font-size:2rem;">⚠️ Website Under Maintenance</h1>
+            <p style="color:var(--text-muted, #aaa); font-size:1rem; line-height:1.5;">हम अभी वेबसाइट पर कुछ ज़रूरी अपडेट और सुधार कर रहे हैं। कृपया कुछ समय बाद दोबारा विजिट करें।</p>
+        </div>
+    </div>
+
+    <script>
+        async function checkMaintenanceStatus() {
+            try {
+                let response = await fetch('maintenance.json?t=' + new Date().getTime());
+                if (response.ok) {
+                    let data = await response.json();
+                    if (data.maintenance === true) {
+                        let isAdmin = localStorage.getItem("isAdmin") === "true";
+                        if (!isAdmin) {
+                            let overlay = document.getElementById("maintenanceOverlay");
+                            if (overlay) overlay.style.display = "flex";
+                        }
                     }
                 }
+            } catch (e) {
+                console.error("Could not check maintenance status", e);
             }
-        } catch (e) {
-            console.error("Could not check maintenance status", e);
         }
-    }
-    checkMaintenanceStatus();
-</script>
+        checkMaintenanceStatus();
+    </script>
+
     <div class="sidebar" id="sidebar">
         <!-- Main Sidebar View -->
         <div id="mainSidebarView" class="sidebar-view">
@@ -673,11 +698,11 @@
                 <button class="close-sidebar-btn" id="closeSidebar">&times;</button>
             </div>
             <ul class="sidebar-nav">
-                <li><a class="sidebar-nav-item" href="#" onclick="toggleSidebar(); return false;">Dashboard</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openMyTasksModal(); return false;">My Tasks</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openSamplePapersModal(); return false;">Sample Papers & Previous Year Papers</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openTestSeriesModal(); return false;">Chapter-wise Test Series</a></li>
-                <li><a class="sidebar-nav-item" href="#" onclick="openClockModal(); return false;">Pomodoro & Timer</a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="toggleSidebar(); return false;">Dashboard <span>&rsaquo;</span></a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openMyTasksModal(); return false;">My Tasks <span>&rsaquo;</span></a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openSamplePapersModal(); return false;">Sample Papers & Previous Year Papers <span>&rsaquo;</span></a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openTestSeriesModal(); return false;">Chapter-wise Test Series <span>&rsaquo;</span></a></li>
+                <li><a class="sidebar-nav-item" href="#" onclick="openClockModal(); return false;">Pomodoro & Timer <span>&rsaquo;</span></a></li>
                 <li>
                     <div class="sidebar-nav-item" id="openSettingsBtn">
                         <span>Settings</span>
@@ -866,29 +891,21 @@
                 </div>
             </div>
         </div>
-<!-- Dashboard View me Insert karein -->
-<div id="currentTaskCard" class="card" style="display: none; margin-bottom: 20px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px;">
-    <div>
-      <span style="font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px;">Current Task</span>
-      <h3 id="currentTaskTitle" style="margin: 5px 0 0 0; font-size: 18px; font-weight: 600;"></h3>
-      <p id="currentTaskDates" style="margin: 5px 0 0 0; font-size: 13px; color: #aaa;"></p>
-    </div>
-    <div>
-      <input type="checkbox" id="currentTaskCheckbox" onchange="completeCurrentTask()" style="width: 20px; height: 20px; cursor: pointer;">
-    </div>
-  </div>
-</div>
 
-<!-- My Tasks Modal/Section Input Form -->
-<div class="task-input-group">
-  <input type="text" id="taskTitleInput" placeholder="Task ka naam likhein...">
-  <label>Start Date:</label>
-  <input type="date" id="taskStartDateInput">
-  <label>Target Date:</label>
-  <input type="date" id="taskTargetDateInput">
-  <button onclick="addNewTask()">Add Task</button>
-</div>
+        <!-- Current Task Widget -->
+        <div id="currentTaskCard" class="card" style="display: none; margin-bottom: 24px; background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Current Task</span>
+                    <h3 id="currentTaskTitle" style="margin: 5px 0 0 0; font-size: 1.1rem; font-weight: 600;"></h3>
+                    <p id="currentTaskDates" style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--accent-blue);"></p>
+                </div>
+                <div>
+                    <input type="checkbox" id="currentTaskCheckbox" onchange="completeCurrentTask()" style="width: 22px; height: 22px; cursor: pointer;">
+                </div>
+            </div>
+        </div>
+
         <h2>Subject Overview Cards</h2>
         <div class="subjects-overview" id="subjectsOverviewGrid"></div>
 
@@ -905,7 +922,7 @@
     <div class="modal" id="clockModal">
         <div class="modal-content" style="text-align: center;">
             <span class="close-modal" onclick="closeClockModal()">&times;</span>
-            <h2 id="clockTitle">Pomodoro Clock</h2>
+            <h2 id="clockTitle" style="margin-bottom: 16px;">Pomodoro Clock</h2>
             <div style="display: flex; justify-content: center; gap: 12px; margin: 16px 0;">
                 <button id="pomodoroTabBtn" class="tab-btn active" onclick="switchClockMode('pomodoro')">Pomodoro</button>
                 <button id="stopwatchTabBtn" class="tab-btn" onclick="switchClockMode('stopwatch')">Stopwatch</button>
@@ -923,7 +940,7 @@
         </div>
     </div>
 
-    <!-- My Tasks Modal -->
+    <!-- My Tasks Modal (Updated with Start Date instead of Target Days) -->
     <div class="modal" id="myTasksModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeMyTasksModal()">&times;</span>
@@ -941,19 +958,19 @@
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <label>Task Title / Detail:</label>
-                    <input type="text" id="newTaskInput" placeholder="Enter task title..." class="form-control">
+                    <input type="text" id="taskTitleInput" placeholder="Enter task title..." class="form-control">
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label>Target Days:</label>
-                        <input type="number" id="newTaskDays" min="1" max="60" value="3" class="form-control" onchange="syncDateFromDays()">
+                        <label>Start Date:</label>
+                        <input type="date" id="taskStartDateInput" class="form-control">
                     </div>
                     <div class="form-group" style="flex:1; margin-bottom:0;">
                         <label>Target Date:</label>
-                        <input type="date" id="newTaskDate" class="form-control">
+                        <input type="date" id="taskTargetDateInput" class="form-control">
                     </div>
                 </div>
-                <button onclick="addTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: 700; margin-top:4px;">Add Task</button>
+                <button onclick="addNewTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: 700; margin-top:4px; cursor:pointer;">Add Task</button>
             </div>
             <div id="tasksListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
@@ -974,7 +991,7 @@
                 </div>
                 <input type="file" id="paperFileInput" multiple accept=".pdf,.doc,.docx" class="form-control" style="margin-bottom: 8px;">
                 <input type="file" id="paperFolderInput" webkitdirectory directory multiple class="form-control" style="display:none; margin-bottom: 8px;">
-                <button onclick="uploadPapers()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; width: 100%;">Upload Resource</button>
+                <button onclick="uploadPapers()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; width: 100%; cursor:pointer;">Upload Resource</button>
             </div>
 
             <div id="papersListContainer" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;"></div>
@@ -996,7 +1013,7 @@
                 </div>
                 <input type="file" id="testFileInput" multiple accept=".pdf,.doc,.docx" class="form-control" style="margin-bottom: 8px;">
                 <input type="file" id="testFolderInput" webkitdirectory directory multiple class="form-control" style="display:none; margin-bottom: 8px;">
-                <button onclick="uploadTestSeries()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; width: 100%;">Upload Test Series</button>
+                <button onclick="uploadTestSeries()" style="background: var(--accent-blue); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; width: 100%; cursor:pointer;">Upload Test Series</button>
             </div>
 
             <div id="testSeriesListContainer" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;"></div>
@@ -1210,6 +1227,7 @@
                 localStorage.removeItem("customCurriculum");
                 localStorage.removeItem("detailedStudyProgress");
                 localStorage.removeItem("myTasksList");
+                localStorage.removeItem("myTasks");
                 localStorage.removeItem("localPapersList");
                 localStorage.removeItem("testSeriesList");
                 currentSubjectTab = "";
@@ -1462,12 +1480,10 @@
                 studentStream: userStream
             };
 
-            // LocalStorage Backup
             let reviews = JSON.parse(localStorage.getItem("adminReviews") || "[]");
             reviews.push(reviewObj);
             localStorage.setItem("adminReviews", JSON.stringify(reviews));
 
-            // Send to Telegram Bot if credentials exist
             let token = localStorage.getItem("telegramBotToken");
             let chatId = localStorage.getItem("telegramChatId");
 
@@ -1516,55 +1532,62 @@
             `).join('');
         }
 
-        // My Tasks Logic
-        function addTask() {
-            let sub = document.getElementById("taskSubjectSelect").value;
-            let chap = document.getElementById("taskChapterSelect").value;
-            let titleInput = document.getElementById("newTaskInput");
-            let daysInput = document.getElementById("newTaskDays");
-            let dateInput = document.getElementById("newTaskDate");
+        // Tasks Logic (Updated with Start Date & Dashboard Current Task Widget)
+        let tasks = JSON.parse(localStorage.getItem('myTasks')) || JSON.parse(localStorage.getItem('myTasksList')) || [];
 
-            let title = titleInput.value.trim();
-            if (!title) {
-                alert("Please enter a task title!");
+        function addNewTask() {
+            const title = document.getElementById('taskTitleInput').value.trim();
+            const startDate = document.getElementById('taskStartDateInput').value;
+            const targetDate = document.getElementById('taskTargetDateInput').value;
+            const sub = document.getElementById('taskSubjectSelect').value;
+            const chap = document.getElementById('taskChapterSelect').value;
+
+            if (!title || !startDate || !targetDate) {
+                alert("Kripya sabhi fields (Task Name, Start Date, Target Date) bharein!");
                 return;
             }
 
-            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
-            tasks.push({
+            const newTask = {
                 id: Date.now(),
+                title: title,
                 subject: sub === "CUSTOM" ? "General" : sub,
                 chapter: sub === "CUSTOM" ? null : chap,
-                title: title,
-                days: daysInput.value,
-                targetDate: dateInput.value,
+                startDate: startDate,
+                targetDate: targetDate,
                 completed: false
-            });
-            localStorage.setItem("myTasksList", JSON.stringify(tasks));
-            titleInput.value = "";
-            renderTasksList();
+            };
+
+            tasks.push(newTask);
+            saveAndRefresh();
+            
+            document.getElementById('taskTitleInput').value = '';
+            document.getElementById('taskStartDateInput').value = '';
+            document.getElementById('taskTargetDateInput').value = '';
         }
 
         function toggleTaskComplete(id) {
-            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
             let t = tasks.find(x => x.id === id);
             if (t) {
                 t.completed = !t.completed;
-                localStorage.setItem("myTasksList", JSON.stringify(tasks));
-                renderTasksList();
+                saveAndRefresh();
             }
         }
 
         function deleteTask(id) {
-            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
             tasks = tasks.filter(t => t.id !== id);
-            localStorage.setItem("myTasksList", JSON.stringify(tasks));
+            saveAndRefresh();
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('myTasks', JSON.stringify(tasks));
+            localStorage.setItem('myTasksList', JSON.stringify(tasks));
+            renderCurrentTask();
             renderTasksList();
         }
 
         function renderTasksList() {
             let container = document.getElementById("tasksListContainer");
-            let tasks = JSON.parse(localStorage.getItem("myTasksList") || "[]");
+            if (!container) return;
             if (tasks.length === 0) {
                 container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>No tasks created yet.</p>";
                 return;
@@ -1572,11 +1595,11 @@
             container.innerHTML = tasks.map(t => `
                 <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTaskComplete(${t.id})">
+                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTaskComplete(${t.id})" style="width:18px; height:18px; cursor:pointer;">
                         <div style="${t.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
                             <div style="font-weight: 600; font-size: 0.9rem;">${t.title}</div>
-                            <div style="font-size: 0.75rem; color: var(--accent-blue);">${t.subject} ${t.chapter ? '• ' + t.chapter : ''}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted);">Due Date: ${t.targetDate || 'In ' + t.days + ' Days'}</div>
+                            <div style="font-size: 0.75rem; color: var(--accent-blue);">${t.subject || 'General'} ${t.chapter ? '• ' + t.chapter : ''}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">Start: ${t.startDate || 'N/A'} | Target: ${t.targetDate || 'N/A'}</div>
                         </div>
                     </div>
                     <button class="icon-btn delete-icon" onclick="deleteTask(${t.id})" title="Delete Task">🗑</button>
@@ -1584,10 +1607,52 @@
             `).join('');
         }
 
+        function renderCurrentTask() {
+            const currentTaskCard = document.getElementById('currentTaskCard');
+            if (!currentTaskCard) return;
+            
+            const pendingTasks = tasks.filter(task => !task.completed);
+
+            if (pendingTasks.length === 0) {
+                currentTaskCard.style.display = 'none';
+                return;
+            }
+
+            pendingTasks.sort((a, b) => new Date(a.targetDate) - new Date(b.targetDate));
+            const closestTask = pendingTasks[0];
+
+            let dateInfo = `Target: ${closestTask.targetDate}`;
+            if (closestTask.startDate) {
+                const start = new Date(closestTask.startDate);
+                const target = new Date(closestTask.targetDate);
+                const diffTime = Math.abs(target - start);
+                const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                dateInfo = `${totalDays} Days (${closestTask.startDate} to ${closestTask.targetDate})`;
+            }
+
+            document.getElementById('currentTaskTitle').innerText = closestTask.title;
+            document.getElementById('currentTaskDates').innerText = dateInfo;
+            
+            const checkbox = document.getElementById('currentTaskCheckbox');
+            checkbox.checked = false;
+            checkbox.setAttribute('data-id', closestTask.id);
+
+            currentTaskCard.style.display = 'block';
+        }
+
+        function completeCurrentTask() {
+            const checkbox = document.getElementById('currentTaskCheckbox');
+            const taskId = Number(checkbox.getAttribute('data-id'));
+            const taskIndex = tasks.findIndex(t => t.id === taskId);
+            if (taskIndex !== -1) {
+                tasks[taskIndex].completed = true;
+                saveAndRefresh();
+            }
+        }
+
         function openMyTasksModal() {
             if (sidebar.classList.contains("active")) toggleSidebar();
             populateTaskSubjectDropdown();
-            syncDateFromDays();
             document.getElementById("myTasksModal").style.display = "flex";
             renderTasksList();
         }
@@ -1598,6 +1663,7 @@
 
         function populateTaskSubjectDropdown() {
             let select = document.getElementById("taskSubjectSelect");
+            if (!select) return;
             select.innerHTML = '<option value="CUSTOM">Custom Task (General)</option>';
             let curriculum = getCurriculum();
             Object.keys(curriculum).forEach(sub => {
@@ -1613,6 +1679,7 @@
             let sub = document.getElementById("taskSubjectSelect").value;
             let group = document.getElementById("taskChapterGroup");
             let chapSelect = document.getElementById("taskChapterSelect");
+            if (!chapSelect || !group) return;
             chapSelect.innerHTML = "";
 
             if (sub === "CUSTOM") {
@@ -1628,13 +1695,6 @@
                     chapSelect.appendChild(opt);
                 });
             }
-        }
-
-        function syncDateFromDays() {
-            let days = parseInt(document.getElementById("newTaskDays").value) || 1;
-            let targetDate = new Date();
-            targetDate.setDate(targetDate.getDate() + days);
-            document.getElementById("newTaskDate").value = targetDate.toISOString().split('T')[0];
         }
 
         // Sample Papers & Test Series Upload Logic
@@ -1748,6 +1808,7 @@
 
         function renderResourceTree(storageKey, containerId) {
             let container = document.getElementById(containerId);
+            if (!container) return;
             let items = JSON.parse(localStorage.getItem(storageKey) || "[]");
 
             if (items.length === 0) {
@@ -1814,7 +1875,7 @@
         }
 
         // Pomodoro Clock & Stopwatch Complete Fixed Logic
-        let clockMode = 'pomodoro'; // 'pomodoro' | 'stopwatch'
+        let clockMode = 'pomodoro'; 
         let timerInterval = null;
         let timeLeft = 25 * 60;
         let stopwatchTime = 0;
@@ -1861,7 +1922,7 @@
         }
 
         function startTimer() {
-            if (timerInterval) return; // Prevent multiple running intervals
+            if (timerInterval) return;
             timerInterval = setInterval(() => {
                 if (clockMode === 'pomodoro') {
                     if (timeLeft > 0) {
@@ -1992,98 +2053,8 @@
             setTheme(savedTheme);
             updateSettingsUI();
             renderDashboard();
+            renderCurrentTask();
         };
-        // Tasks Data Array Structure
-let tasks = JSON.parse(localStorage.getItem('myTasks')) || [];
-
-// 1. Naya Task Add karne ka Function
-function addNewTask() {
-  const title = document.getElementById('taskTitleInput').value.trim();
-  const startDate = document.getElementById('taskStartDateInput').value;
-  const targetDate = document.getElementById('taskTargetDateInput').value;
-
-  if (!title || !startDate || !targetDate) {
-    alert("Kripya sabhi fields (Task Name, Start Date, Target Date) bharein!");
-    return;
-  }
-
-  const newTask = {
-    id: Date.now(),
-    title: title,
-    startDate: startDate,
-    targetDate: targetDate,
-    completed: false
-  };
-
-  tasks.push(newTask);
-  saveAndRefresh();
-  
-  // Reset Inputs
-  document.getElementById('taskTitleInput').value = '';
-  document.getElementById('taskStartDateInput').value = '';
-  document.getElementById('taskTargetDateInput').value = '';
-}
-
-// 2. Dashboard par sabse closest pending task dikhane ka logic
-function renderCurrentTask() {
-  const currentTaskCard = document.getElementById('currentTaskCard');
-  
-  // Sirf woh tasks jo complete nahi hue hain
-  const pendingTasks = tasks.filter(task => !task.completed);
-
-  if (pendingTasks.length === 0) {
-    currentTaskCard.style.display = 'none';
-    return;
-  }
-
-  // Target Date ke hisaab se sort karke sabse nazdeeki task pehle layeint
-  pendingTasks.sort((a, b) => new Date(a.targetDate) - new Date(b.targetDate));
-
-  const closestTask = pendingTasks[0];
-
-  // Start Date aur Target Date ke beech ke dino ki ginti (Total Days)
-  const start = new Date(closestTask.startDate);
-  const target = new Date(closestTask.targetDate);
-  const diffTime = Math.abs(target - start);
-  const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Including start day
-
-  // UI update
-  document.getElementById('currentTaskTitle').innerText = closestTask.title;
-  document.getElementById('currentTaskDates').innerText = 
-    `Target: ${totalDays} Days (${closestTask.startDate} to ${closestTask.targetDate})`;
-  
-  const checkbox = document.getElementById('currentTaskCheckbox');
-  checkbox.checked = false;
-  checkbox.setAttribute('data-id', closestTask.id);
-
-  currentTaskCard.style.display = 'block';
-}
-
-// 3. Current Task ko Dashboard se Complete mark karne ka Function
-function completeCurrentTask() {
-  const checkbox = document.getElementById('currentTaskCheckbox');
-  const taskId = Number(checkbox.getAttribute('data-id'));
-
-  const taskIndex = tasks.findIndex(t => t.id === taskId);
-  if (taskIndex !== -1) {
-    tasks[taskIndex].completed = true;
-    saveAndRefresh(); // LocalStorage me save karega aur UI refresh karega
-  }
-}
-
-// 4. Data Save aur UI Refresh
-function saveAndRefresh() {
-  localStorage.setItem('myTasks', JSON.stringify(tasks));
-  renderCurrentTask(); // Dashboard Widget refresh
-  if (typeof renderMyTasksList === 'function') {
-    renderMyTasksList(); // Agar My Tasks page open ho toh wahan bhi list update ho
-  }
-}
-
-// App initial load par execute karein
-document.addEventListener('DOMContentLoaded', () => {
-  renderCurrentTask();
-});
     </script>
 </body>
 </html>
