@@ -940,7 +940,7 @@
         </div>
     </div>
 
-    <!-- My Tasks Modal (Updated with Start Date instead of Target Days) -->
+    <!-- My Tasks Modal (Start Date & Target Date with Date Picker) -->
     <div class="modal" id="myTasksModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeMyTasksModal()">&times;</span>
@@ -1532,7 +1532,7 @@
             `).join('');
         }
 
-        // Tasks Logic (Updated with Start Date & Dashboard Current Task Widget)
+        // Tasks Logic (Start Date & Target Date using Date Picker)
         let tasks = JSON.parse(localStorage.getItem('myTasks')) || JSON.parse(localStorage.getItem('myTasksList')) || [];
 
         function addNewTask() {
