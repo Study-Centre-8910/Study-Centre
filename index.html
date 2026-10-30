@@ -940,7 +940,7 @@
         </div>
     </div>
 
-    <!-- My Tasks Modal (Start Date & Target Date with Date Picker) -->
+    <!-- My Tasks Modal (Start Date & Target Date with Indian DD/MM/YYYY Calendar Picker) -->
     <div class="modal" id="myTasksModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeMyTasksModal()">&times;</span>
@@ -961,13 +961,19 @@
                     <input type="text" id="taskTitleInput" placeholder="Enter task title..." class="form-control">
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label>Start Date:</label>
-                        <input type="date" id="taskStartDateInput" class="form-control">
+                    <div class="form-group" style="flex:1; margin-bottom:0; position:relative;">
+                        <label>Start Date (DD/MM/YYYY):</label>
+                        <div style="display:flex; align-items:center; position:relative;">
+                            <input type="text" id="taskStartDateDisplay" placeholder="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color);">
+                            <input type="date" id="taskStartDateInput" style="position:absolute; opacity:0; width:100%; height:100%; cursor:pointer; left:0; top:0;" onchange="onDateSelected('Start')">
+                        </div>
                     </div>
-                    <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label>Target Date:</label>
-                        <input type="date" id="taskTargetDateInput" class="form-control">
+                    <div class="form-group" style="flex:1; margin-bottom:0; position:relative;">
+                        <label>Target Date (DD/MM/YYYY):</label>
+                        <div style="display:flex; align-items:center; position:relative;">
+                            <input type="text" id="taskTargetDateDisplay" placeholder="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color);">
+                            <input type="date" id="taskTargetDateInput" style="position:absolute; opacity:0; width:100%; height:100%; cursor:pointer; left:0; top:0;" onchange="onDateSelected('Target')">
+                        </div>
                     </div>
                 </div>
                 <button onclick="addNewTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: 700; margin-top:4px; cursor:pointer;">Add Task</button>
@@ -1532,13 +1538,26 @@
             `).join('');
         }
 
-        // Tasks Logic (Start Date & Target Date using Date Picker)
+        // Date selection helper for Indian DD/MM/YYYY format
+        function onDateSelected(type) {
+            const inputVal = document.getElementById(`task${type}DateInput`).value;
+            if (inputVal) {
+                // inputVal is YYYY-MM-DD from calendar picker
+                const parts = inputVal.split('-');
+                if (parts.length === 3) {
+                    const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // DD/MM/YYYY
+                    document.getElementById(`task${type}DateDisplay`).value = formatted;
+                }
+            }
+        }
+
+        // Tasks Logic
         let tasks = JSON.parse(localStorage.getItem('myTasks')) || JSON.parse(localStorage.getItem('myTasksList')) || [];
 
         function addNewTask() {
             const title = document.getElementById('taskTitleInput').value.trim();
-            const startDate = document.getElementById('taskStartDateInput').value;
-            const targetDate = document.getElementById('taskTargetDateInput').value;
+            const startDate = document.getElementById('taskStartDateDisplay').value;
+            const targetDate = document.getElementById('taskTargetDateDisplay').value;
             const sub = document.getElementById('taskSubjectSelect').value;
             const chap = document.getElementById('taskChapterSelect').value;
 
@@ -1561,6 +1580,8 @@
             saveAndRefresh();
             
             document.getElementById('taskTitleInput').value = '';
+            document.getElementById('taskStartDateDisplay').value = '';
+            document.getElementById('taskTargetDateDisplay').value = '';
             document.getElementById('taskStartDateInput').value = '';
             document.getElementById('taskTargetDateInput').value = '';
         }
@@ -1618,13 +1639,21 @@
                 return;
             }
 
-            pendingTasks.sort((a, b) => new Date(a.targetDate) - new Date(b.targetDate));
+            // Helper to parse DD/MM/YYYY for sorting comparison
+            function parseDateDMY(str) {
+                if (!str) return new Date();
+                const p = str.split('/');
+                if (p.length === 3) return new Date(`${p[2]}-${p[1]}-${p[0]}`);
+                return new Date(str);
+            }
+
+            pendingTasks.sort((a, b) => parseDateDMY(a.targetDate) - parseDateDMY(b.targetDate));
             const closestTask = pendingTasks[0];
 
             let dateInfo = `Target: ${closestTask.targetDate}`;
             if (closestTask.startDate) {
-                const start = new Date(closestTask.startDate);
-                const target = new Date(closestTask.targetDate);
+                const start = parseDateDMY(closestTask.startDate);
+                const target = parseDateDMY(closestTask.targetDate);
                 const diffTime = Math.abs(target - start);
                 const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                 dateInfo = `${totalDays} Days (${closestTask.startDate} to ${closestTask.targetDate})`;
@@ -2015,6 +2044,7 @@
         };
         document.getElementById("backToSettingsFromStreamBtn").onclick = () => {
             streamSidebarView.classList.add("hidden");
+            settingsSidebarView.classList.add("hidden"); // fixed
             settingsSidebarView.classList.remove("hidden");
         };
         document.getElementById("openThemeBtn").onclick = () => {
