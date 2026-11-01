@@ -584,7 +584,6 @@
             margin-top: 24px;
         }
 
-        /* Grouped Folder Tree View CSS */
         .folder-group {
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -621,7 +620,6 @@
             border-bottom: none;
         }
 
-        /* Chapter Item Header Styling */
         .chapter-item-header {
             display: flex;
             align-items: center;
@@ -865,7 +863,6 @@
                 <button class="add-btn" onclick="addSubjectPrompt()">Add Subject</button>
             </div>
 
-            <!-- Single exact Top-Right Logo -->
             <img src="logo.png" alt="Study Centre Logo" class="site-logo">
         </header>
 
@@ -892,7 +889,6 @@
             </div>
         </div>
 
-        <!-- Current Task Widget -->
         <div id="currentTaskCard" class="card" style="display: none; margin-bottom: 24px; background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
@@ -918,7 +914,6 @@
         </div>
     </div>
 
-    <!-- Clock Modal -->
     <div class="modal" id="clockModal">
         <div class="modal-content" style="text-align: center;">
             <span class="close-modal" onclick="closeClockModal()">&times;</span>
@@ -940,7 +935,6 @@
         </div>
     </div>
 
-    <!-- My Tasks Modal (Start Date & Target Date with Indian DD/MM/YYYY Calendar Picker) -->
     <div class="modal" id="myTasksModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeMyTasksModal()">&times;</span>
@@ -961,28 +955,27 @@
                     <input type="text" id="taskTitleInput" placeholder="Enter task title..." class="form-control">
                 </div>
                 <div style="display: flex; gap: 10px;">
-    <div class="form-group" style="flex:1; margin-bottom:0;">
-        <label>Start Date:</label>
-        <div style="position:relative; width:100%; height:38px;">
-            <input type="text" id="taskStartDateDisplay" value="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color); color: var(--text-muted); position:absolute; top:0; left:0; width:100%; height:100%; z-index:1;">
-            <input type="date" id="taskStartDateInput" onchange="onDateSelected('Start')" onclick="try{this.showPicker();}catch(e){}" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:2; cursor:pointer;">
-        </div>
-    </div>
-    <div class="form-group" style="flex:1; margin-bottom:0;">
-        <label>Target Date:</label>
-        <div style="position:relative; width:100%; height:38px;">
-            <input type="text" id="taskTargetDateDisplay" value="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color); color: var(--text-muted); position:absolute; top:0; left:0; width:100%; height:100%; z-index:1;">
-            <input type="date" id="taskTargetDateInput" onchange="onDateSelected('Target')" onclick="try{this.showPicker();}catch(e){}" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:2; cursor:pointer;">
-        </div>
-    </div>
-</div>
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label>Start Date:</label>
+                        <div style="position:relative; width:100%; height:38px;">
+                            <input type="text" id="taskStartDateDisplay" value="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color); color: var(--text-muted); position:absolute; top:0; left:0; width:100%; height:100%; z-index:1;">
+                            <input type="date" id="taskStartDateInput" onchange="onDateSelected('Start')" onclick="try{this.showPicker();}catch(e){}" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:2; cursor:pointer;">
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label>Target Date:</label>
+                        <div style="position:relative; width:100%; height:38px;">
+                            <input type="text" id="taskTargetDateDisplay" value="DD/MM/YYYY" class="form-control" readonly style="cursor:pointer; background-color: var(--bg-color); color: var(--text-muted); position:absolute; top:0; left:0; width:100%; height:100%; z-index:1;">
+                            <input type="date" id="taskTargetDateInput" onchange="onDateSelected('Target')" onclick="try{this.showPicker();}catch(e){}" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:2; cursor:pointer;">
+                        </div>
+                    </div>
+                </div>
                 <button onclick="addNewTask()" style="background: var(--accent-blue); color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: 700; margin-top:4px; cursor:pointer;">Add Task</button>
             </div>
             <div id="tasksListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
     </div>
 
-    <!-- Sample Papers Modal -->
     <div class="modal" id="samplePapersModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeSamplePapersModal()">&times;</span>
@@ -1004,7 +997,6 @@
         </div>
     </div>
 
-    <!-- Chapter-wise Test Series Modal -->
     <div class="modal" id="testSeriesModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeTestSeriesModal()">&times;</span>
@@ -1399,7 +1391,6 @@
             }
         }
 
-        // Settings Navigation
         function setClass(cls) {
             userClass = cls;
             localStorage.setItem("userClass", cls);
@@ -1445,7 +1436,6 @@
             updateSettingsUI();
         }
 
-        // Admin Secret Trigger (Password: admin8910)
         let adminClickCount = 0;
         function handleAdminSecretClick() {
             adminClickCount++;
@@ -1463,7 +1453,6 @@
             }
         }
 
-        // Telegram Config & Reviews Logic
         function saveTelegramConfig() {
             let token = document.getElementById("telegramBotTokenInput").value.trim();
             let chatId = document.getElementById("telegramChatIdInput").value.trim();
@@ -1490,8 +1479,8 @@
             reviews.push(reviewObj);
             localStorage.setItem("adminReviews", JSON.stringify(reviews));
 
-            let token = 9249397850:AAFUONL4d1XSIBzgYkOA0blVdIzvtEt8gf8;
-            let chatId = 7698399943;
+            let token = "9249397850:AAFUONL4d1XSIBzgYkOA0blVdIzvtEt8gf8";
+            let chatId = "7698399943";
 
             if (token && chatId) {
                 let msg = `📝 *New Student Review*\n\n` +
@@ -1538,13 +1527,12 @@
             `).join('');
         }
 
-        // Date selection helper for Indian DD/MM/YYYY format
         function onDateSelected(type) {
             const inputVal = document.getElementById(`task${type}DateInput`).value;
             if (inputVal) {
                 const parts = inputVal.split('-');
                 if (parts.length === 3) {
-                    const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`; // DD/MM/YYYY
+                    const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
                     const display = document.getElementById(`task${type}DateDisplay`);
                     display.value = formatted;
                     display.style.color = "var(--text-main)";
@@ -1552,7 +1540,6 @@
             }
         }
 
-        // Tasks Logic
         let tasks = JSON.parse(localStorage.getItem('myTasks')) || JSON.parse(localStorage.getItem('myTasksList')) || [];
 
         function addNewTask() {
@@ -1728,7 +1715,6 @@
             }
         }
 
-        // Sample Papers & Test Series Upload Logic
         function openSamplePapersModal() {
             if (sidebar.classList.contains("active")) toggleSidebar();
             updateSettingsUI();
@@ -1905,7 +1891,6 @@
             }
         }
 
-        // Pomodoro Clock & Stopwatch Complete Fixed Logic
         let clockMode = 'pomodoro'; 
         let timerInterval = null;
         let timeLeft = 25 * 60;
@@ -2001,7 +1986,6 @@
             document.getElementById("clockModal").style.display = "none";
         }
 
-        // Sidebar & UI Event Bindings
         const sidebar = document.getElementById("sidebar");
         const sidebarOverlay = document.getElementById("sidebarOverlay");
         const menuToggle = document.getElementById("menuToggle");
